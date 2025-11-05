@@ -15,8 +15,6 @@ public partial class ChatServer
     /// <summary>
     ///   The main program.
     /// </summary>
-    /// <param name="args"> ignored. </param>
-    /// <returns> A Task. Not really used. </returns>
     private static void Main()
     {
         using var loggerFactory = LoggerFactory.Create(builder =>{

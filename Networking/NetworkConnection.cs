@@ -49,7 +49,7 @@ public sealed class NetworkConnection : IDisposable
     ///   </para>
     /// </summary>
     /// <param name="tcpClient">
-    ///   An already existing TcpClient
+    ///   An already existing TcpClient.
     /// </param>
     /// <param name="logger"> The logging element. </param>
     public NetworkConnection( TcpClient tcpClient, ILogger logger )
@@ -85,7 +85,6 @@ public sealed class NetworkConnection : IDisposable
     {
         get
         {
-
                 _logger.LogDebug("Checking connection status");
                 return _tcpClient.Connected;
         }
@@ -106,6 +105,7 @@ public sealed class NetworkConnection : IDisposable
 
     }
 
+    //TODO Verify newline handling is correct
     /// <summary>
     ///   Send a message to the remote server.  If the <paramref name="message"/> contains
     ///   new lines, these will be treated on the receiving side as multiple messages.
@@ -117,10 +117,11 @@ public sealed class NetworkConnection : IDisposable
     /// <param name="message"> The string of characters to send. </param>
     public void SendLine( string message )
     {
-        _logger.LogDebug($"Attempting to sent message");
+        _logger.LogDebug($"Attempting to sent message: {message}");
         try
         {
-            _writer.WriteLine( message );
+            Console.WriteLine(message);
+            _writer.WriteLine( message.Trim() + '\n');
         }
         catch (Exception e)
         {
