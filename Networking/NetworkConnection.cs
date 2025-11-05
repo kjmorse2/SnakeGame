@@ -1,7 +1,4 @@
-﻿// <copyright file="NetworkConnection.cs" company="UofU-CS3500">
-// Copyright (c) 2024 UofU-CS3500. All rights reserved.
-// </copyright>
-
+﻿
 using System.Net.Sockets;
 using System.Text;
 using Microsoft.Extensions.Logging;

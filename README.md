@@ -11,27 +11,24 @@ Commit Date:
 Solution:   
 Copyright:  CS 3500, Kenneth Morse,and Hunter Simmons - This work may not be copied for use in Academic Coursework.
 ```
+# Assignment 8:
 
-# Overview of the // functionality
+### Overview of the functionality
+This basic chat application allows users to connect to a server and communicate with each other in real-time. 
+The application consists of a server that manages client connections and the ability for any number of clients to connect, 
+send messages, and receive messages from other connected clients.
 
-The Spreadsheet program is currently capable of:
+### Time Expenditures (in hours):
+Expected Hours: 14 hours total (7 each) 
+Actual Hours:
+- 11/4/25
+  - Paired Programming
+     - 2.5: Read assignment, set up repo, read starter code, and add logging statements to starter code
+     also started basic functionality for sending messages, but multiple users not working yet.
+- 11/5/25
+    - Paired Programming
+      - 2: Allowed multiple clients to connect, save names of users, and broadcast messages to all connected clients.
 
-### Assignment 8:
-
-## Time Expenditures (in hours):
-
-
-## Branching
-
-
-## Time Estimation
-
-
-## Sources:
-
-This only includes commonly referenced sources, see each project's README for more specific details.
-
-- [StyleCop Documentation](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation)
-- [Microsoft C# Documentation](https://learn.microsoft.com/en-us/dotnet/api/)
-- [ChatGPT 4.1/5 Copilot (GitHub)](https://github.com/copilot) For documentations, code style, and understanding C#,
-  helpful for autocompleting repetitive docs. Scans code and looks for grammatical errors/typos.
+### Sources:
+[Microsoft thread safe collections documents](https://learn.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2?view=net-9.0)
+[TcpListener and TcpClient documentation](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/sockets/tcp-classes)
