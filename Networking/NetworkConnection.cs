@@ -53,14 +53,14 @@ public sealed class NetworkConnection : IDisposable
     /// <param name="logger"> The logging element. </param>
     public NetworkConnection( TcpClient tcpClient, ILogger logger )
     {
-        // FIXME: save the logger
         _tcpClient = tcpClient;
         _logger = logger;
         if ( IsConnected )
         {
             // Only establish the reader/writer if the provided TcpClient is already connected.
             _reader = new StreamReader( _tcpClient.GetStream(), Encoding.UTF8 );
-            _writer = new StreamWriter( _tcpClient.GetStream(), Encoding.UTF8 ) { AutoFlush = true }; // AutoFlush ensures data is sent immediately
+            // AutoFlush ensures data is sent immediately
+            _writer = new StreamWriter( _tcpClient.GetStream(), Encoding.UTF8 ) { AutoFlush = true }; 
         }
     }
 
@@ -113,8 +113,14 @@ public sealed class NetworkConnection : IDisposable
     public void SendLine( string message )
     {
         // TODO: logging
-        // TODO: Implement this
-        throw new NotImplementedException();
+        try
+        {
+            _writer.WriteLine( message + '\n');
+        }
+        catch(Exception e) 
+        {
+            throw new InvalidOperationException("Error sending message: " + e.Message);
+        }
     }
 
 
@@ -152,10 +158,22 @@ public sealed class NetworkConnection : IDisposable
     /// </exception>
     public string ReceiveLine( )
     {
-        // TODO: logging
-        // TODO: implement this
-        throw new NotImplementedException();
+        try
+        {
+            string recieved = _reader.ReadLine();
 
+            if (!this.IsConnected || recieved is null)
+            {
+                throw new InvalidOperationException("Connection was closed");
+            }
+
+            return recieved;
+        }
+        catch (Exception e)
+        {
+            throw new IOException("Error getting message: " + e.Message);
+
+        }
     }
 
     /// <summary>
@@ -166,7 +184,7 @@ public sealed class NetworkConnection : IDisposable
     ///   </para>
     ///   <list type="number">
     ///     <item>
-    ///       Then call the tcpclient object's client.Shutdown method with SocketShutdown.Both.
+    ///       Then call the tcpclient object's Client.Shutdown method with SocketShutdown.Both.
     ///     </item>
     ///     <item>
     ///       Then dispose the writer and reader.
@@ -179,8 +197,13 @@ public sealed class NetworkConnection : IDisposable
     public void Disconnect( )
     {
         // TODO: logging
-        //TODO: implement this
-        throw new NotImplementedException();
+        if (this.IsConnected)
+        {
+            _tcpClient.Client.Shutdown(SocketShutdown.Both);
+            _writer.Close();
+            _reader.Close();
+            _tcpClient.Close();
+        }
     }
 
     /// <summary>

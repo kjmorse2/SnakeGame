@@ -64,7 +64,7 @@ public partial class ChatServer
         {
             while ( true )
             {
-                var message = connection.ReceiveLine( );
+                var message = connection.ReceiveLine();
 
                 connection.SendLine( $"thanks, I got {message}!" );
             }
