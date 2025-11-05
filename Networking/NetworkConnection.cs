@@ -83,10 +83,9 @@ public sealed class NetworkConnection : IDisposable
     {
         get
         {
+
                 _logger.LogDebug("Checking connection status");
                 return _tcpClient.Connected;
-  
-
         }
     }
 
@@ -119,7 +118,7 @@ public sealed class NetworkConnection : IDisposable
         _logger.LogDebug($"Attempting to sent message");
         try
         {
-            _writer.WriteLine( message + '\n');
+            _writer.WriteLine( message );
         }
         catch (Exception e)
         {
