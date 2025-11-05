@@ -121,6 +121,7 @@
     private void DisconnectFromServer()
     {
         network.Disconnect();
+        network = new NetworkConnection(logger);
     }
 
     /// <summary>

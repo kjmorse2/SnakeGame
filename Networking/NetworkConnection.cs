@@ -102,7 +102,6 @@ public sealed class NetworkConnection : IDisposable
         _reader = new StreamReader(_tcpClient.GetStream(), Encoding.UTF8);
         //AutoFlush ensures data is sent immediately
         _writer = new StreamWriter(_tcpClient.GetStream(), Encoding.UTF8) { AutoFlush = true };
-
     }
 
     //TODO Verify newline handling is correct

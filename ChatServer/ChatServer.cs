@@ -15,6 +15,8 @@ public partial class ChatServer
 {
     private static ConcurrentDictionary<string, NetworkConnection> connectedClients = new();
 
+    private static ILogger _logger;
+
     /// <summary>
     ///   The main program.
     /// </summary>
@@ -26,9 +28,9 @@ public partial class ChatServer
             builder.SetMinimumLevel(LogLevel.Trace);
         });
 
-        ILogger logger = loggerFactory.CreateLogger<ChatServer>();
+        _logger = loggerFactory.CreateLogger<ChatServer>();
 
-        ServerConnection.WaitForConnections( HandleConnect, 11_000, logger );
+        ServerConnection.WaitForConnections( HandleConnect, 11_000, _logger );
         Console.Read(); // don't stop the program.
     }
 
@@ -66,6 +68,7 @@ public partial class ChatServer
     private static void HandleConnect( NetworkConnection connection )
     {
         var name = connection.ReceiveLine();
+        _logger.LogInformation("Connection established, name recieved: " + name);
         connectedClients[ name ] = connection;
 
         try
