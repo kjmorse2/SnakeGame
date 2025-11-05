@@ -35,7 +35,7 @@ public sealed class NetworkConnection : IDisposable
     /// <summary>
     ///   Reading end of the connection
     /// </summary>
-    private StreamReader _reader;
+    private StreamReader _reader = null!;
 
     /// <summary>
     ///   Writing end of the connection
@@ -60,8 +60,8 @@ public sealed class NetworkConnection : IDisposable
         {
             _logger.LogInformation("Connected to server");
             _reader = new StreamReader( _tcpClient.GetStream(), Encoding.UTF8 );
-            // AutoFlush ensures data is sent immediately
-            _writer = new StreamWriter( _tcpClient.GetStream(), Encoding.UTF8 ) { AutoFlush = true }; 
+            //AutoFlush ensures data is sent immediately
+            _writer = new StreamWriter( _tcpClient.GetStream(), Encoding.UTF8 ) { AutoFlush = true };
         }
     }
 
@@ -83,12 +83,12 @@ public sealed class NetworkConnection : IDisposable
     {
         get
         {
-            _logger.LogDebug("Checking connection status");
-            return _tcpClient.Connected;
-            // TODO: logging 
+                _logger.LogDebug("Checking connection status");
+                return _tcpClient.Connected;
+  
+
         }
     }
-
 
     /// <summary>
     ///   Try to connect to the given host:port.
@@ -99,9 +99,11 @@ public sealed class NetworkConnection : IDisposable
     {
         _logger.LogDebug($"Attempting to connect to {host} on port {port}");
         _tcpClient.Connect( host, port );
+        _reader = new StreamReader(_tcpClient.GetStream(), Encoding.UTF8);
+        //AutoFlush ensures data is sent immediately
+        _writer = new StreamWriter(_tcpClient.GetStream(), Encoding.UTF8) { AutoFlush = true };
+
     }
-
-
 
     /// <summary>
     ///   Send a message to the remote server.  If the <paramref name="message"/> contains
