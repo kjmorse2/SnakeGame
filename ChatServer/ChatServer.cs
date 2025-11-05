@@ -2,6 +2,7 @@
 // Copyright (c) 2024 UofU-CS3500. All rights reserved.
 // </copyright>
 
+using System.Collections.Concurrent;
 using CS3500.Networking;
 using Microsoft.Extensions.Logging;
 
@@ -12,7 +13,7 @@ namespace CS3500.Chatting;
 /// </summary>
 public partial class ChatServer
 {
-    private static List<NetworkConnection> connectedClients = new();
+    private static ConcurrentDictionary<string, NetworkConnection> connectedClients = new();
 
     /// <summary>
     ///   The main program.
@@ -64,15 +65,15 @@ public partial class ChatServer
     /// </summary>
     private static void HandleConnect( NetworkConnection connection )
     {
-        connectedClients.Add(connection);
         var name = connection.ReceiveLine();
+        connectedClients[ name ] = connection;
 
         try
         {
             while ( true )
             {
                 var message = connection.ReceiveLine();
-                foreach (var connectedClient in connectedClients)
+                foreach (var connectedClient in connectedClients.Values)
                 {
                     connectedClient.SendLine($"{name}: {message}");
                 }
@@ -81,6 +82,7 @@ public partial class ChatServer
         catch ( Exception )
         {
             connection.Dispose();
+            connectedClients.Remove(name, out _);
         }
     }
 }
