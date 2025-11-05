@@ -1,0 +1,207 @@
+﻿@page "/chatclient"
+@rendermode InteractiveServer
+@using CS3500.Networking
+@using System.Text
+@inject ILogger<ChatClient> logger
+
+<PageTitle>Chat Client</PageTitle>
+
+<h1>Chat Client</h1>
+
+<div id="ConnectionInputs">
+    <div class="input-row">
+        <label for="name"> Your Name: </label>
+        <input id="name" disabled="@network.IsConnected" type="text" @bind="UserName" />
+    </div>
+
+    <div class="input-row">
+        <label for="url"> Server Address: </label>
+        <input id="url" disabled="@network.IsConnected" type="text" @bind="ServerNameOrAddress" />
+        <label for="url"> Port: </label>
+        <input id="port" disabled="@network.IsConnected" type="number" @bind="ServerPort" class="port" />
+        @if ( network.IsConnected )
+        {
+            <button class="btn btn-primary" @onclick="DisconnectFromServer">Disconnect</button>
+        }
+        else
+        {
+            <button class="btn btn-primary" @onclick="ConnectToServer">Connect</button>
+        }
+        <div class="@spinner"></div>
+    </div>
+
+    @{
+        bool disconnected = !network.IsConnected;
+        string grayedOut = disconnected ? "grayedOut" : string.Empty;
+    }
+
+    <div class="input-row">
+        <label for="message"> Chat: </label>
+        <input id="message"   @bind:event="oninput"  @bind="currentMessage" class="@grayedOut" disabled="@(disconnected)" type="text" @onkeydown="HandleSendMessage" />
+        @if ( !disconnected )
+        {
+            <p class="hint"> Press Enter to Send </p>
+        }
+    </div>
+    <div class="input-row">
+        <div class="input-col">
+            <div id="Messages" class="container @grayedOut">
+                @foreach ( var line in AllMessages )
+                {
+                    <span class="themClass">
+                        @line
+                    </span>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code
+{
+    /// <summary>
+    ///   Default server name
+    /// </summary>
+    private string ServerNameOrAddress = "localhost";
+
+    /// <summary>
+    ///   Default server port
+    /// </summary>
+    private int ServerPort = 11000;
+
+    /// <summary>
+    ///   The name you want the server to "call" you by.
+    /// </summary>
+    private string UserName = "NotJim";
+
+    /// <summary>
+    ///   The current message being typed by the user.
+    /// </summary>
+    private string currentMessage = string.Empty;
+
+    /// <summary>
+    ///   Give visual feedback that we are connecting to the server. Empty --> no feedback.
+    ///   "spinner" --> show spinner.
+    /// </summary>
+    private string spinner = string.Empty;
+
+    /// <summary>
+    /// The NetworkConnection object representing a connection with the server.
+    /// </summary>
+    /// <remarks>
+    ///   The ! operator is used here to indicate to the compiler that the developer
+    ///   knows that this variable will be initialized before it is used (and thus
+    ///   should not be flagged as an error). See the OnInitialized method below 
+    ///   (which is called by the Blazor framework) when the html page is loaded.
+    /// </remarks>
+    private NetworkConnection network = null!;
+
+    /// <summary>
+    /// The string shown in the message display area, representing all messages seen
+    /// </summary>
+    private string MessageDisplayTextAreaData
+    {
+        get
+        {
+            return string.Join( "\n", AllMessages );
+        }
+    }
+
+    /// <summary>
+    ///   All of the messages seen by the server.
+    /// </summary>
+    private List<string> AllMessages = new();
+
+
+    /// <summary>
+    /// Disconnect the network object from the server.
+    /// </summary>
+    private void DisconnectFromServer()
+    {
+        network.Disconnect();
+    }
+
+    /// <summary>
+    ///   <para>
+    ///     Handler for the connect button.
+    ///   </para>
+    ///   <para>
+    ///     Connect to the server, then continuously wait for messages and display them.
+    ///   </para>
+    /// </summary>
+    private void ConnectToServer()
+    {
+        try
+        {
+            // Communicating with the server needs to be asynchronous so that the UI thread 
+            // can continue drawing.  Thus we have to start it up in its own thread.
+            new Thread( () =>
+            {
+                spinner = "spinner";
+                InvokeAsync( () => StateHasChanged() ); // make sure the UI updates to show connection status
+
+                network.Connect( ServerNameOrAddress, ServerPort );
+                spinner = string.Empty;
+                InvokeAsync( () => StateHasChanged() ); 
+
+                // TODO: Send the command message with the name stored in UserName
+
+                while ( network.IsConnected )
+                {
+                    try
+                    {
+                        var message = network.ReceiveLine();
+
+                        message = $"{DateTime.Now:HH:mm:ss tt} - {message}";
+                        AllMessages.Insert( 0, message );
+
+                        // Important: (test question?) 
+                        // Since we are modifying the data shown by the UI in another thread, we need to 
+                        // use the dispatcher for StateHasChanged so that the GUI thread
+                        // can be "told" to update the UI on its own thread.
+                        InvokeAsync( () => StateHasChanged() );
+                    }
+                    catch
+                    {
+                        // TODO: alert the user that the server has disconnected them.
+                        // you can simulate this by stopping the server while the client is connected.
+                    }
+                }
+            } ).Start();
+        }
+        catch
+        {
+            // TODO: alert the user that the connection failed.
+            // you can simulate this by trying to connect to a port where no server is running.
+        }
+
+    }
+
+    /// <summary>
+    ///   When the user types a message and presses enter, send the message
+    ///   to the server.
+    /// </summary>
+    /// <param name="e"> Event data containing the message. </param>
+    private async Task HandleSendMessage(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" )
+        {
+            network.SendLine( currentMessage );
+            currentMessage = string.Empty;
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>
+    ///   Create a default network object
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        network = new( logger );
+        logger.LogInformation("OnInitialized!");
+    }
+
+}
