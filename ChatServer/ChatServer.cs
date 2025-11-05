@@ -19,9 +19,15 @@ public partial class ChatServer
     /// <returns> A Task. Not really used. </returns>
     private static void Main()
     {
-        // TODO - build a logging system and pass a logger to WaitForConnections
+        using var loggerFactory = LoggerFactory.Create(builder => {
+            builder.AddConsole(); // JIM: must nuget add Microsoft.Extensions.Logging.Console and Debug
+            builder.AddDebug();
+            builder.SetMinimumLevel(LogLevel.Trace);
+        });
 
-        ServerConnection.WaitForConnections( HandleConnect, 11_000, null );
+        ILogger logger = loggerFactory.CreateLogger<ChatServer>();
+
+        ServerConnection.WaitForConnections( HandleConnect, 11_000, logger );
         Console.Read(); // don't stop the program.
     }
 

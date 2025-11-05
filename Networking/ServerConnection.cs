@@ -15,9 +15,6 @@ namespace CS3500.Networking;
 /// </summary>
 public static class ServerConnection
 {
-    private static ILogger _logger = null!;
-    private static TcpListener _listener = null!;
-
     /// <summary>
     ///   Use on a TcpListener to handle new connections. Alert the calling program/function
     ///   via the handleConnect delegate.
@@ -29,13 +26,15 @@ public static class ServerConnection
     /// <param name="port"> The port (e.g., 11000) to listen on. </param>
     public static void WaitForConnections( Action<NetworkConnection> handleConnect, int port, ILogger logger )
     {
-        _listener = new TcpListener(IPAddress.Any, port);
-        _listener.Start();
-        _logger = logger;
+        TcpListener listener = new (IPAddress.Any, port);
+        listener.Start();
+        ILogger localLogger = logger;
 
         while (true)
         {
-            NetworkConnection client = new(_listener.AcceptTcpClient(), _logger);
+            localLogger.LogInformation("Waiting for connections...");
+            NetworkConnection client = new(listener.AcceptTcpClient(), localLogger);
+            localLogger.LogInformation("Connection found, attempting to connect.");
             new Thread(() => handleConnect(client)).Start();
         }
     }

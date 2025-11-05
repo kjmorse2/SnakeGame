@@ -26,6 +26,7 @@ public sealed class NetworkConnection : IDisposable
 {
 
     private readonly ILogger _logger;
+
     /// <summary>
     ///   The connection/socket abstraction
     /// </summary>
@@ -57,7 +58,7 @@ public sealed class NetworkConnection : IDisposable
         _logger = logger;
         if ( IsConnected )
         {
-            // Only establish the reader/writer if the provided TcpClient is already connected.
+            _logger.LogInformation("Connected to server");
             _reader = new StreamReader( _tcpClient.GetStream(), Encoding.UTF8 );
             // AutoFlush ensures data is sent immediately
             _writer = new StreamWriter( _tcpClient.GetStream(), Encoding.UTF8 ) { AutoFlush = true }; 
@@ -82,6 +83,7 @@ public sealed class NetworkConnection : IDisposable
     {
         get
         {
+            _logger.LogDebug("Checking connection status");
             return _tcpClient.Connected;
             // TODO: logging 
         }
@@ -95,8 +97,8 @@ public sealed class NetworkConnection : IDisposable
     /// <param name="port"> The port, e.g., 11000. </param>
     public void Connect( string host, int port )
     {
+        _logger.LogDebug($"Attempting to connect to {host} on port {port}");
         _tcpClient.Connect( host, port );
-        // TODO: logging
     }
 
 
@@ -112,17 +114,18 @@ public sealed class NetworkConnection : IDisposable
     /// <param name="message"> The string of characters to send. </param>
     public void SendLine( string message )
     {
-        // TODO: logging
+        _logger.LogDebug($"Attempting to sent message");
         try
         {
             _writer.WriteLine( message + '\n');
         }
-        catch(Exception e) 
+        catch (Exception e)
         {
+            _logger.LogDebug("Message not sent: " + e.Message);
             throw new InvalidOperationException("Error sending message: " + e.Message);
         }
-    }
 
+    }
 
     /// <summary>
     ///   Read a message from the other side of the socket.  The message will contain
@@ -158,21 +161,23 @@ public sealed class NetworkConnection : IDisposable
     /// </exception>
     public string ReceiveLine( )
     {
+        _logger.LogInformation("Attempting to receive message.");
         try
         {
-            string recieved = _reader.ReadLine();
+            string received = _reader.ReadLine();
 
-            if (!this.IsConnected || recieved is null)
+            if (!this.IsConnected || received is null)
             {
+                _logger.LogDebug("Message not recieved, connection was closed");
                 throw new InvalidOperationException("Connection was closed");
             }
 
-            return recieved;
+            return received;
         }
         catch (Exception e)
         {
-            throw new IOException("Error getting message: " + e.Message);
-
+            _logger.LogDebug("Message not received, other error occured: " + e.Message);
+            throw new IOException("Error getting message: " + e.Message); // Can you hear me in discord?
         }
     }
 
@@ -203,6 +208,7 @@ public sealed class NetworkConnection : IDisposable
             _writer.Close();
             _reader.Close();
             _tcpClient.Close();
+            _logger.LogInformation("Disconnected");
         }
     }
 
@@ -211,7 +217,7 @@ public sealed class NetworkConnection : IDisposable
     /// </summary>
     public void Dispose( )
     {
-        // TODO: logging
+        _logger.LogDebug("Network Connection was disposed of.");
         Disconnect();
     }
 }
