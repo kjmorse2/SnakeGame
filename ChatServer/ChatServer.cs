@@ -25,7 +25,6 @@ public partial class ChatServer
         Console.Read(); // don't stop the program.
     }
 
-
     /// <summary>
     ///   <para>
     ///     Current (Wrong) Functionality: When a new connection is established,

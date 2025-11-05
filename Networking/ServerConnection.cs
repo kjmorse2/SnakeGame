@@ -30,6 +30,7 @@ public static class ServerConnection
     public static void WaitForConnections( Action<NetworkConnection> handleConnect, int port, ILogger logger )
     {
         _listener = new TcpListener(IPAddress.Any, port);
+        _listener.Start();
         _logger = logger;
 
         while (true)
@@ -37,7 +38,5 @@ public static class ServerConnection
             NetworkConnection client = new(_listener.AcceptTcpClient(), _logger);
             new Thread(() => handleConnect(client)).Start();
         }
-
-
     }
 }
