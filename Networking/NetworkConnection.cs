@@ -204,9 +204,8 @@ public sealed class NetworkConnection : IDisposable
     ///     </item>
     ///   </list>
     /// </summary>
-    public void Disconnect( )
+    public void Disconnect()
     {
-        // TODO: logging
         if (this.IsConnected)
         {
             _tcpClient.Client.Shutdown(SocketShutdown.Both);
@@ -220,7 +219,7 @@ public sealed class NetworkConnection : IDisposable
     /// <summary>
     ///   Automatically called with a using statement (see IDisposable)
     /// </summary>
-    public void Dispose( )
+    public void Dispose()
     {
         _logger.LogDebug("Network Connection was disposed of.");
         Disconnect();
