@@ -74,7 +74,7 @@
     /// <summary>
     ///   The name you want the server to "call" you by.
     /// </summary>
-    private string UserName = "NotJim";
+    private string UserName = "Your Name Here";
 
     /// <summary>
     ///   The current message being typed by the user.
@@ -93,7 +93,7 @@
     /// <remarks>
     ///   The ! operator is used here to indicate to the compiler that the developer
     ///   knows that this variable will be initialized before it is used (and thus
-    ///   should not be flagged as an error). See the OnInitialized method below 
+    ///   should not be flagged as an error). See the OnInitialized method below
     ///   (which is called by the Blazor framework) when the html page is loaded.
     /// </remarks>
     private NetworkConnection network = null!;
@@ -110,7 +110,7 @@
     }
 
     /// <summary>
-    ///   All of the messages seen by the server.
+    ///   All the messages seen by the server.
     /// </summary>
     private List<string> AllMessages = new();
 
@@ -135,18 +135,19 @@
     {
         try
         {
-            // Communicating with the server needs to be asynchronous so that the UI thread 
-            // can continue drawing.  Thus we have to start it up in its own thread.
+            // Communicating with the server needs to be asynchronous so that the UI thread
+            // can continue drawing. Thus, we have to start it up in its own thread.
             new Thread( () =>
             {
                 spinner = "spinner";
-                InvokeAsync( () => StateHasChanged() ); // make sure the UI updates to show connection status
+                InvokeAsync( StateHasChanged ); // make sure the UI updates to show connection status
 
                 network.Connect( ServerNameOrAddress, ServerPort );
                 spinner = string.Empty;
-                InvokeAsync( () => StateHasChanged() ); 
+                InvokeAsync( StateHasChanged );
 
                 // TODO: Send the command message with the name stored in UserName
+                // TODO: logging
 
                 while ( network.IsConnected )
                 {
@@ -157,15 +158,16 @@
                         message = $"{DateTime.Now:HH:mm:ss tt} - {message}";
                         AllMessages.Insert( 0, message );
 
-                        // Important: (test question?) 
-                        // Since we are modifying the data shown by the UI in another thread, we need to 
+                        // Important: (test question?)
+                        // Since we are modifying the data shown by the UI in another thread, we need to
                         // use the dispatcher for StateHasChanged so that the GUI thread
                         // can be "told" to update the UI on its own thread.
-                        InvokeAsync( () => StateHasChanged() );
+                        InvokeAsync( StateHasChanged );
                     }
                     catch
                     {
                         // TODO: alert the user that the server has disconnected them.
+                        // TODO: logging
                         // you can simulate this by stopping the server while the client is connected.
                     }
                 }

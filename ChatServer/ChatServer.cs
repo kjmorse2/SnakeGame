@@ -28,7 +28,7 @@ public partial class ChatServer
 
     /// <summary>
     ///   <para>
-    ///     Current (Wrong) Functionality: When a new connection is established, 
+    ///     Current (Wrong) Functionality: When a new connection is established,
     ///     enter a loop that receives from the client and sends "thanks" back
     ///     to the client for each message received.
     ///   </para>
@@ -37,7 +37,7 @@ public partial class ChatServer
     ///   </para>
     ///   <list type="number">
     ///     <item>
-    ///       Read the name of the connection and store it.  
+    ///       Read the name of the connection and store it.
     ///     </item>
     ///     <item>
     ///       Begin a loop that reads messages from the client.
@@ -52,7 +52,7 @@ public partial class ChatServer
     ///   <para>
     ///     All actions on the list of connected clients must be thread-safe!
     ///   </para>
-    ///   <para> 
+    ///   <para>
     ///     All important events (connections, disconnections, messages received, messages sent, errors, etc.)
     ///     must be logged using the logging system at the appropriate log level.
     ///   </para>

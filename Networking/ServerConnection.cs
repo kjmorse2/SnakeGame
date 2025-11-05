@@ -27,6 +27,7 @@ public static class ServerConnection
     public static void WaitForConnections( Action<NetworkConnection> handleConnect, int port, ILogger logger )
     {
         // TODO: Implement this - should look very much like sample code from class.
+        // TODO: logging
         throw new NotImplementedException();
     }
 }

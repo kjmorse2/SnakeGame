@@ -571,6 +571,8 @@ qodana.yaml
 # Ignore any \.cs file containing "GradingTests" in its filename
 *GradingTests*.cs
 
+*copilot*.xml
+
 # User-specific files
 *.env
 

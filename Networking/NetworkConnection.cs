@@ -19,25 +19,27 @@ namespace CS3500.Networking;
 ///   </para>
 ///   <para>
 ///     Implements IDisposable because we want to make sure that any given
-///     network connection is "cleaned up" when we are done with it. 
+///     network connection is "cleaned up" when we are done with it.
 ///   </para>
 /// </summary>
 public sealed class NetworkConnection : IDisposable
 {
+
+    private readonly ILogger _logger;
     /// <summary>
     ///   The connection/socket abstraction
     /// </summary>
-    private TcpClient _tcpClient = new();
+    private TcpClient _tcpClient;
 
     /// <summary>
     ///   Reading end of the connection
     /// </summary>
-    private StreamReader _reader = StreamReader.Null;
+    private StreamReader _reader;
 
     /// <summary>
     ///   Writing end of the connection
     /// </summary>
-    private StreamWriter? _writer = StreamWriter.Null;
+    private StreamWriter? _writer;
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="NetworkConnection"/> class.
@@ -53,6 +55,7 @@ public sealed class NetworkConnection : IDisposable
     {
         // FIXME: save the logger
         _tcpClient = tcpClient;
+        _logger = logger;
         if ( IsConnected )
         {
             // Only establish the reader/writer if the provided TcpClient is already connected.
@@ -79,22 +82,21 @@ public sealed class NetworkConnection : IDisposable
     {
         get
         {
-            return false;
-            // TODO: implement this
-            // Reminder: logging is required.
+            return _tcpClient.Connected;
+            // TODO: logging 
         }
     }
 
 
     /// <summary>
-    ///   Try to connect to the given host:port. 
+    ///   Try to connect to the given host:port.
     /// </summary>
     /// <param name="host"> The URL or IP address, e.g., www.cs.utah.edu, or  127.0.0.1. </param>
     /// <param name="port"> The port, e.g., 11000. </param>
     public void Connect( string host, int port )
     {
-        // TODO: implement this
-        throw new NotImplementedException();
+        _tcpClient.Connect( host, port );
+        // TODO: logging
     }
 
 
@@ -110,6 +112,7 @@ public sealed class NetworkConnection : IDisposable
     /// <param name="message"> The string of characters to send. </param>
     public void SendLine( string message )
     {
+        // TODO: logging
         // TODO: Implement this
         throw new NotImplementedException();
     }
@@ -149,13 +152,14 @@ public sealed class NetworkConnection : IDisposable
     /// </exception>
     public string ReceiveLine( )
     {
+        // TODO: logging
         // TODO: implement this
         throw new NotImplementedException();
 
     }
 
     /// <summary>
-    ///   If connected, disconnect the connection and clean 
+    ///   If connected, disconnect the connection and clean
     ///   up (dispose) any streams.
     ///   <para>
     ///     TODO:
@@ -174,6 +178,7 @@ public sealed class NetworkConnection : IDisposable
     /// </summary>
     public void Disconnect( )
     {
+        // TODO: logging
         //TODO: implement this
         throw new NotImplementedException();
     }
@@ -183,6 +188,7 @@ public sealed class NetworkConnection : IDisposable
     /// </summary>
     public void Dispose( )
     {
+        // TODO: logging
         Disconnect();
     }
 }
