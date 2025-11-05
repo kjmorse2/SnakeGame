@@ -121,14 +121,13 @@ public sealed class NetworkConnection : IDisposable
         try
         {
             Console.WriteLine(message);
-            _writer.WriteLine( message.Trim() + '\n');
+            _writer.WriteLine( message.Trim());
         }
         catch (Exception e)
         {
             _logger.LogDebug("Message not sent: " + e.Message);
             throw new InvalidOperationException("Error sending message: " + e.Message);
         }
-
     }
 
     /// <summary>

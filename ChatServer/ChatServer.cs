@@ -12,6 +12,8 @@ namespace CS3500.Chatting;
 /// </summary>
 public partial class ChatServer
 {
+    private static List<NetworkConnection> connectedClients = new();
+
     /// <summary>
     ///   The main program.
     /// </summary>
@@ -62,19 +64,23 @@ public partial class ChatServer
     /// </summary>
     private static void HandleConnect( NetworkConnection connection )
     {
-        // handle all messages until disconnect.
+        connectedClients.Add(connection);
+        var name = connection.ReceiveLine();
+
         try
         {
             while ( true )
             {
                 var message = connection.ReceiveLine();
-
-                connection.SendLine( $"thanks, I got {message}!" );
+                foreach (var connectedClient in connectedClients)
+                {
+                    connectedClient.SendLine($"{name}: {message}");
+                }
             }
         }
         catch ( Exception )
         {
-            // TODO: do anything necessary to handle a disconnected client in here,
+            connection.Dispose();
         }
     }
 }
