@@ -145,9 +145,9 @@
                 network.Connect( ServerNameOrAddress, ServerPort );
                 spinner = string.Empty;
                 InvokeAsync( StateHasChanged );
-
-                // TODO: Send the command message with the name stored in UserName
-                // TODO: logging
+                // Send first message: the username
+                logger.LogInformation($"Connected to server, sending username: {UserName}");
+                network.SendLine(UserName);
 
                 while ( network.IsConnected )
                 {
@@ -178,7 +178,6 @@
             // TODO: alert the user that the connection failed.
             // you can simulate this by trying to connect to a port where no server is running.
         }
-
     }
 
     /// <summary>
