@@ -19,7 +19,7 @@ public partial class ChatServer
     /// <returns> A Task. Not really used. </returns>
     private static void Main()
     {
-        using var loggerFactory = LoggerFactory.Create(builder => {
+        using var loggerFactory = LoggerFactory.Create(builder =>{
             builder.AddConsole(); // JIM: must nuget add Microsoft.Extensions.Logging.Console and Debug
             builder.AddDebug();
             builder.SetMinimumLevel(LogLevel.Trace);

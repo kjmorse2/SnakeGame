@@ -36,6 +36,7 @@ public static class ServerConnection
             NetworkConnection client = new(listener.AcceptTcpClient(), localLogger);
             localLogger.LogInformation("Connection found, attempting to connect.");
             new Thread(() => handleConnect(client)).Start();
+            localLogger.LogInformation("Connection handed off to thread.");
         }
     }
 }

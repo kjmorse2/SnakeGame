@@ -56,6 +56,7 @@ public sealed class NetworkConnection : IDisposable
     {
         _tcpClient = tcpClient;
         _logger = logger;
+        _logger.LogTrace("NetworkConnection created with provided tcpClient.");
         if ( IsConnected )
         {
             _logger.LogInformation("Connected to server");
@@ -74,6 +75,7 @@ public sealed class NetworkConnection : IDisposable
     public NetworkConnection( ILogger logger )
         : this( new TcpClient(), logger )
     {
+        _logger.LogTrace("NetworkConnection with no connection created, connection is needed before communication.");
     }
 
     /// <summary>
@@ -85,8 +87,6 @@ public sealed class NetworkConnection : IDisposable
         {
                 _logger.LogDebug("Checking connection status");
                 return _tcpClient.Connected;
-  
-
         }
     }
 
@@ -170,9 +170,11 @@ public sealed class NetworkConnection : IDisposable
 
             if (!this.IsConnected || received is null)
             {
-                _logger.LogDebug("Message not recieved, connection was closed");
+                _logger.LogDebug("Message not received, connection was closed");
                 throw new InvalidOperationException("Connection was closed");
             }
+
+            _logger.LogTrace("Message recieved: " + received);
 
             return received;
         }
