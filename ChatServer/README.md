@@ -7,25 +7,20 @@ Start Date: 4-Nov-2025
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  kjmorse2, HunterDSimmons
 Repo:       https://github.com/uofu-cs3500-20-fall2025/assignment-eight-chatting-kj_hunter_game.git
-Commit Date: 
-Solution:   
+Commit Date: 6-Nov-2025
+Project:    ChatServer
 Copyright:  CS 3500, Kenneth Morse,and Hunter Simmons - This work may not be copied for use in Academic Coursework.
 ```
 
-# Overview of the // functionality
+### Comments to Evaluators:
+In the HandleConnect method we did not use a lock. KJ had learned about thread safe lists before, and after some research we decided to use a thread safe dictionary to 
+store the names and the connection object associated with that name.
 
-The Spreadsheet program is currently capable of:
+### Assignment Specific Topics:
+None
 
-### Assignment 8:
-
-## Time Expenditures (in hours):
-
-
-## Branching
-
-
-## Time Estimation
-
+### Consulted Peers:
+We only consulted each other for this assignment.
 
 ## Sources:
 
