@@ -6,12 +6,12 @@
 //  in my README file.
 // </copyright>
 
+namespace CS3500.Networking;
+
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
-
-namespace CS3500.Networking;
 
 /// <summary>
 ///   Represents a server task that waits for connections on a given
@@ -30,7 +30,7 @@ public static class ServerConnection
     /// <param name="port"> The port (e.g., 11000) to listen on. </param>
     public static void WaitForConnections( Action<NetworkConnection> handleConnect, int port, ILogger logger )
     {
-        TcpListener listener = new (IPAddress.Any, port);
+        TcpListener listener = new(IPAddress.Any, port);
         listener.Start();
         ILogger localLogger = logger;
 

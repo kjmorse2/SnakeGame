@@ -17,8 +17,16 @@ namespace CS3500.Chatting;
 /// </summary>
 public partial class ChatServer
 {
+    /// <summary>
+    /// Holds all the currently connected clients.
+    /// The key is the client's username, and the value is the corresponding NetworkConnection object.
+    /// A ConcurrentDictionary ensures thread-safe access.
+    /// </summary>
     private static ConcurrentDictionary<string, NetworkConnection> connectedClients = new();
 
+    /// <summary>
+    /// Shared logger instance used throughout the server for structured logging.
+    /// </summary>
     private static ILogger _logger;
 
     /// <summary>
@@ -72,7 +80,7 @@ public partial class ChatServer
     private static void HandleConnect( NetworkConnection connection )
     {
         var name = connection.ReceiveLine();
-        _logger.LogInformation("Connection established, name recieved: " + name);
+        _logger.LogInformation("Connection established, name received: " + name);
         connectedClients[ name ] = connection;
 
         try
