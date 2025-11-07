@@ -120,7 +120,7 @@
     private void DisconnectFromServer()
     {
         network.Disconnect();
-        network = new NetworkConnection(logger);
+        network = new NetworkConnection( logger );
     }
 
     /// <summary>
@@ -147,7 +147,7 @@
                 InvokeAsync( StateHasChanged );
                 // Send first message: the username
                 logger.LogInformation($"Connected to server, sending username: {UserName}");
-                network.SendLine(UserName);
+                network.SendLine( UserName );
 
                 while ( network.IsConnected )
                 {
@@ -166,7 +166,7 @@
                     }
                     catch
                     {
-                        logger.LogDebug("You have been disconnected from the server.");
+                        logger.LogDebug( "You have been disconnected from the server." );
                         // you can simulate this by stopping the server while the client is connected.
                     }
                 }
@@ -174,7 +174,7 @@
         }
         catch
         {
-            logger.LogDebug("Connection to the server has failed.");
+            logger.LogDebug( "Connection to the server has failed." );
             // you can simulate this by trying to connect to a port where no server is running.
         }
     }
@@ -184,9 +184,9 @@
     ///   to the server.
     /// </summary>
     /// <param name="e"> Event data containing the message. </param>
-    private async Task HandleSendMessage(KeyboardEventArgs e)
+    private async Task HandleSendMessage( KeyboardEventArgs e )
     {
-        if (e.Key == "Enter" )
+        if ( e.Key == "Enter" )
         {
             network.SendLine( currentMessage );
             currentMessage = string.Empty;
@@ -201,6 +201,6 @@
     {
         base.OnInitialized();
         network = new( logger );
-        logger.LogInformation("OnInitialized!");
+        logger.LogInformation( "OnInitialized!" );
     }
 }

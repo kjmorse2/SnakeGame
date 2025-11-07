@@ -28,19 +28,20 @@ public static class ServerConnection
     ///   This should be run asynchronously via a new thread.
     /// </param>
     /// <param name="port"> The port (e.g., 11000) to listen on. </param>
+    /// <param name="logger"> The logger instance used for logging connection events. </param>
     public static void WaitForConnections( Action<NetworkConnection> handleConnect, int port, ILogger logger )
     {
-        TcpListener listener = new(IPAddress.Any, port);
+        TcpListener listener = new( IPAddress.Any, port );
         listener.Start();
         ILogger localLogger = logger;
 
         while (true)
         {
-            localLogger.LogInformation("Waiting for connections...");
-            NetworkConnection client = new(listener.AcceptTcpClient(), localLogger);
-            localLogger.LogInformation("Connection found, attempting to connect.");
-            new Thread(() => handleConnect(client)).Start();
-            localLogger.LogInformation("Connection handed off to thread.");
+            localLogger.LogInformation( "Waiting for connections..." );
+            NetworkConnection client = new( listener.AcceptTcpClient(), localLogger );
+            localLogger.LogInformation( "Connection found, attempting to connect." );
+            new Thread( () => handleConnect( client ) ).Start();
+            localLogger.LogInformation( "Connection handed off to thread." );
         }
     }
 }

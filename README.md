@@ -8,7 +8,7 @@ Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  kjmorse2, HunterDSimmons
 Repo:       https://github.com/uofu-cs3500-20-fall2025/assignment-eight-chatting-kj_hunter_game.git
 Commit Date: 
-Solution:   
+Solution:   Chatting
 Copyright:  CS 3500, Kenneth Morse,and Hunter Simmons - This work may not be copied for use in Academic Coursework.
 ```
 # Assignment 8:
@@ -28,7 +28,8 @@ Actual Hours:
 - 11/5/25
     - Paired Programming
       - 2: Allowed multiple clients to connect, save names of users, and broadcast messages to all connected clients.
-
+- 11/7/25
+    - 2: Added information to the homepage, updated some variable names, and fixed formatting issues.
 ### Sources:
 [Microsoft thread safe collections documents](https://learn.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2?view=net-9.0)
 [TcpListener and TcpClient documentation](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/sockets/tcp-classes)
