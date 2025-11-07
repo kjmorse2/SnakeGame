@@ -19,4 +19,9 @@
 
   </ItemGroup>
 
+
+  <ItemGroup>
+    <None Include="stylecop.json" />
+  </ItemGroup>
+
 </Project>

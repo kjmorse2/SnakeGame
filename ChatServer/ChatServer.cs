@@ -1,9 +1,7 @@
-﻿// <copyright file="ChatSever.cs" company="UofU-CS3500">
-// Copyright: UofU-CS3500, Kenneth Morse, and Hunter Simmons- This work may not be copied for use in Academic Coursework.
-//  We, Kenneth Morse and Hunter Simmons, certify that I wrote this code from scratch and
-//  did not copy it in part or whole from another source.All
-//  references used in the completion of the assignments are cited
-//  in my README file.
+﻿// <copyright file="ChatServer.cs" company="PlaceholderCompany">
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 // </copyright>
 
 using System.Collections.Concurrent;
@@ -42,6 +40,7 @@ public partial class ChatServer
         } );
 
         serverLogger = loggerFactory.CreateLogger<ChatServer>();
+        serverLogger.LogInformation("Server initialized, waiting for connections...");
 
         ServerConnection.WaitForConnections( HandleConnect, 11_000, serverLogger );
         Console.Read(); // don't stop the program.
@@ -89,14 +88,19 @@ public partial class ChatServer
             while ( true )
             {
                 var message = connection.ReceiveLine();
-                foreach ( var connectedClient in connectedClients.Values )
+                serverLogger.LogDebug("Received message from " + name + ": " + message);
+                foreach ( var sendName in connectedClients.Keys)
                 {
+                    var connectedClient = connectedClients[ sendName ];
+                    message = $"{name}: {message}";
+                    serverLogger.LogTrace($"Sending \"{message}\" to {sendName}.");
                     connectedClient.SendLine( $"{name}: {message}" );
                 }
             }
         }
         catch ( Exception )
         {
+            serverLogger.LogInformation($"Connection with {name} has been lost.");
             connection.Dispose();
             connectedClients.Remove( name, out _ );
         }
