@@ -2,12 +2,56 @@
 
 <PageTitle>CS 3500 Starter Code for Chatting Project</PageTitle>
 
-<h1> Networking is Fun!</h1>
-<p> Computing is Fun</p>
-<p> Coding is Fun</p>
-<p> Blazor is Fun</p>
-<p> Chatting is Fun</p>
-<p> CS 3500 is Fun</p>
-<p> Enjoy your project!</p>
+<h1>Networking is Fun!</h1>
 
-<p> Make sure you watched the setup video!</p>
+<p>Welcome to the CS 3500 Chatting Project.</p>
+
+<hr />
+
+<h2>How the Project is Organized</h2>
+<ul>
+    <li><strong>NetworkConnection</strong>: A small helper class that wraps a TcpClient, StreamReader, and StreamWriter so you can send and receive lines of text without dealing with low-level socket details every time.</li>
+    <li><strong>ServerConnection</strong>: A static helper that listens for incoming TCP connections on a given port and hands each new client to your handler method on its own thread.</li>
+    <li><strong>ChatServer</strong>: A console application that uses ServerConnection and NetworkConnection to accept clients, read their usernames, and broadcast messages to every connected client.</li>
+    <li><strong>ChatClient (Blazor page)</strong>: A web-based chat client that lets you connect to the server, send messages, and see messages from all users.</li>
+</ul>
+
+<hr />
+
+<h2>Running the Chat Server</h2>
+<ol>
+    <li>Build and run the ChatServer project (console app).</li>
+    <li>The server listens on port 11000 by default.</li>
+    <li>Leave this window running so clients can connect.</li>
+</ol>
+
+<hr />
+
+<h2>Using the Chat Client</h2>
+<ol>
+    <li>Run the Blazor app and navigate to the /chatclient page.</li>
+    <li>
+        Enter:
+        <ul>
+            <li>Your display name (this is how messages from you will be tagged).</li>
+            <li>The server address (for example, localhost if running on the same machine).</li>
+            <li>The server port (default: 11000).</li>
+        </ul>
+    </li>
+    <li>Click Connect.</li>
+    <li>
+        Once connected:
+        <ul>
+            <li>Type your message into the chat box.</li>
+            <li>Press Enter to send.</li>
+            <li>Your message is sent to the server and broadcast to all connected clients.</li>
+        </ul>
+    </li>
+    <li>Click Disconnect to close your connection and stop sending or receiving messages.</li>
+</ol>
+
+<hr />
+<hr />
+
+<p>Make sure you watch the setup video, read through the provided code, and understand how each piece fits together.</p>
+<p>Your job is to extend, harden, and enhance this system while keeping good software engineering practices in mind.</p>

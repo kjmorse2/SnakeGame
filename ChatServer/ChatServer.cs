@@ -27,22 +27,23 @@ public partial class ChatServer
     /// <summary>
     /// Shared logger instance used throughout the server for structured logging.
     /// </summary>
-    private static ILogger _logger;
+    private static ILogger serverLogger;
 
     /// <summary>
     ///   The main program.
     /// </summary>
     private static void Main()
     {
-        using var loggerFactory = LoggerFactory.Create(builder =>{
+        using var loggerFactory = LoggerFactory.Create(builder =>
+        {
             builder.AddConsole(); // JIM: must nuget add Microsoft.Extensions.Logging.Console and Debug
             builder.AddDebug();
-            builder.SetMinimumLevel(LogLevel.Trace);
-        });
+            builder.SetMinimumLevel( LogLevel.Trace );
+        } );
 
-        _logger = loggerFactory.CreateLogger<ChatServer>();
+        serverLogger = loggerFactory.CreateLogger<ChatServer>();
 
-        ServerConnection.WaitForConnections( HandleConnect, 11_000, _logger );
+        ServerConnection.WaitForConnections( HandleConnect, 11_000, serverLogger );
         Console.Read(); // don't stop the program.
     }
 
@@ -80,7 +81,7 @@ public partial class ChatServer
     private static void HandleConnect( NetworkConnection connection )
     {
         var name = connection.ReceiveLine();
-        _logger.LogInformation("Connection established, name received: " + name);
+        serverLogger.LogInformation( "Connection established, name received: " + name );
         connectedClients[ name ] = connection;
 
         try
@@ -88,16 +89,16 @@ public partial class ChatServer
             while ( true )
             {
                 var message = connection.ReceiveLine();
-                foreach (var connectedClient in connectedClients.Values)
+                foreach ( var connectedClient in connectedClients.Values )
                 {
-                    connectedClient.SendLine($"{name}: {message}");
+                    connectedClient.SendLine( $"{name}: {message}" );
                 }
             }
         }
         catch ( Exception )
         {
             connection.Dispose();
-            connectedClients.Remove(name, out _);
+            connectedClients.Remove( name, out _ );
         }
     }
 }

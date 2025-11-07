@@ -6,12 +6,12 @@
 //  in my README file.
 // </copyright>
 
-namespace CS3500.Networking;
-
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
+
+namespace CS3500.Networking;
 
 /// <summary>
 ///   Represents a server task that waits for connections on a given
