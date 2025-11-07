@@ -3,7 +3,7 @@
   "settings": {
     "documentationRules": {
       "companyName": "UofU-CS3500",
-      "copyrightText": "Author: Kenneth Morse\nDate: 10/17/25\nCourse: CS 3500, University of Utah, School of Computing\n\nCopyright: {companyName} and Kenneth Morse - This work may not\nbe copied for use in Academic Coursework.\n\nI, Kenneth Morse, certify that I wrote this code from scratch and\ndid not copy it in part or whole from another source.All\nreferences used in the completion of the assignments are cited\nin my README file.",
+      "copyrightText": "Author: Kenneth Morse and Hunter Simmons\nDate: 11/7/25\nCourse: CS 3500, University of Utah, School of Computing\n\nCopyright: {CompanyName}, Kenneth Morse and Hunter Simmons - This work may not\nbe copied for use in Academic Coursework.\n\n W, Kenneth Morse and Hunter Simmons , certify that we wrote this code from scratch and\ndid not copy it in part or whole from another source.All\nreferences used in the completion of the assignments are cited\nin my README file.",
       "xmlHeader": true
     }
   }

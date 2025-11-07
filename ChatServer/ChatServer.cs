@@ -1,4 +1,7 @@
-﻿
+﻿// <copyright file="ChatServer.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 using System.Collections.Concurrent;
 using CS3500.Networking;
 using Microsoft.Extensions.Logging;

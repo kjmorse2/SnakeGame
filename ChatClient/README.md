@@ -13,7 +13,7 @@ Copyright:  CS 3500, Kenneth Morse,and Hunter Simmons - This work may not be cop
 ```
 
 ### Comments to Evaluators:
-We Have no comments for the evaluators.
+We could not get the stylecop headers for any of the classes to work.
 
 ### Assignment Specific Topics:
 None
