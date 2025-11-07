@@ -166,8 +166,11 @@
                     }
                     catch
                     {
-                        logger.LogDebug( "You have been disconnected from the server." );
-                        // you can simulate this by stopping the server while the client is connected.
+                        string disconnectMessage = "You have been disconnected from the server.";
+                        AllMessages.Insert(0, disconnectMessage);
+                        logger.LogDebug(disconnectMessage);
+                        DisconnectFromServer();
+// you can simulate this by stopping the server while the client is connected.
                     }
                 }
             } ).Start();
