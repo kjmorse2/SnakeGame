@@ -66,7 +66,7 @@ public sealed class NetworkConnection : IDisposable
         networkLogger.LogTrace( "NetworkConnection created with provided tcpClient." );
         if ( IsConnected )
         {
-            networkLogger.LogInformation( "Connected to server" );
+            networkLogger.LogDebug( "NetworkConnection object connected to server" );
             networkReader = new StreamReader( networkTcpClient.GetStream(), Encoding.UTF8 );
 
             // AutoFlush ensures data is sent immediately
@@ -94,7 +94,7 @@ public sealed class NetworkConnection : IDisposable
     {
         get
         {
-                networkLogger.LogDebug( "Checking connection status" );
+                networkLogger.LogTrace( "NetworkiConnection is checking connection status" );
                 return networkTcpClient.Connected;
         }
     }
@@ -106,7 +106,7 @@ public sealed class NetworkConnection : IDisposable
     /// <param name="port"> The port, e.g., 11000. </param>
     public void Connect( string host, int port )
     {
-        networkLogger.LogDebug( $"Attempting to connect to {host} on port {port}" );
+        networkLogger.LogDebug( $"NetworkConnection is attempting to connect to {host} on port {port}" );
         networkTcpClient.Connect( host, port );
         networkReader = new StreamReader( networkTcpClient.GetStream(), Encoding.UTF8 );
         // AutoFlush ensures data is sent immediately
@@ -124,11 +124,12 @@ public sealed class NetworkConnection : IDisposable
     /// <param name="message"> The string of characters to send. </param>
     public void SendLine( string message )
     {
-        networkLogger.LogDebug( $"Attempting to sent message: {message}" );
+        networkLogger.LogDebug( $"NetworkConnection is attempting to send message: {message}" );
         try
         {
             Console.WriteLine( message );
             networkWriter.WriteLine( message.Trim() );
+            networkLogger.LogDebug( $"NetworkConnection sent message: {message}" );
         }
         catch ( Exception e )
         {
@@ -171,18 +172,18 @@ public sealed class NetworkConnection : IDisposable
     /// </exception>
     public string ReceiveLine()
     {
-        networkLogger.LogInformation( "Attempting to receive message." );
+        networkLogger.LogDebug( "Network connection is attempting to receive message." );
         try
         {
             string received = networkReader.ReadLine();
 
             if ( !this.IsConnected || received is null )
             {
-                networkLogger.LogDebug( "Message not received, connection was closed" );
+                networkLogger.LogDebug( "NetworkConnection did not recieve message, connection was closed" );
                 throw new InvalidOperationException( "Connection was closed" );
             }
 
-            networkLogger.LogTrace( "Message received: " + received );
+            networkLogger.LogDebug( "NetworkConnection recieved message: " + received );
 
             return received;
         }
@@ -219,7 +220,7 @@ public sealed class NetworkConnection : IDisposable
             networkWriter.Close();
             networkReader.Close();
             networkTcpClient.Close();
-            networkLogger.LogInformation( "Disconnected" );
+            networkLogger.LogDebug( "NetworkConnection disconnected from current TcpClient." );
         }
     }
 
@@ -228,7 +229,7 @@ public sealed class NetworkConnection : IDisposable
     /// </summary>
     public void Dispose()
     {
-        networkLogger.LogDebug( "Network Connection was disposed of." );
+        networkLogger.LogDebug( "NetworkConnection was disposed of." );
         Disconnect();
     }
 }

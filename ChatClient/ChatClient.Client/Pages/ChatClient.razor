@@ -29,7 +29,10 @@
         }
         <div class="@spinner"></div>
     </div>
-
+    @if(!string.IsNullOrEmpty( noServerMessage ) )
+    {
+        <p> @noServerMessage</p>
+    }
     @{
         bool disconnected = !network.IsConnected;
         string grayedOut = disconnected ? "grayedOut" : string.Empty;
@@ -82,6 +85,10 @@
     private string currentMessage = string.Empty;
 
     /// <summary>
+    /// The message if there is no server running at the port.
+    /// </summary>
+    private string noServerMessage = string.Empty;
+    /// <summary>
     ///   Give visual feedback that we are connecting to the server. Empty --> no feedback.
     ///   "spinner" --> show spinner.
     /// </summary>
@@ -105,6 +112,7 @@
     {
         get
         {
+            logger.LogTrace("Displaying from AllMessages list.");
             return string.Join( "\n", AllMessages );
         }
     }
@@ -119,6 +127,7 @@
     /// </summary>
     private void DisconnectFromServer()
     {
+        logger.LogInformation("Disconecting from server.");
         network.Disconnect();
         network = new NetworkConnection( logger );
     }
@@ -154,27 +163,26 @@
                     try
                     {
                         var message = network.ReceiveLine();
-
+                        logger.LogInformation( "Recieving message from server..." );
                         message = $"{DateTime.Now:HH:mm:ss tt} - {message}";
                         AllMessages.Insert( 0, message );
-
-                        // Important: (test question?)
-                        // Since we are modifying the data shown by the UI in another thread, we need to
-                        // use the dispatcher for StateHasChanged so that the GUI thread
-                        // can be "told" to update the UI on its own thread.
                         InvokeAsync( StateHasChanged );
                     }
                     catch
                     {
-                        logger.LogDebug( "You have been disconnected from the server." );
-                        // you can simulate this by stopping the server while the client is connected.
+                        string disconnectMessage = "You have been disconnected from the server.";
+                        AllMessages.Insert(0, disconnectMessage);
+                        logger.LogInformation(disconnectMessage);
+                        DisconnectFromServer();
                     }
                 }
             } ).Start();
         }
         catch
         {
-            logger.LogDebug( "Connection to the server has failed." );
+            string noServerMessage = $"There is no server at: {ServerNameOrAddress}, port: {ServerPort}.";
+            logger.LogInformation( noServerMessage );
+            AllMessages.Insert( 0, noServerMessage );
             // you can simulate this by trying to connect to a port where no server is running.
         }
     }
@@ -189,6 +197,7 @@
         if ( e.Key == "Enter" )
         {
             network.SendLine( currentMessage );
+            logger.LogInformation("Sending message to server.");
             currentMessage = string.Empty;
             StateHasChanged();
         }
@@ -201,6 +210,6 @@
     {
         base.OnInitialized();
         network = new( logger );
-        logger.LogInformation( "OnInitialized!" );
+        logger.LogInformation( "Initializing..." );
     }
 }
