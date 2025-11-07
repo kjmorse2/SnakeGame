@@ -1,9 +1,5 @@
-﻿// <copyright file="NetworkConnection.cs" company="UofU-CS3500">
-// Copyright: UofU-CS3500, Kenneth Morse, and Hunter Simmons- This work may not be copied for use in Academic Coursework.
-//  We, Kenneth Morse and Hunter Simmons, certify that I wrote this code from scratch and
-//  did not copy it in part or whole from another source.All
-//  references used in the completion of the assignments are cited
-//  in my README file.
+﻿// <copyright file="NetworkConnection.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
 using System.Net.Sockets;
@@ -47,7 +43,7 @@ public sealed class NetworkConnection : IDisposable
     /// <summary>
     ///   Writing end of the connection.
     /// </summary>
-    private StreamWriter? networkWriter;
+    private StreamWriter? networkWriter = null!;
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="NetworkConnection"/> class.
@@ -109,6 +105,7 @@ public sealed class NetworkConnection : IDisposable
         networkLogger.LogDebug( $"Attempting to connect to {host} on port {port}" );
         networkTcpClient.Connect( host, port );
         networkReader = new StreamReader( networkTcpClient.GetStream(), Encoding.UTF8 );
+
         // AutoFlush ensures data is sent immediately
         networkWriter = new StreamWriter( networkTcpClient.GetStream(), Encoding.UTF8) { AutoFlush = true };
     }
@@ -174,7 +171,7 @@ public sealed class NetworkConnection : IDisposable
         networkLogger.LogInformation( "Attempting to receive message." );
         try
         {
-            string received = networkReader.ReadLine();
+            string? received = networkReader.ReadLine();
 
             if ( !this.IsConnected || received is null )
             {
@@ -216,7 +213,7 @@ public sealed class NetworkConnection : IDisposable
         if ( this.IsConnected )
         {
             networkTcpClient.Client.Shutdown( SocketShutdown.Both );
-            networkWriter.Close();
+            networkWriter!.Close();
             networkReader.Close();
             networkTcpClient.Close();
             networkLogger.LogInformation( "Disconnected" );

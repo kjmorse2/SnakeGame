@@ -1,12 +1,4 @@
-﻿// <copyright file="ServerConnection.cs" company="UofU-CS3500">
-// Copyright: UofU-CS3500, Kenneth Morse, and Hunter Simmons- This work may not be copied for use in Academic Coursework.
-//  We, Kenneth Morse and Hunter Simmons, certify that I wrote this code from scratch and
-//  did not copy it in part or whole from another source.All
-//  references used in the completion of the assignments are cited
-//  in my README file.
-// </copyright>
-
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using Microsoft.Extensions.Logging;

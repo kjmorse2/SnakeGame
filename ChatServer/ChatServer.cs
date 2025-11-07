@@ -1,9 +1,4 @@
-﻿// <copyright file="ChatServer.cs" company="PlaceholderCompany">
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-// </copyright>
-
+﻿
 using System.Collections.Concurrent;
 using CS3500.Networking;
 using Microsoft.Extensions.Logging;
@@ -92,9 +87,9 @@ public partial class ChatServer
                 foreach ( var sendName in connectedClients.Keys)
                 {
                     var connectedClient = connectedClients[ sendName ];
-                    message = $"{name}: {message}";
-                    serverLogger.LogTrace($"Sending \"{message}\" to {sendName}.");
-                    connectedClient.SendLine( $"{name}: {message}" );
+                    string fullMessage = $"{name}: {message}";
+                    serverLogger.LogTrace($"Sending \"{fullMessage}\" to {sendName}.");
+                    connectedClient.SendLine( fullMessage );
                 }
             }
         }
