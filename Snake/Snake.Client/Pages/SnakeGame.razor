@@ -1,9 +1,17 @@
 ﻿@page "/chatclient"
-@using System.Text.Json
-@using CS3500.Networking
-@using CS3500.Snake.Models
+
 @rendermode InteractiveServer
-@inject ILogger<SnakeGame> Logger
+
+@using Blazor.Extensions
+@using Blazor.Extensions.Canvas
+@using Blazor.Extensions.Canvas.Canvas2D
+@using System.Drawing
+@using CS3500.Networking
+@using Microsoft.Extensions.Logging.Abstractions
+@using System.Text.Json
+
+@inject IJSRuntime JsRuntime;
+@inject ILogger<Program> Logger;
 
 @namespace CS3500.Snake.Client.Pages.SnakeGame 
 
@@ -41,7 +49,6 @@
         var grayedOut = disconnected ? "grayedOut" : string.Empty;
     }
     <div class="input-row">
-        <span>TODO: put game here</span>
     </div>
 </div>
 
@@ -164,5 +171,25 @@
         base.OnInitialized();
         network = new NetworkConnection( Logger );
         Logger.LogInformation( "Initializing..." );
+    }
+    
+    /// <summary>
+    ///   The first time we start up, we load our JavaScript and start the animation
+    ///   process.
+    /// </summary>
+    /// <param name="firstRender"></param>
+    /// <returns></returns>
+    protected override async Task OnAfterRenderAsync( bool firstRender )
+    {
+        if ( firstRender )
+        {
+            Logger.LogDetailsBrief( LogLevel.Debug, "First Render" );
+
+            _jsModule = await JsRuntime.InvokeAsync<IJSObjectReference>( "import", "./Pages/NetworkedDrawing.razor.js" );
+            context = await canvasReference.CreateCanvas2DAsync();
+
+            await _jsModule.InvokeVoidAsync( "initJS", DotNetObjectReference.Create( this ) );
+            await _jsModule.InvokeVoidAsync( "ToggleAnimation", true );
+        }
     }
 }

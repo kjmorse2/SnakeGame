@@ -6,10 +6,5 @@ public partial class SnakeGame
 {
     public static void GameLoop(int playerId, World world)
     {
-        new Thread(() =>
-        {
-            
-        }).Start();
-
     }
 }
