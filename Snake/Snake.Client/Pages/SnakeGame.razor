@@ -1,5 +1,7 @@
 ﻿@page "/chatclient"
+@using System.Text.Json
 @using CS3500.Networking
+@using CS3500.Snake.Models
 @rendermode InteractiveServer
 @inject ILogger<SnakeGame> Logger
 
@@ -103,46 +105,52 @@
     /// </summary>
     private void ConnectToServer()
     {
-        new Thread(() =>
+        try
         {
-            try
-            {
-                // Communicating with the server needs to be asynchronous so that the UI thread
-                // can continue drawing. Thus, we have to start it up in its own thread.
-                spinner = "spinner";
-                InvokeAsync( StateHasChanged ); // make sure the UI updates to show connection status
+            // Communicating with the server needs to be asynchronous so that the UI thread
+            // can continue drawing. Thus, we have to start it up in its own thread.
+            spinner = "spinner";
+            InvokeAsync( StateHasChanged ); // make sure the UI updates to show connection status
 
-                network.Connect( serverNameOrAddress, serverPort );
-                spinner = string.Empty;
-                InvokeAsync( StateHasChanged );
-                // Send first message: the username
-                Logger.LogInformation($"Connected to server, sending username: {userName}");
-                network.SendLine( userName );
-                int playerId = int.Parse(network.ReceiveLine());
-                
-                //TODO: put game loop code here
-                while ( network.IsConnected )
+            network.Connect( serverNameOrAddress, serverPort );
+            spinner = string.Empty;
+            InvokeAsync( StateHasChanged );
+            // Send first message: the username
+            Logger.LogInformation($"Connected to server, sending username: {userName}");
+            network.SendLine( userName );
+            int playerId = int.Parse(network.ReceiveLine());
+            World world = new(int.Parse(network.ReceiveLine()));
+
+            while (true)
+            {
+                try
                 {
-                    try
-                    {
-                        var message = network.ReceiveLine();
-                        Logger.LogInformation( "Receiving message from server..." );
-                        InvokeAsync( StateHasChanged );
-                    }
-                    catch
-                    {
-                        var disconnectMessage = "You have been disconnected from the server.";
-                        DisconnectFromServer();
-                    }
+                    Wall receivedWall = JsonSerializer.Deserialize<Wall>(network.ReceiveLine()) ?? throw new NullReferenceException();
+                    world.Walls[receivedWall.Id] = receivedWall;
+                }
+                catch (JsonException)
+                {
+                    break;
+                }
+                catch (InvalidOperationException)
+                {
+                    //TODO handle disconnect gracefully
+                }
+                catch (NullReferenceException)
+                {
+                    //TODO if you got here somehting else happend. 
                 }
             }
-            catch
-            {
-                noServerMessage = $"There is no server at: {serverNameOrAddress}, port: {serverPort}.";
-                Logger.LogInformation( noServerMessage );
-                // you can simulate this by trying to connect to a port where no server is running.
-            }
-        } ).Start();
+
+            //TODO: put game loop code here
+            GameLoop(playerId, world);
+        }
+        catch
+        {
+            noServerMessage = $"There is no server at: {serverNameOrAddress}, port: {serverPort}.";
+            Logger.LogInformation( noServerMessage );
+            // you can simulate this by trying to connect to a port where no server is running.
+        }
     }
 
     /// <summary>
