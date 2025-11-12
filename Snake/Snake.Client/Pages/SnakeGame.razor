@@ -3,6 +3,8 @@
 @rendermode InteractiveServer
 @inject ILogger<SnakeGame> Logger
 
+@namespace CS3500.Snake.Client.Pages.SnakeGame 
+
 <PageTitle>Chat Client</PageTitle>
 
 <h1>Chat Client</h1>
@@ -126,13 +128,11 @@
                         {
                             var message = network.ReceiveLine();
                             Logger.LogInformation( "Receiving message from server..." );
-                            message = $"{DateTime.Now:HH:mm:ss tt} - {message}";
                             InvokeAsync( StateHasChanged );
                         }
                         catch
                         {
                             var disconnectMessage = "You have been disconnected from the server.";
-                            Logger.LogDebug(disconnectMessage);
                             DisconnectFromServer();
                         }
                     }
