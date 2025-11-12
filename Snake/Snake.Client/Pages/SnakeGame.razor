@@ -48,13 +48,18 @@
         var disconnected = !network.IsConnected;
         var grayedOut = disconnected ? "grayedOut" : string.Empty;
     }
-    <div class="input-row">
+   <div id="myCanvas">
+    <BECanvas Width="500" Height="500" @ref="canvasReference"/>
     </div>
 </div>
 
 
 @code
 {
+    // Drawing/Canvas variables here.
+    private BECanvasComponent canvasReference = null!;
+    private Canvas2DContext context = null!;
+
     /// <summary>
     ///     Default server name
     /// </summary>
