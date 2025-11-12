@@ -14,13 +14,29 @@ public class Snake
     /// Gets or sets the name of the player controlling this snake.
     /// </summary>
     [JsonPropertyName("name")]
-    public string Name { get; set; } 
+    public string Name { get; set; }
 
     /// <summary>
     /// Gets or sets the list of points representing the snake's body.
     /// </summary>
     [JsonPropertyName("body")]
     public List<Point2D> Body { get; set; } = new();
+
+    public Point2D Head
+    {
+        get
+        {
+           return Body[0];
+        }
+    }
+
+    public Point2D Tail
+    {
+        get
+        {
+            return Body[Body.Count - 1];
+        }
+    }
 
     /// <summary>
     /// Gets or sets the direction vector of the snake.

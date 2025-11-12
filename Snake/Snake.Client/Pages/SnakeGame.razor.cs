@@ -1,6 +1,8 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Text.Json;
 using CS3500.Networking;
 using System.Threading.Tasks;
+using Blazor.Extensions.Canvas.Canvas2D;
 
 namespace CS3500.Snake.Client.Pages.SnakeGame;
 
@@ -10,8 +12,29 @@ using CS3500.Snake.Models;
 public partial class SnakeGame
 {
 
-    private static void GameLoop(int playerId, World world)
+    private static World worldModel = null!;
+
+    private static int playerId = -1;
+
+    private static int frameNumber = 0;
+
+    private static Stopwatch gameTimer = new();
+
+    private float AvgFps
     {
+        get
+        {
+            return frameNumber / (float)gameTimer.Elapsed.TotalSeconds;
+        }
+    }
+
+    private async Task GameLoop()
+    {
+        while (network.IsConnected)
+        {
+            await Task.Delay(16);
+            await DrawFrame();
+        }
     }
 
     /// <summary>
@@ -34,11 +57,14 @@ public partial class SnakeGame
     /// </summary>
     private void ConnectToServer()
     {
-        spinner = "spinner";
-        InvokeAsync(StateHasChanged); // update UI to show connection status
-
-        _ = Task.Run(() =>
+        new Task(() =>
         {
+
+            spinner = "spinner";
+            InvokeAsync(StateHasChanged); // update UI to show connection status
+            //TODO prevent commands before walls
+            //TODO prevent client from sending more than one command per frame.
+
             try
             {
                 // Communicating with the server needs to be asynchronous so that the UI thread
@@ -49,33 +75,13 @@ public partial class SnakeGame
                 // Send first message: the username
                 Logger.LogInformation($"Connected to server, sending username: {userName}");
                 network.SendLine(userName);
-                int playerId = int.Parse(network.ReceiveLine());
-                World world = new(int.Parse(network.ReceiveLine()));
+                playerId = int.Parse(network.ReceiveLine());
+                World world = new(int.Parse(network.ReceiveLine()), network);
 
-                while (true)
+                while (network.IsConnected)
                 {
-                    try
-                    {
-                        Wall receivedWall = JsonSerializer.Deserialize<Wall>(network.ReceiveLine()) ?? throw new NullReferenceException();
-                        world.Walls[receivedWall.Id] = receivedWall;
-                    }
-                    catch (JsonException)
-                    {
-                        break;
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        // TODO handle disconnect gracefully
-                        break;
-                    }
-                    catch (NullReferenceException)
-                    {
-                        // TODO if you got here something else happened.
-                        break;
-                    }
+                    world.UpdateElement(network.ReceiveLine());
                 }
-
-                GameLoop(playerId, world);
             }
             catch
             {
@@ -85,6 +91,21 @@ public partial class SnakeGame
                 InvokeAsync(StateHasChanged);
                 // you can simulate this by trying to connect to a port where no server is running.
             }
-        });
+        }).Start();
+        Task gameloop = new(() => GameLoop());
+        gameloop.RunSynchronously();
+    }
+}
+public static class ContextExtensions
+{
+    public static async Task Draw(this Canvas2DContext context, Snake s)
+    {
+        await context.BeginPathAsync();
+        await context.MoveToAsync(s.Head.X, s.Head.Y);
+        for (int i = 1; i < s.Body.Count - 1; i++)
+        {
+            await context.MoveToAsync(s.Body[i].X, s.Body[i].Y);
+        }
+        await context.LineToAsync(s.Tail.X, s.Tail.Y);
     }
 }

@@ -2,6 +2,8 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System.Text.Json.Serialization;
+
 namespace CS3500.Snake.Models;
 
 /// <summary>
@@ -9,6 +11,15 @@ namespace CS3500.Snake.Models;
 /// </summary>
 public class ControlCommand
 {
+    public ControlCommand()
+    {
+        Direction = string.Empty;
+    }
+
+    public ControlCommand(string direction)
+    {
+        this.Direction =  direction;
+    }
     /// <summary>
     /// <p>
     /// Gets or sets the direction the snake is moving.
@@ -21,7 +32,6 @@ public class ControlCommand
     /// "right" - Move the snake right.
     /// </list>
     /// </summary>
-    public string Moving { get; set; }
-
-    //TODO: possibly add Enum for direction
+    [JsonPropertyName("moving")]
+    public string Direction { get; set; }
 }

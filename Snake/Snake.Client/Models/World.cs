@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using CS3500.Networking;
 
 namespace CS3500.Snake.Models;
 
@@ -11,9 +12,30 @@ public class World
     /// Initializes a new instance of the <see cref="World"/> class.
     /// </summary>
     /// <param name="size">The size of the world, worlds are always square.</param>
-    public World(int size)
+    public World(int size, NetworkConnection connection)
     {
         this.Size = size;
+        while (true)
+        {
+            try
+            {
+                UpdateElement(connection.ReceiveLine());
+            }
+            catch (JsonException)
+            {
+                break;
+            }
+            catch (InvalidOperationException)
+            {
+                // TODO handle disconnect gracefully
+                break;
+            }
+            catch (NullReferenceException)
+            {
+                // TODO if you got here something else happened.
+                break;
+            }
+        }
     }
 
     public void UpdateElement(string jsonString)
@@ -22,12 +44,16 @@ public class World
         switch(type)
         {
             case 's':
-               Snake recievedSnake = JsonSerializer.Deserialize<Snake>(jsonString); 
+               Snake recievedSnake = JsonSerializer.Deserialize<Snake>(jsonString);
                 Snakes[recievedSnake.Id] = recievedSnake;
                 break;
             case 'p':
                 PowerUp recievedPowerUp = JsonSerializer.Deserialize<PowerUp>(jsonString);
                 PowerUps[recievedPowerUp.Id] = recievedPowerUp;
+                break;
+            case'w':
+                Wall recievedWall = JsonSerializer.Deserialize<Wall>(jsonString);
+                Walls[recievedWall.Id] = recievedWall;
                 break;
         }
     }

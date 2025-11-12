@@ -1,22 +1,22 @@
-﻿@page "/chatclient"
+﻿@page "/snake"
 
 @rendermode InteractiveServer
 
 @using Blazor.Extensions
 @using Blazor.Extensions.Canvas
 @using Blazor.Extensions.Canvas.Canvas2D
-@using System.Drawing
 @using CS3500.Networking
 @using Microsoft.Extensions.Logging.Abstractions
 @using System.Text.Json
 @using CS3500.Snake.Models
 
-@inject IJSRuntime JsRuntime;
 @inject ILogger<Program> Logger;
 
 @namespace CS3500.Snake.Client.Pages.SnakeGame 
 
 <PageTitle>Chat Client</PageTitle>
+
+<script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.min.js"></script>
 
 <h1>Chat Client</h1>
 
@@ -49,15 +49,16 @@
         var disconnected = !network.IsConnected;
         var grayedOut = disconnected ? "grayedOut" : string.Empty;
     }
-   <div id="myCanvas">
-    <BECanvas Width="500" Height="500" @ref="canvasReference"/>
+    <div id="myCanvas"
+         @onkeydown = "HandleKeyPress">
+    <BECanvas Width="CanvasWidth" Height="CanvasHeight" @ref="canvasReference"/>
     </div>
 </div>
 
 @code
 {
     // Drawing/Canvas variables here.
-    private BECanvasComponent canvasReference = null!;
+    private BECanvasComponent canvasReference;
     private Canvas2DContext context = null!;
     private IJSObjectReference _jsModule = null!;
 
@@ -98,6 +99,15 @@
     /// </remarks>
     private NetworkConnection network = null!;
 
+    private readonly string UpCommand = JsonSerializer.Serialize(new ControlCommand("up"));
+    private readonly string DownCommand = JsonSerializer.Serialize(new ControlCommand("down"));
+    private readonly string RightCommand = JsonSerializer.Serialize(new ControlCommand("right"));
+    private readonly string LeftCommand = JsonSerializer.Serialize(new ControlCommand("left"));
+    private readonly string NoneCommand = JsonSerializer.Serialize(new ControlCommand("none"));
+
+    private readonly int CanvasWidth = 2000;
+    private readonly int CanvasHeight = 2000;
+
 
     /// <summary>
     ///     Create a default network object
@@ -108,7 +118,7 @@
         network = new NetworkConnection( Logger );
         Logger.LogInformation( "Initializing..." );
     }
-    
+
     /// <summary>
     ///   The first time we start up, we load our JavaScript and start the animation
     ///   process.
@@ -119,11 +129,84 @@
     {
         if ( firstRender )
         {
-            _jsModule = await JsRuntime.InvokeAsync<IJSObjectReference>( "import", "./Pages/NetworkedDrawing.razor.js" );
+            // _jsModule = await JsRuntime.InvokeAsync<IJSObjectReference>( "import", "./Pages/Snake.razor.js" );
             context = await canvasReference.CreateCanvas2DAsync();
 
-            await _jsModule.InvokeVoidAsync( "initJS", DotNetObjectReference.Create( this ) );
-            await _jsModule.InvokeVoidAsync( "ToggleAnimation", true );
+            // await _jsModule.InvokeVoidAsync( "initJS", DotNetObjectReference.Create( this ) );
+            // await _jsModule.InvokeVoidAsync( "ToggleAnimation", true );
+        }
+    }
+
+    private void HandleKeyPress(KeyboardEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case "ArrowUp":
+            case "W":
+                network.SendLine(UpCommand);
+                break;
+
+            case "ArrowRight":
+            case "D":
+                network.SendLine(RightCommand);
+                break;
+
+            case "ArrowDown":
+            case "S":
+                network.SendLine(DownCommand);
+                break;
+
+            case "ArrowLeft":
+            case "A":
+                network.SendLine(LeftCommand);
+                break;
+            //TODO is default necessary?
+        }
+    }
+
+    public async Task DrawFrame()
+    {
+        try
+        {
+            // Group all the draw commands into one large single draw.
+            await context.BeginBatchAsync();
+
+            // Draw Background.
+            await context.SetFillStyleAsync( "darkblue" );
+            await context.FillRectAsync( 0, 0, CanvasWidth, CanvasHeight);
+
+            // Draw "World Model" (i.e., rectangles)
+            List<Snake> currentSnakes;
+            List<PowerUp> currentPowerUps;
+            lock (worldModel)
+            {
+                currentSnakes = worldModel.Snakes;
+                currentPowerUps = worldModel.PowerUps;
+            }
+
+            foreach (var snake in currentSnakes)
+            {
+                //TODO make art style better
+                await context.Draw(snake);
+            }
+
+            foreach (var powerUp in currentPowerUps)
+            {
+                await context.ArcAsync(powerUp.Position.X, powerUp.Position.Y, 8, 0, 360);
+            }
+
+            // Draw Heads Up Display - do this last so it is on top
+            await context.SetFontAsync( "30px Arial" );
+            await context.SetFillStyleAsync( "white" );
+            await context.FillTextAsync( $"FPS: {AvgFps:F1}", 400, 30 );
+
+            await context.EndBatchAsync();
+        }
+        catch ( Exception e )
+        {
+            //TODO add logging
         }
     }
 }
+
+
