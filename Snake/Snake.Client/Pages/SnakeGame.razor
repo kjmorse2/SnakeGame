@@ -1,7 +1,11 @@
 ﻿@page "/chatclient"
 @using System.Text.Json
+@using Blazor.Extensions.Canvas
 @using CS3500.Networking
 @using CS3500.Snake.Models
+@using Blazor.Extensions
+@using Blazor.Extensions.Canvas.Canvas2D
+
 @rendermode InteractiveServer
 @inject ILogger<SnakeGame> Logger
 
@@ -40,14 +44,18 @@
         var disconnected = !network.IsConnected;
         var grayedOut = disconnected ? "grayedOut" : string.Empty;
     }
-    <div class="input-row">
-        <span>TODO: put game here</span>
+   <div id="myCanvas">
+    <BECanvas Width="500" Height="500" @ref="canvasReference"/>
     </div>
 </div>
 
 
 @code
 {
+    // Drawing/Canvas variables here.
+    private BECanvasComponent canvasReference = null!;
+    private Canvas2DContext context = null!;
+
     /// <summary>
     ///     Default server name
     /// </summary>
@@ -165,4 +173,5 @@
         network = new NetworkConnection( Logger );
         Logger.LogInformation( "Initializing..." );
     }
+
 }
