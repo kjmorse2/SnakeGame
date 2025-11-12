@@ -1,9 +1,9 @@
 ﻿namespace Snake.Models;
 
 /// <summary>
-/// TODO Document PowerUps class
+/// TODO Document PowerUp class
 /// </summary>
-public class PowerUps
+public class PowerUp
 {
     /// <summary>
     /// Gets or sets a unique identifier for the power-up.
