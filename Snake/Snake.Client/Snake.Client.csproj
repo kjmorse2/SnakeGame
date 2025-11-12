@@ -9,15 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="stylecop.json" />
+    <Content Remove="stylecop.json"/>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="stylecop.json" />
+    <None Include="stylecop.json"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.11"/>
   </ItemGroup>
 
 </Project>

@@ -11,7 +11,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.10"/>
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -19,11 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Networking\Networking.csproj" />
+    <ProjectReference Include="..\..\Networking\Networking.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="stylecop.json" />
+    <None Include="stylecop.json"/>
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,7 @@
 # assignment-eight-chatting-kj_hunter_game
+
 assignment-eight-chatting-kj_hunter_game created by GitHub Classroom
+
 ```
 Author:     Kenneth Morse 
 Partner:    Hunter Simmons
@@ -13,14 +15,18 @@ Copyright:  CS 3500, Kenneth Morse,and Hunter Simmons - This work may not be cop
 ```
 
 ### Comments to Evaluators:
-In the HandleConnect method we did not use a lock. KJ had learned about thread safe lists before, and after some research we decided to use a thread safe dictionary to 
+
+In the HandleConnect method we did not use a lock. KJ had learned about thread safe lists before, and after some
+research we decided to use a thread safe dictionary to
 store the names and the connection object associated with that name.
 We could not get the stylecop headers for any of the classes to work.
 
 ### Assignment Specific Topics:
+
 None
 
 ### Consulted Peers:
+
 We only consulted each other for this assignment.
 
 ## Sources:

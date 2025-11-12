@@ -7,7 +7,8 @@ root = true
 [*]
 indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
-spelling_exclusion_path = SpellingExclusions.dic
+spelling_exclusion_path =
+SpellingExclusions.dic
 
 # Code files
 [*.{cs,csx,vb,vbx}]
@@ -96,15 +97,14 @@ dotnet_naming_symbols.constants.required_modifiers = const
 dotnet_naming_style.constant_style.capitalization = pascal_case
 
 # Static fields are camelCase and start with s_
-dotnet_naming_rule.static_fields_should_be_camel_case.severity = suggestion
-dotnet_naming_rule.static_fields_should_be_camel_case.symbols = static_fields
-dotnet_naming_rule.static_fields_should_be_camel_case.style = static_field_style
+dotnet_naming_rule.static_fields_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.static_fields_should_be_pascal_case.symbols = static_fields
+dotnet_naming_rule.static_fields_should_be_pascal_case.style = static_field_style
 
 dotnet_naming_symbols.static_fields.applicable_kinds = field
 dotnet_naming_symbols.static_fields.required_modifiers = static
 
-dotnet_naming_style.static_field_style.capitalization = camel_case
-dotnet_naming_style.static_field_style.required_prefix = s_
+dotnet_naming_style.static_field_style.capitalization = pascal_case
 
 # Instance fields are camelCase and start with _
 dotnet_naming_rule.instance_fields_should_be_camel_case.severity = suggestion
@@ -114,7 +114,6 @@ dotnet_naming_rule.instance_fields_should_be_camel_case.style = instance_field_s
 dotnet_naming_symbols.instance_fields.applicable_kinds = field
 
 dotnet_naming_style.instance_field_style.capitalization = camel_case
-dotnet_naming_style.instance_field_style.required_prefix = _
 
 # Locals and parameters are camelCase
 dotnet_naming_rule.locals_should_be_camel_case.severity = suggestion
@@ -320,7 +319,6 @@ dotnet_diagnostic.RS0060.severity = error
 dotnet_diagnostic.RS0061.severity = error
 
 
-
 [*.{cs,vb}]
 #### Naming styles ####
 
@@ -342,31 +340,31 @@ dotnet_naming_rule.non_field_members_should_be_pascal_case.style = non_private_s
 
 dotnet_naming_symbols.interface.applicable_kinds = interface
 dotnet_naming_symbols.interface.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.interface.required_modifiers = 
+dotnet_naming_symbols.interface.required_modifiers =
 
 dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum
 dotnet_naming_symbols.types.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.types.required_modifiers = 
+dotnet_naming_symbols.types.required_modifiers =
 
 dotnet_naming_symbols.non_field_members.applicable_kinds = property, event, method
 dotnet_naming_symbols.non_field_members.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.non_field_members.required_modifiers = 
+dotnet_naming_symbols.non_field_members.required_modifiers =
 
 # Naming styles
 
 dotnet_naming_style.begins_with_i.required_prefix = I
-dotnet_naming_style.begins_with_i.required_suffix = 
-dotnet_naming_style.begins_with_i.word_separator = 
+dotnet_naming_style.begins_with_i.required_suffix =
+dotnet_naming_style.begins_with_i.word_separator =
 dotnet_naming_style.begins_with_i.capitalization = pascal_case
 
-dotnet_naming_style.pascal_case.required_prefix = 
-dotnet_naming_style.pascal_case.required_suffix = 
-dotnet_naming_style.pascal_case.word_separator = 
+dotnet_naming_style.pascal_case.required_prefix =
+dotnet_naming_style.pascal_case.required_suffix =
+dotnet_naming_style.pascal_case.word_separator =
 dotnet_naming_style.pascal_case.capitalization = pascal_case
 
-dotnet_naming_style.pascal_case.required_prefix = 
-dotnet_naming_style.pascal_case.required_suffix = 
-dotnet_naming_style.pascal_case.word_separator = 
+dotnet_naming_style.pascal_case.required_prefix =
+dotnet_naming_style.pascal_case.required_suffix =
+dotnet_naming_style.pascal_case.word_separator =
 dotnet_naming_style.pascal_case.capitalization = pascal_case
 dotnet_style_operator_placement_when_wrapping = beginning_of_line
 tab_width = 4
@@ -426,7 +424,7 @@ dotnet_diagnostic.IDE1006.severity = none
 dotnet_diagnostic.SA1000.severity = warning
 
 # SA1003: Add spaces into comma separated lists and for loops FIXME: verify this is what we want
-dotnet_diagnostic.SA1003.severity = none  
+dotnet_diagnostic.SA1003.severity = none
 
 # SA1008: Ignore opening parenthesis should be spaced correctly   - JIM - we want ( item ) for clarity
 dotnet_diagnostic.SA1008.severity = none
@@ -478,24 +476,24 @@ csharp_style_allow_embedded_statements_on_same_line_experimental = true:silent
 csharp_space_around_binary_operators = before_and_after
 
 # Prefer old fashion { } functions, etc.
-csharp_style_expression_bodied_methods      = false:suggestion
+csharp_style_expression_bodied_methods = false:suggestion
 csharp_style_expression_bodied_constructors = false:suggestion
-csharp_style_expression_bodied_operators    = false:suggestion
-csharp_style_expression_bodied_indexers     = false:suggestion
-csharp_style_expression_bodied_properties   = true:suggestion
-csharp_style_expression_bodied_accessors    = true:suggestion
-csharp_style_expression_bodied_lambdas      = true:suggestion
+csharp_style_expression_bodied_operators = false:suggestion
+csharp_style_expression_bodied_indexers = false:suggestion
+csharp_style_expression_bodied_properties = true:suggestion
+csharp_style_expression_bodied_accessors = true:suggestion
+csharp_style_expression_bodied_lambdas = true:suggestion
 csharp_style_expression_bodied_local_functions = true:suggestion
 
-csharp_style_throw_expression 		    = true:suggestion
-csharp_prefer_simple_default_expression     = true:suggestion
-csharp_style_prefer_index_operator	    = true:suggestion
-csharp_style_prefer_range_operator	    = true:suggestion
+csharp_style_throw_expression = true:suggestion
+csharp_prefer_simple_default_expression = true:suggestion
+csharp_style_prefer_index_operator = true:suggestion
+csharp_style_prefer_range_operator = true:suggestion
 
 csharp_style_prefer_local_over_anonymous_function = false:suggestion
 
 csharp_style_implicit_object_creation_when_type_is_apparent = true:warning
-csharp_style_prefer_null_check_over_type_check		    = true:warning
+csharp_style_prefer_null_check_over_type_check = true:warning
 
 # swap two variables code brevity
 csharp_style_prefer_tuple_swap = true:suggestion

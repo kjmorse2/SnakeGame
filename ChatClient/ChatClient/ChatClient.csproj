@@ -13,15 +13,15 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <ProjectReference Include="..\ChatClient.Client\ChatClient.Client.csproj" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.10" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.10" />
+    <ProjectReference Include="..\ChatClient.Client\ChatClient.Client.csproj"/>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.10"/>
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.10"/>
 
   </ItemGroup>
 
 
   <ItemGroup>
-    <None Include="stylecop.json" />
+    <None Include="stylecop.json"/>
   </ItemGroup>
 
 </Project>

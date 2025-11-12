@@ -7,16 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="stylecop.json" />
+    <Content Remove="stylecop.json"/>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="stylecop.json" />
+    <None Include="stylecop.json"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Snake.Client\Snake.Client.csproj" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.11" />
+    <ProjectReference Include="..\Snake.Client\Snake.Client.csproj"/>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.11"/>
     <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Images\" />
+    <Folder Include="wwwroot\Images\"/>
   </ItemGroup>
 
 </Project>

@@ -6,28 +6,42 @@
 
 <p>Welcome to the CS 3500 Chatting Project.</p>
 
-<hr />
+<hr/>
 
 <h2>How the Project is Organized</h2>
 <ul>
-    <li><strong>NetworkConnection</strong>: A small helper class that wraps a TcpClient, StreamReader, and StreamWriter so you can send and receive lines of text.</li>
-    <li><strong>ServerConnection</strong>: A static helper that listens for incoming TCP connections on a given port and hands each new client to the handler method on its own thread.</li>
-    <li><strong>ChatServer</strong>: Uses ServerConnection and NetworkConnection to accept clients, read their usernames, and broadcast messages to every connected client.</li>
-    <li><strong>ChatClient (Blazor page)</strong>: The GUI client that lets you connect to the server, send messages, and see messages from all users.</li>
+    <li><strong>NetworkConnection</strong>: A small helper class that wraps a TcpClient, StreamReader, and StreamWriter
+        so you can send and receive lines of text.
+    </li>
+    <li><strong>ServerConnection</strong>: A static helper that listens for incoming TCP connections on a given port and
+        hands each new client to the handler method on its own thread.
+    </li>
+    <li><strong>ChatServer</strong>: Uses ServerConnection and NetworkConnection to accept clients, read their
+        usernames, and broadcast messages to every connected client.
+    </li>
+    <li><strong>ChatClient (Blazor page)</strong>: The GUI client that lets you connect to the server, send messages,
+        and see messages from all users.
+    </li>
 </ul>
 
-<hr />
+<hr/>
 
 <h2>Running the Chat Server and Client</h2>
 <ol>
     <li>In Visual Studio, set the solution to start multiple projects at once.</li>
     <li>Select both ChatServer and ChatClient as startup projects.</li>
-    <li>Run the solution — the ChatServer console window will open first and begin listening for clients on port 11000.</li>
-    <li>The Blazor ChatClient will open in your browser automatically and can clients now connect to the running ChatServer.</li>
-    <li>You can open additional browser tabs or windows to start multiple clients, each connecting to the same server instance.</li>
+    <li>Run the solution — the ChatServer console window will open first and begin listening for clients on port
+        11000.
+    </li>
+    <li>The Blazor ChatClient will open in your browser automatically and can clients now connect to the running
+        ChatServer.
+    </li>
+    <li>You can open additional browser tabs or windows to start multiple clients, each connecting to the same server
+        instance.
+    </li>
 </ol>
 
-<hr />
+<hr/>
 
 <h2>Using the Chat Client</h2>
 <ol>
