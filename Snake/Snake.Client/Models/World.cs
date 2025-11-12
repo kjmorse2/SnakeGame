@@ -1,4 +1,4 @@
-﻿namespace Snake.Models;
+﻿namespace CS3500.Snake.Models;
 
 /// <summary>
 /// TODO document.

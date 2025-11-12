@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace Snake.Models;
+namespace CS3500.Snake.Models;
 
 /// <summary>
 /// TODO Document ControlCommand class

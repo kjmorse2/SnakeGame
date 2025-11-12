@@ -112,30 +112,29 @@
                 spinner = "spinner";
                 InvokeAsync( StateHasChanged ); // make sure the UI updates to show connection status
 
-                    network.Connect( serverNameOrAddress, serverPort );
-                    spinner = string.Empty;
-                    InvokeAsync( StateHasChanged );
-                    // Send first message: the username
-                    Logger.LogInformation($"Connected to server, sending username: {userName}");
-                    network.SendLine( userName );
-
-                    //TODO : put game initialization code here
-
-                    //TODO: put game loop code here
-                    while ( network.IsConnected )
+                network.Connect( serverNameOrAddress, serverPort );
+                spinner = string.Empty;
+                InvokeAsync( StateHasChanged );
+                // Send first message: the username
+                Logger.LogInformation($"Connected to server, sending username: {userName}");
+                network.SendLine( userName );
+                int playerId = int.Parse(network.ReceiveLine());
+                
+                //TODO: put game loop code here
+                while ( network.IsConnected )
+                {
+                    try
                     {
-                        try
-                        {
-                            var message = network.ReceiveLine();
-                            Logger.LogInformation( "Receiving message from server..." );
-                            InvokeAsync( StateHasChanged );
-                        }
-                        catch
-                        {
-                            var disconnectMessage = "You have been disconnected from the server.";
-                            DisconnectFromServer();
-                        }
+                        var message = network.ReceiveLine();
+                        Logger.LogInformation( "Receiving message from server..." );
+                        InvokeAsync( StateHasChanged );
                     }
+                    catch
+                    {
+                        var disconnectMessage = "You have been disconnected from the server.";
+                        DisconnectFromServer();
+                    }
+                }
             }
             catch
             {
