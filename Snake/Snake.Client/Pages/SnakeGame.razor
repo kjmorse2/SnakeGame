@@ -9,6 +9,7 @@
 @using CS3500.Networking
 @using Microsoft.Extensions.Logging.Abstractions
 @using System.Text.Json
+@using CS3500.Snake.Models
 
 @inject IJSRuntime JsRuntime;
 @inject ILogger<Program> Logger;
@@ -59,6 +60,7 @@
     // Drawing/Canvas variables here.
     private BECanvasComponent canvasReference = null!;
     private Canvas2DContext context = null!;
+    private IJSObjectReference _jsModule = null!;
 
     /// <summary>
     ///     Default server name
@@ -188,8 +190,6 @@
     {
         if ( firstRender )
         {
-            Logger.LogDetailsBrief( LogLevel.Debug, "First Render" );
-
             _jsModule = await JsRuntime.InvokeAsync<IJSObjectReference>( "import", "./Pages/NetworkedDrawing.razor.js" );
             context = await canvasReference.CreateCanvas2DAsync();
 
