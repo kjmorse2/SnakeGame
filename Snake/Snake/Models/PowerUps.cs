@@ -1,5 +1,24 @@
 ﻿namespace Snake.Models;
 
+/// <summary>
+/// TODO Document PowerUps class
+/// </summary>
 public class PowerUps
 {
+    /// <summary>
+    /// Gets or sets a unique identifier for the power-up.
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Gets or sets the position of the power-up.
+    /// </summary>
+    public Point2D Position { get; set;  }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the power-up is dead.
+    /// This property is true only on the exact tick the power-up is collected,
+    /// and should be removed from the game immediately after.
+    /// </summary>
+    public bool IsDead { get; set; }
 }

@@ -1,42 +1,63 @@
-﻿namespace Snake.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Snake.Models;
 
 public class Snake
 {
     /// <summary>
+    /// Gets or sets a unique identifier for the snake.
     /// </summary>
-    public bool alive { get; set; }
+    [JsonPropertyName("snake")]
+    public int Id { get; set; }
 
     /// <summary>
+    /// Gets or sets the name of the player controlling this snake.
     /// </summary>
-    public List<Point2D> body { get; set; } = new();
+    [JsonPropertyName("name")]
+    public string Name { get; set; } 
 
     /// <summary>
+    /// Gets or sets the list of points representing the snake's body.
     /// </summary>
-    public bool dc { get; set; }
+    [JsonPropertyName("body")]
+    public List<Point2D> Body { get; set; } = new();
 
     /// <summary>
+    /// Gets or sets the direction vector of the snake.
     /// </summary>
-    public bool died { get; set; }
+    [JsonPropertyName("dir")]
+    public Point2D Dir { get; set; } = new();
 
     /// <summary>
+    /// Gets or sets the score of the snake.
     /// </summary>
-    public Point2D dir { get; set; } = new();
+    [JsonPropertyName("score")]
+    public int Score { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the snake has died.
+    /// This property is true only on the exact tick the snake dies.
     /// </summary>
-    public bool join { get; set; }
+    [JsonPropertyName("died")]
+    public bool Died { get; set; }
 
     /// <summary>
-    ///     Gets or sets the name of the player.
+    /// Gets or sets a value indicating whether the snake is alive.
     /// </summary>
-    public string name { get; set; }
+    [JsonPropertyName("alive")]
+    public bool Alive { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the snake is disconnected.
+    /// Used to remove players from the model when they leave the game.
     /// </summary>
-    public int score { get; set; }
+    [JsonPropertyName("dc")]
+    public bool Dc { get; set; }
 
     /// <summary>
-    ///     Gets or sets the Id of the snake.
+    /// Gets or sets a value indicating whether the snake has joined the game.
+    /// This property is true only on the exact tick the snake joins.
     /// </summary>
-    public int snake { get; set; }
+    [JsonPropertyName("join")]
+    public bool Join { get; set; }
 }

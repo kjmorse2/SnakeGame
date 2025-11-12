@@ -1,20 +1,158 @@
-﻿@page "/counter"
+﻿@page "/chatclient"
+@using CS3500.Networking
 @rendermode InteractiveServer
+@inject ILogger<SnakeGame> Logger
 
-<PageTitle>Snake Game</PageTitle>
+<PageTitle>Chat Client</PageTitle>
 
-<h1>Snake Game</h1>
+<h1>Chat Client</h1>
 
-<p role="status">Current count: @currentCount</p>
+<div id="ConnectionInputs">
+    <div class="input-row">
+        <label for="name"> Your Name: </label>
+        <input id="name" disabled="@network.IsConnected" type="text" @bind="userName" />
+    </div>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-
-@code {
-    private int currentCount;
-
-    private void IncrementCount()
+    <div class="input-row">
+        <label for="url"> Server Address: </label>
+        <input id="url" disabled="@network.IsConnected" type="text" @bind="serverNameOrAddress" />
+        <label for="url"> Port: </label>
+        <input id="port" disabled="@network.IsConnected" type="number" @bind="serverPort" class="port" />
+        @if ( network.IsConnected )
+        {
+            <button class="btn btn-primary" @onclick="DisconnectFromServer">Disconnect</button>
+        }
+        else
+        {
+            <button class="btn btn-primary" @onclick="ConnectToServer">Connect</button>
+        }
+        <div class="@spinner"></div>
+    </div>
+    @if(!string.IsNullOrEmpty( noServerMessage ) )
     {
-        currentCount++;
+        <p> @noServerMessage</p>
+    }
+    @{
+        var disconnected = !network.IsConnected;
+        var grayedOut = disconnected ? "grayedOut" : string.Empty;
+    }
+    <div class="input-row">
+        <span>TODO: put game here</span>
+    </div>
+</div>
+
+
+@code
+{
+    /// <summary>
+    ///     Default server name
+    /// </summary>
+    private string serverNameOrAddress = "localhost";
+
+    /// <summary>
+    ///     Default server port
+    /// </summary>
+    private int serverPort = 11000;
+
+    /// <summary>
+    ///     The name you want the server to "call" you by.
+    /// </summary>
+    private string userName = "Your Name Here";
+
+    /// <summary>
+    ///     The message if there is no server running at the port.
+    /// </summary>
+    private string noServerMessage = string.Empty;
+
+    /// <summary>
+    ///     Give visual feedback that we are connecting to the server. Empty --> no feedback.
+    ///     "spinner" --> show spinner.
+    /// </summary>
+    private string spinner = string.Empty;
+
+    /// <summary>
+    ///     The NetworkConnection object representing a connection with the server.
+    /// </summary>
+    /// <remarks>
+    ///     The ! operator is used here to indicate to the compiler that the developer
+    ///     knows that this variable will be initialized before it is used (and thus
+    ///     should not be flagged as an error). See the OnInitialized method below
+    ///     (which is called by the Blazor framework) when the html page is loaded.
+    /// </remarks>
+    private NetworkConnection network = null!;
+
+    /// <summary>
+    ///     Disconnect the network object from the server.
+    /// </summary>
+    private void DisconnectFromServer()
+    {
+        Logger.LogInformation("Disconnecting from server.");
+        network.Disconnect();
+        network = new NetworkConnection( Logger );
     }
 
+    /// <summary>
+    ///     <para>
+    ///         Handler for the connect button.
+    ///     </para>
+    ///     <para>
+    ///         Connect to the server, then continuously wait for messages and display them.
+    ///     </para>
+    /// </summary>
+    private void ConnectToServer()
+    {
+        new Thread(() =>
+        {
+            try
+            {
+                // Communicating with the server needs to be asynchronous so that the UI thread
+                // can continue drawing. Thus, we have to start it up in its own thread.
+                spinner = "spinner";
+                InvokeAsync( StateHasChanged ); // make sure the UI updates to show connection status
+
+                    network.Connect( serverNameOrAddress, serverPort );
+                    spinner = string.Empty;
+                    InvokeAsync( StateHasChanged );
+                    // Send first message: the username
+                    Logger.LogInformation($"Connected to server, sending username: {userName}");
+                    network.SendLine( userName );
+
+                    //TODO : put game initialization code here
+
+                    //TODO: put game loop code here
+                    while ( network.IsConnected )
+                    {
+                        try
+                        {
+                            var message = network.ReceiveLine();
+                            Logger.LogInformation( "Receiving message from server..." );
+                            message = $"{DateTime.Now:HH:mm:ss tt} - {message}";
+                            InvokeAsync( StateHasChanged );
+                        }
+                        catch
+                        {
+                            var disconnectMessage = "You have been disconnected from the server.";
+                            Logger.LogDebug(disconnectMessage);
+                            DisconnectFromServer();
+                        }
+                    }
+            }
+            catch
+            {
+                noServerMessage = $"There is no server at: {serverNameOrAddress}, port: {serverPort}.";
+                Logger.LogInformation( noServerMessage );
+                // you can simulate this by trying to connect to a port where no server is running.
+            }
+        } ).Start();
+    }
+
+    /// <summary>
+    ///     Create a default network object
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        network = new NetworkConnection( Logger );
+        Logger.LogInformation( "Initializing..." );
+    }
 }
