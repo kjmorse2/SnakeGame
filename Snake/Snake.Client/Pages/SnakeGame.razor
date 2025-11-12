@@ -54,7 +54,6 @@
     </div>
 </div>
 
-
 @code
 {
     // Drawing/Canvas variables here.
@@ -99,76 +98,6 @@
     /// </remarks>
     private NetworkConnection network = null!;
 
-    /// <summary>
-    ///     Disconnect the network object from the server.
-    /// </summary>
-    private void DisconnectFromServer()
-    {
-        Logger.LogInformation("Disconnecting from server.");
-        network.Disconnect();
-        network = new NetworkConnection( Logger );
-    }
-
-    /// <summary>
-    ///     <para>
-    ///         Handler for the connect button.
-    ///     </para>
-    ///     <para>
-    ///         Connect to the server, then continuously wait for messages and display them.
-    ///     </para>
-    /// </summary>
-    private void ConnectToServer()
-    {
-        new Thread(() =>
-        {
-            try
-            {
-                // Communicating with the server needs to be asynchronous so that the UI thread
-                // can continue drawing. Thus, we have to start it up in its own thread.
-                spinner = "spinner";
-                InvokeAsync(StateHasChanged); // make sure the UI updates to show connection status
-
-                network.Connect(serverNameOrAddress, serverPort);
-                spinner = string.Empty;
-                InvokeAsync(StateHasChanged);
-                // Send first message: the username
-                Logger.LogInformation($"Connected to server, sending username: {userName}");
-                network.SendLine(userName);
-                int playerId = int.Parse(network.ReceiveLine());
-                World world = new(int.Parse(network.ReceiveLine()));
-
-                while (true)
-                {
-                    try
-                    {
-                        Wall receivedWall = JsonSerializer.Deserialize<Wall>(network.ReceiveLine()) ?? throw new NullReferenceException();
-                        world.Walls[receivedWall.Id] = receivedWall;
-                    }
-                    catch (JsonException)
-                    {
-                        break;
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        //TODO handle disconnect gracefully
-                    }
-                    catch (NullReferenceException)
-                    {
-                        //TODO if you got here something else happened.
-                    }
-                }
-
-                //TODO: put game loop code here
-                GameLoop(playerId, world);
-            }
-            catch
-            {
-                noServerMessage = $"There is no server at: {serverNameOrAddress}, port: {serverPort}.";
-                Logger.LogInformation(noServerMessage);
-                // you can simulate this by trying to connect to a port where no server is running.
-            }
-        }).Start();
-    }
 
     /// <summary>
     ///     Create a default network object

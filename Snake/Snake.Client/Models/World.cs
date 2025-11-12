@@ -1,4 +1,6 @@
-﻿namespace CS3500.Snake.Models;
+﻿using System.Text.Json;
+
+namespace CS3500.Snake.Models;
 
 /// <summary>
 /// TODO document.
@@ -12,6 +14,22 @@ public class World
     public World(int size)
     {
         this.Size = size;
+    }
+
+    public void UpdateElement(string jsonString)
+    {
+        char type = jsonString[2];
+        switch(type)
+        {
+            case 's':
+               Snake recievedSnake = JsonSerializer.Deserialize<Snake>(jsonString); 
+                Snakes[recievedSnake.Id] = recievedSnake;
+                break;
+            case 'p':
+                PowerUp recievedPowerUp = JsonSerializer.Deserialize<PowerUp>(jsonString);
+                PowerUps[recievedPowerUp.Id] = recievedPowerUp;
+                break;
+        }
     }
 
     /// <summary>
