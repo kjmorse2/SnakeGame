@@ -26,7 +26,7 @@ public class Snake
     {
         get
         {
-           return Body[0];
+           return Body[Body.Count - 1];
         }
     }
 
@@ -34,7 +34,7 @@ public class Snake
     {
         get
         {
-            return Body[Body.Count - 1];
+            return Body[0];
         }
     }
 

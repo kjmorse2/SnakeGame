@@ -38,22 +38,30 @@ public class World
         }
     }
 
+    /// <summary>
+    /// Updates the corresponding game element based on the provided JSON string.
+    /// </summary>
+    /// <remarks>The method deserializes the JSON string into the appropriate object type based on the type
+    /// identifier ('s', 'p', or 'w') and updates the corresponding collection with the deserialized object. The object
+    /// is identified by its unique ID.</remarks>
+    /// <param name="jsonString">A JSON-formatted string representing the game element to update. The third character in the string determines
+    /// the type of the element: 's' for a snake, 'p' for a power-up, and 'w' for a wall.</param>
     public void UpdateElement(string jsonString)
     {
         char type = jsonString[2];
         switch(type)
         {
             case 's':
-               Snake recievedSnake = JsonSerializer.Deserialize<Snake>(jsonString);
-                Snakes[recievedSnake.Id] = recievedSnake;
+               Snake receivedSnake = JsonSerializer.Deserialize<Snake>(jsonString);
+                Snakes[receivedSnake.Id] = recievedSnake;
                 break;
             case 'p':
-                PowerUp recievedPowerUp = JsonSerializer.Deserialize<PowerUp>(jsonString);
-                PowerUps[recievedPowerUp.Id] = recievedPowerUp;
+                PowerUp receivedPowerUp = JsonSerializer.Deserialize<PowerUp>(jsonString);
+                PowerUps[receivedPowerUp.Id] = recievedPowerUp;
                 break;
             case'w':
-                Wall recievedWall = JsonSerializer.Deserialize<Wall>(jsonString);
-                Walls[recievedWall.Id] = recievedWall;
+                Wall receivedWall = JsonSerializer.Deserialize<Wall>(jsonString);
+                Walls[receivedWall.Id] = recievedWall;
                 break;
         }
     }
