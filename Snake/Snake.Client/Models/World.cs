@@ -66,15 +66,15 @@ public class World
     /// <summary>
     /// Gets a list of snakes in the current game world.
     /// </summary>
-    public List<Snake> Snakes { get; } = new(100);
+    public Dictionary<int, Snake> Snakes { get; } = new(100);
 
     /// <summary>
     /// Gets a list of walls in the current game world.
     /// </summary>
-    public List<Wall> Walls { get; } = new(100);
+    public Dictionary<int, Wall> Walls { get; } = new(100);
 
     /// <summary>
     /// Gets a list of power-ups in the current game world.
     /// </summary>
-    public List<PowerUp> PowerUps { get; } = new(100);
+    public Dictionary<int, PowerUp> PowerUps { get; } = new();
 }

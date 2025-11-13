@@ -176,12 +176,14 @@
             await context.FillRectAsync( 0, 0, CanvasWidth, CanvasHeight);
 
             // Draw "World Model" (i.e., rectangles)
-            List<Snake> currentSnakes;
-            List<PowerUp> currentPowerUps;
+            IEnumerable<Snake> currentSnakes;
+            IEnumerable<PowerUp> currentPowerUps;
+            IEnumerable<Wall> currentWalls;
             lock (worldModel)
             {
-                currentSnakes = worldModel.Snakes;
-                currentPowerUps = worldModel.PowerUps;
+                currentSnakes = worldModel.Snakes.Values;
+                currentPowerUps = worldModel.PowerUps.Values;
+                currentWalls = worldModel.Walls.Values;
             }
 
             foreach (var snake in currentSnakes)
@@ -193,6 +195,11 @@
             foreach (var powerUp in currentPowerUps)
             {
                 await context.ArcAsync(powerUp.Position.X, powerUp.Position.Y, 8, 0, 360);
+            }
+
+            foreach (var wall in currentWalls)
+            {
+                await context.FillRectAsync(wall.Start.X, wall.Start.Y, 10, 10);
             }
 
             // Draw Heads Up Display - do this last so it is on top

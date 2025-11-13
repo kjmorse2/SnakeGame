@@ -11,6 +11,7 @@ using CS3500.Snake.Models;
 
 public partial class SnakeGame
 {
+    private CancellationTokenSource CancelTokenSource = new();
 
     private static World worldModel = null!;
 
@@ -28,13 +29,10 @@ public partial class SnakeGame
         }
     }
 
-    private async Task GameLoop()
+    private void GameLoop()
     {
-        while (network.IsConnected)
-        {
-            await Task.Delay(16);
-            await DrawFrame();
-        }
+        Task recieveLoop = RecieveLoop(CancelTokenSource.Token);
+        Task renderLoop = RenderLoop(CancelTokenSource.Token);
     }
 
     /// <summary>
@@ -65,8 +63,8 @@ public partial class SnakeGame
             //TODO prevent commands before walls
             //TODO prevent client from sending more than one command per frame.
 
-            try
-            {
+            // try
+            // {
                 // Communicating with the server needs to be asynchronous so that the UI thread
                 // can continue drawing. Thus, we run on a background Task.
                 network.Connect(serverNameOrAddress, serverPort);
@@ -76,24 +74,55 @@ public partial class SnakeGame
                 Logger.LogInformation($"Connected to server, sending username: {userName}");
                 network.SendLine(userName);
                 playerId = int.Parse(network.ReceiveLine());
-                World world = new(int.Parse(network.ReceiveLine()), network);
+                worldModel = new(int.Parse(network.ReceiveLine()), network);
+                GameLoop();
 
-                while (network.IsConnected)
-                {
-                    world.UpdateElement(network.ReceiveLine());
-                }
-            }
-            catch
-            {
-                noServerMessage = $"There is no server at: {serverNameOrAddress}, port: {serverPort}.";
-                Logger.LogInformation(noServerMessage);
-                spinner = string.Empty;
-                InvokeAsync(StateHasChanged);
-                // you can simulate this by trying to connect to a port where no server is running.
-            }
+            // }
+            // catch(Exception e)
+            // {
+            //     Logger.LogInformation(e.Message);
+            //     noServerMessage = $"There is no server at: {serverNameOrAddress}, port: {serverPort}.";
+            //     Logger.LogInformation(noServerMessage);
+            //     spinner = string.Empty;
+            //     InvokeAsync(StateHasChanged);
+            //     // you can simulate this by trying to connect to a port where no server is running.
+            // }
         }).Start();
         Task gameloop = new(() => GameLoop());
         gameloop.RunSynchronously();
+    }
+
+    private async Task RecieveLoop(CancellationToken ct)
+    {
+        while (network.IsConnected && !ct.IsCancellationRequested)
+        {
+            string line = await Task.Run(() => network.ReceiveLine());
+
+            if (!string.IsNullOrWhiteSpace(line))
+            {
+                lock (worldModel)
+                {
+                    Console.WriteLine(line);
+                    worldModel.UpdateElement(line);
+                }
+            }
+        }
+    }
+
+    private async Task RenderLoop(CancellationToken ct)
+    {
+        frameNumber = 0;
+        gameTimer.Restart();
+        while (network.IsConnected && !ct.IsCancellationRequested)
+        {
+            await Task.Delay(16, ct);
+            await InvokeAsync(async () =>
+            {
+                await DrawFrame();
+                frameNumber++;
+            });
+        }
+
     }
 }
 public static class ContextExtensions
