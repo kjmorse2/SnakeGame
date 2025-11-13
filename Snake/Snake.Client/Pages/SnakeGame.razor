@@ -160,7 +160,7 @@
             case "A":
                 network.SendLine(LeftCommand);
                 break;
-            //TODO is default necessary?
+                //TODO is default necessary?
         }
     }
 
@@ -170,6 +170,9 @@
         {
             // Group all the draw commands into one large single draw.
             await context.BeginBatchAsync();
+
+            //int viewWidth = CanvasWidth;
+            //int viewHeight = CanvasHeight;
 
             // Draw Background.
             await context.SetFillStyleAsync( "darkblue" );
@@ -190,6 +193,14 @@
             {
                 //TODO make art style better
                 await context.Draw(snake);
+                await context.FileTextAsync(snake.Name, snake.Head.X + 10, snake.Head.Y - 10);
+                if (snake.Died)
+                {
+                    await context.beginPathAysnc();
+                    await context.SetFileStyleAsync("red");
+                    await context.ArcAsync(Snake.Head.X, Snake.Head.Y, 20, 0, 0);
+                    await context.FillAysnc();
+                }
             }
 
             foreach (var powerUp in currentPowerUps)
