@@ -96,7 +96,8 @@ public partial class SnakeGame
                 Logger.LogInformation($"Connected to server, sending username: {userName}");
                 network.SendLine(userName);
                 playerId = int.Parse(network.ReceiveLine());
-                worldModel = new(int.Parse(network.ReceiveLine()), network);
+                int worldSize = int.Parse(network.ReceiveLine());
+                worldModel = new World(worldSize);
                 GameLoop();
 
             // }
@@ -110,8 +111,9 @@ public partial class SnakeGame
             //     // you can simulate this by trying to connect to a port where no server is running.
             // }
         }).Start();
-        Task gameloop = new(() => GameLoop());
-        gameloop.RunSynchronously();
+        //Im pretty sure this is already done in the GameLoop() we call above.
+        //Task gameloop = new(() => GameLoop());
+        //gameloop.RunSynchronously();
     }
 
     /// <summary>
