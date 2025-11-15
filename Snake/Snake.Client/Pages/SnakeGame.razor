@@ -99,13 +99,39 @@
     /// </remarks>
     private NetworkConnection network = null!;
 
+    /// <summary>
+    /// Serialized command to move up.
+    /// </summary>
     private readonly string UpCommand = JsonSerializer.Serialize(new ControlCommand("up"));
+
+    /// <summary>
+    /// Serialized command to move down.
+    /// </summary>
     private readonly string DownCommand = JsonSerializer.Serialize(new ControlCommand("down"));
+
+    /// <summary>
+    /// Serialized command to move right.
+    /// </summary>
     private readonly string RightCommand = JsonSerializer.Serialize(new ControlCommand("right"));
+
+    /// <summary>
+    /// Serialized command to move left.
+    /// </summary>
     private readonly string LeftCommand = JsonSerializer.Serialize(new ControlCommand("left"));
+
+    /// <summary>
+    /// Represent a no movement command.
+    /// </summary>
     private readonly string NoneCommand = JsonSerializer.Serialize(new ControlCommand("none"));
 
+    /// <summary>
+    /// Pixel width of the drawing canvas.
+    /// </summary>
     private readonly int CanvasWidth = 2000;
+
+    /// <summary>
+    /// Pixel height of the drawing canvas.
+    /// </summary>
     private readonly int CanvasHeight = 2000;
 
 
@@ -137,6 +163,10 @@
         }
     }
 
+    /// <summary>
+    /// Handles keyboard input for WASD and Arrow keys, sending movement command to the server.
+    /// </summary>
+    /// <param name="e"><Keeyboard event./param>
     private void HandleKeyPress(KeyboardEventArgs e)
     {
         switch (e.Key)
@@ -164,15 +194,25 @@
         }
     }
 
+    /// <summary>
+    /// Draws a single frame of the game to the canvas based on the current state of the WorldModel.
+    /// This method is called repeatedly in the render loop.
+    /// </summary>
+    /// <returns>A task representing the drawing operation.</returns>
     public async Task DrawFrame()
     {
         try
         {
+            if ( context == null || worldModel == null)
+            {
+                return;
+            }
             // Group all the draw commands into one large single draw.
             await context.BeginBatchAsync();
 
-            //int viewWidth = CanvasWidth;
-            //int viewHeight = CanvasHeight;
+            //For the 
+            int viewWidth = CanvasWidth;
+            int viewHeight = CanvasHeight;
 
             // Draw Background.
             await context.SetFillStyleAsync( "darkblue" );
@@ -193,13 +233,13 @@
             {
                 //TODO make art style better
                 await context.Draw(snake);
-                await context.FileTextAsync(snake.Name, snake.Head.X + 10, snake.Head.Y - 10);
+                await context.FillTextAsync(snake.Name, snake.Head.X + 10, snake.Head.Y - 10);
                 if (snake.Died)
                 {
-                    await context.beginPathAysnc();
-                    await context.SetFileStyleAsync("red");
-                    await context.ArcAsync(Snake.Head.X, Snake.Head.Y, 20, 0, 0);
-                    await context.FillAysnc();
+                    await context.BeginPathAsync();
+                    await context.SetFillStyleAsync("red");
+                    await context.ArcAsync(snake.Head.X, snake.Head.Y, 20, 0, 0);
+                    await context.FillAsync();
                 }
             }
 
@@ -222,7 +262,7 @@
         }
         catch ( Exception e )
         {
-            //TODO add logging
+            Logger.LogError(e, "Error during DrawFrame");
         }
     }
 }
