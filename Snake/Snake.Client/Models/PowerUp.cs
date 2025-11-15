@@ -1,4 +1,6 @@
-﻿namespace CS3500.Snake.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace CS3500.Snake.Models;
 
 /// <summary>
 /// TODO Document PowerUp class
