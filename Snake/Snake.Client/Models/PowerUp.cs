@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace CS3500.Snake.Models;
+﻿namespace CS3500.Snake.Models;
 
 
 

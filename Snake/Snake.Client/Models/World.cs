@@ -53,15 +53,15 @@ public class World
         {
             case 's':
                Snake receivedSnake = JsonSerializer.Deserialize<Snake>(jsonString);
-                Snakes[receivedSnake.Id] = receivedSnake;
+                Snakes[receivedSnake.Id] = recievedSnake;
                 break;
             case 'p':
                 PowerUp receivedPowerUp = JsonSerializer.Deserialize<PowerUp>(jsonString);
-                PowerUps[receivedPowerUp.Id] = receivedPowerUp;
+                PowerUps[receivedPowerUp.Id] = recievedPowerUp;
                 break;
             case'w':
                 Wall receivedWall = JsonSerializer.Deserialize<Wall>(jsonString);
-                Walls[receivedWall.Id] = receivedWall;
+                Walls[receivedWall.Id] = recievedWall;
                 break;
         }
     }
