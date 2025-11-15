@@ -99,39 +99,13 @@
     /// </remarks>
     private NetworkConnection network = null!;
 
-    /// <summary>
-    /// Serialized command to move up.
-    /// </summary>
     private readonly string UpCommand = JsonSerializer.Serialize(new ControlCommand("up"));
-
-    /// <summary>
-    /// Serialized command to move down.
-    /// </summary>
     private readonly string DownCommand = JsonSerializer.Serialize(new ControlCommand("down"));
-
-    /// <summary>
-    /// Serialized command to move right.
-    /// </summary>
     private readonly string RightCommand = JsonSerializer.Serialize(new ControlCommand("right"));
-
-    /// <summary>
-    /// Serialized command to move left.
-    /// </summary>
     private readonly string LeftCommand = JsonSerializer.Serialize(new ControlCommand("left"));
-
-    /// <summary>
-    /// Represent a no movement command.
-    /// </summary>
     private readonly string NoneCommand = JsonSerializer.Serialize(new ControlCommand("none"));
 
-    /// <summary>
-    /// Pixel width of the drawing canvas.
-    /// </summary>
     private readonly int CanvasWidth = 2000;
-
-    /// <summary>
-    /// Pixel height of the drawing canvas.
-    /// </summary>
     private readonly int CanvasHeight = 2000;
 
 
@@ -163,10 +137,7 @@
         }
     }
 
-    /// <summary>
-    /// Handles keyboard input for WASD and Arrow keys, sending movement command to the server.
-    /// </summary>
-    /// <param name="e"><Keeyboard event./param>
+    [JSInvokable]
     private void HandleKeyPress(KeyboardEventArgs e)
     {
         switch (e.Key)
@@ -194,25 +165,15 @@
         }
     }
 
-    /// <summary>
-    /// Draws a single frame of the game to the canvas based on the current state of the WorldModel.
-    /// This method is called repeatedly in the render loop.
-    /// </summary>
-    /// <returns>A task representing the drawing operation.</returns>
     public async Task DrawFrame()
     {
         try
         {
-            if ( context == null || worldModel == null)
-            {
-                return;
-            }
             // Group all the draw commands into one large single draw.
             await context.BeginBatchAsync();
 
-            //For the 
-            int viewWidth = CanvasWidth;
-            int viewHeight = CanvasHeight;
+            //int viewWidth = CanvasWidth;
+            //int viewHeight = CanvasHeight;
 
             // Draw Background.
             await context.SetFillStyleAsync( "darkblue" );
@@ -229,6 +190,7 @@
                 currentWalls = worldModel.Walls.Values;
             }
 
+            await context.SetFillStyleAsync( "yellow" );
             foreach (var snake in currentSnakes)
             {
                 //TODO make art style better
@@ -245,19 +207,13 @@
 
             foreach (var powerUp in currentPowerUps)
             {
-                await context.BeginBatchAsync();
-                await context.SetFillStyleAsync("yellow");
-                await context.ArcAsync(powerUp.Position.X, powerUp.Position.Y, 8, 0, 2*Math.PI);
-            
-                await context.FillAsync();
+                await context.ArcAsync(powerUp.Position.X, powerUp.Position.Y, 8, 0, 360);
             }
-
+            
+            await context.SetFillStyleAsync( "red" );
             foreach (var wall in currentWalls)
             {
-                //TODO: walls are only blocks of 50X50 right now
-                await context.SetFillStyleAsync("brown");
-                await context.FillRectAsync(wall.Start.X, wall.Start.Y, 50, 50);
-                
+                await context.FillRectAsync(wall.Start.X, wall.Start.Y, 10, 10);
             }
 
             // Draw Heads Up Display - do this last so it is on top
@@ -269,7 +225,7 @@
         }
         catch ( Exception e )
         {
-            Logger.LogError(e, "Error during DrawFrame");
+            //TODO add logging
         }
     }
 }

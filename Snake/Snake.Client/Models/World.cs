@@ -12,30 +12,30 @@ public class World
     /// Initializes a new instance of the <see cref="World"/> class.
     /// </summary>
     /// <param name="size">The size of the world, worlds are always square.</param>
-    public World(int size )//, NetworkConnection connection)
+    public World(int size, NetworkConnection connection)
     {
         this.Size = size;
-        //while (true)
-        //{
-        //    try
-        //    {
-        //        UpdateElement(connection.ReceiveLine());
-        //    }
-        //    catch (JsonException)
-        //    {
-        //        break;
-        //    }
-        //    catch (InvalidOperationException)
-        //    {
-        //        // TODO handle disconnect gracefully
-        //        break;
-        //    }
-        //    catch (NullReferenceException)
-        //    {
-        //        // TODO if you got here something else happened.
-        //        break;
-        //    }
-        //}
+        while (true)
+        {
+            try
+            {
+                UpdateElement(connection.ReceiveLine());
+            }
+            catch (JsonException)
+            {
+                break;
+            }
+            catch (InvalidOperationException)
+            {
+                // TODO handle disconnect gracefully
+                break;
+            }
+            catch (NullReferenceException)
+            {
+                // TODO if you got here something else happened.
+                break;
+            }
+        }
     }
 
     /// <summary>
