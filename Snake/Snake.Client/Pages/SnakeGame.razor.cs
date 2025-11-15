@@ -29,12 +29,6 @@ public partial class SnakeGame
         }
     }
 
-    private void GameLoop()
-    {
-        Task recieveLoop = RecieveLoop(CancelTokenSource.Token);
-        Task renderLoop = RenderLoop(CancelTokenSource.Token);
-    }
-
     /// <summary>
     ///     Disconnect the network object from the server.
     /// </summary>
@@ -53,9 +47,9 @@ public partial class SnakeGame
     ///         Connect to the server, then continuously wait for messages and display them.
     ///     </para>
     /// </summary>
-    private void ConnectToServer()
+    private async void Connect()
     {
-        new Task(() =>
+        await Task.Run(() =>
         {
 
             spinner = "spinner";
@@ -74,9 +68,20 @@ public partial class SnakeGame
                 Logger.LogInformation($"Connected to server, sending username: {userName}");
                 network.SendLine(userName);
                 playerId = int.Parse(network.ReceiveLine());
-                worldModel = new(int.Parse(network.ReceiveLine()), network);
-                GameLoop();
+                worldModel = new(int.Parse(network.ReceiveLine()));
+                while (network.IsConnected)
+                {
+                    string line = network.ReceiveLine();
 
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        lock (worldModel)
+                        {
+                            // Console.WriteLine(line);
+                            worldModel.UpdateElement(line);
+                        }
+                    }
+                }
             // }
             // catch(Exception e)
             // {
@@ -87,9 +92,7 @@ public partial class SnakeGame
             //     InvokeAsync(StateHasChanged);
             //     // you can simulate this by trying to connect to a port where no server is running.
             // }
-        }).Start();
-        Task gameloop = new(() => GameLoop());
-        gameloop.RunSynchronously();
+        });
     }
 
     private async Task RecieveLoop(CancellationToken ct)
@@ -118,7 +121,7 @@ public partial class SnakeGame
             await Task.Delay(16, ct);
             await InvokeAsync(async () =>
             {
-                await DrawFrame();
+                await Draw();
                 frameNumber++;
             });
         }
