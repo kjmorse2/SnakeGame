@@ -185,6 +185,6 @@ public static class ContextExtensions
         await context.LineToAsync(s.Tail.X, s.Tail.Y);
         //await context.SetLineWidthAsync(10);
         //await context.SetStrokeStyleAsync("lime");
-        //await context.StrokeAsync();
+        await context.StrokeAsync();
     }
 }
