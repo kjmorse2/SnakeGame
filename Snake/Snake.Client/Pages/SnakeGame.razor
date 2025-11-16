@@ -100,13 +100,39 @@
     /// </remarks>
     private NetworkConnection network = null!;
 
+    /// <summary>
+    /// Serialized command to move up.
+    /// </summary>
     private readonly string UpCommand = JsonSerializer.Serialize(new ControlCommand("up"));
+
+    /// <summary>
+    /// Serialized command to move down.
+    /// </summary>
     private readonly string DownCommand = JsonSerializer.Serialize(new ControlCommand("down"));
+
+    /// <summary>
+    /// Serialized command to move right.
+    /// </summary>
     private readonly string RightCommand = JsonSerializer.Serialize(new ControlCommand("right"));
+
+    /// <summary>
+    /// Serialized command to move left.
+    /// </summary>
     private readonly string LeftCommand = JsonSerializer.Serialize(new ControlCommand("left"));
+
+    /// <summary>
+    /// Represent a no movement command.
+    /// </summary>
     private readonly string NoneCommand = JsonSerializer.Serialize(new ControlCommand("none"));
 
+    /// <summary>
+    /// Pixel width of the drawing canvas.
+    /// </summary>
     private readonly int CanvasWidth = 2000;
+
+    /// <summary>
+    /// Pixel height of the drawing canvas.
+    /// </summary>
     private readonly int CanvasHeight = 2000;
 
 
@@ -138,6 +164,10 @@
         }
     }
 
+    /// <summary>
+    /// Handles keyboard input for WASD and Arrow keys, sending movement command to the server.
+    /// </summary>
+    /// <param name="e"><Keeyboard event./param>
     [JSInvokable]
     private void HandleKeyPress(KeyboardEventArgs e)
     {
@@ -199,7 +229,7 @@
                 //TODO make art style better
                 await context.Draw(snake);
                 await context.FillTextAsync(snake.Name, snake.Head.X + 10, snake.Head.Y - 10);
-                if (snake.Died)
+                if (!snake.Died)
                 {
                     await context.BeginPathAsync();
                     await context.SetFillStyleAsync("red");
@@ -208,9 +238,9 @@
                 }
             }
 
-            await context.SetFillStyleAsync( "green" );
             foreach (var powerUp in currentPowerUps)
             {
+                await context.BeginPathAsync();
                 await context.SetFillStyleAsync("yellow");
                 await context.ArcAsync(powerUp.Position.X, powerUp.Position.Y, 8, 0, 360);
                 await context.FillAsync();
