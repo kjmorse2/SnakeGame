@@ -248,9 +248,8 @@
 
             foreach (var powerUp in currentPowerUps)
             {
-                await context.BeginPathAsync();
                 await context.SetFillStyleAsync("yellow");
-                await context.ArcAsync(powerUp.Position.X, powerUp.Position.Y, 8, 0, 360);
+                await context.FillRectAsync(powerUp.Position.X - 8, powerUp.Position.Y - 8, 16, 16);
                 await context.FillAsync();
 
             }

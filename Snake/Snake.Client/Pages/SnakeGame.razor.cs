@@ -108,14 +108,17 @@ public static class ContextExtensions
     /// <returns>????</returns>
     public static async Task Draw(this Canvas2DContext context, Snake s)
     {
+        float oldLineWidth = context.LineWidth;
+        await context.SetLineWidthAsync(10);
         await context.BeginPathAsync();
         await context.MoveToAsync(s.Head.X, s.Head.Y);
         for (int i = 1; i < s.Body.Count - 1; i++)
         {
             await context.MoveToAsync(s.Body[i].X, s.Body[i].Y);
         }
-        await.SetstrokeWidth( 10)
+        await context.SetStrokeStyleAsync("green");
         await context.LineToAsync(s.Tail.X, s.Tail.Y);
         await context.StrokeAsync();
+        await context.SetLineWidthAsync(oldLineWidth);
     }
 }
