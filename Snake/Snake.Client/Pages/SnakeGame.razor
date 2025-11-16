@@ -171,6 +171,7 @@
     {
         try
         {
+            frameNumber++;
             // Group all the draw commands into one large single draw.
             await context.BeginBatchAsync();
 
@@ -212,7 +213,7 @@
             {
                 await context.ArcAsync(powerUp.Position.X, powerUp.Position.Y, 8, 0, 360);
             }
-            
+
             await context.SetFillStyleAsync( "red" );
             foreach (var wall in currentWalls)
             {
