@@ -52,7 +52,7 @@
     }
     <div id="myCanvas"
          @onkeydown = "HandleKeyPress">
-    <BECanvas Width="@CanvasWidth" Height="@CanvasHeight" @ref="canvasReference"/>
+    <BECanvas Width="CanvasWidth" Height="CanvasHeight" @ref="canvasReference"/>
     </div>
 </div>
 
@@ -197,6 +197,11 @@
     }
 
     [JSInvokable]
+    /// <summary>
+    /// Draws a single frame of the game to the canvas based on the current state of the WorldModel.
+    /// This method is called repeatedly in the render loop.
+    /// </summary>
+    /// <returns>A task representing the drawing operation.</returns>
     public async Task Draw()
     {
         try
@@ -204,6 +209,9 @@
             frameNumber++;
             // Group all the draw commands into one large single draw.
             await context.BeginBatchAsync();
+            
+
+
 
             //int viewWidth = CanvasWidth;
             //int viewHeight = CanvasHeight;
@@ -233,7 +241,7 @@
                 {
                     await context.BeginPathAsync();
                     await context.SetFillStyleAsync("red");
-                    await context.ArcAsync(snake.Head.X, snake.Head.Y, 20, 0, 0);
+                    await context.ArcAsync(snake.Head.X, snake.Head.Y, 5, 0, 360);
                     await context.FillAsync();
                 }
             }
@@ -247,10 +255,14 @@
 
             }
 
-            await context.SetFillStyleAsync( "red" );
+            int segmentSize = 50;
             foreach (var wall in currentWalls)
             {
-                await context.FillRectAsync(wall.Start.X, wall.Start.Y, 50, 50);
+                await context.SetFillStyleAsync("red");
+                foreach (Point2D segment in wall.GetSegments())
+                {
+                    await context.FillRectAsync(segment.X -25, segment.Y - 25, segmentSize, segmentSize);
+                }
             }
 
             // Draw Heads Up Display - do this last so it is on top
@@ -262,7 +274,7 @@
         }
         catch ( Exception e )
         {
-            //TODO add logging
+            Logger.LogError(e, "Error drawing");
         }
     }
 }

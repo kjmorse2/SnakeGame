@@ -8,16 +8,29 @@ namespace CS3500.Snake.Client.Pages.SnakeGame;
 
 using CS3500.Snake.Models;
 
-
 public partial class SnakeGame
 {
+    /// <summary>
+    /// The full game state that is sent by the server.
+    /// </summary>
     private static World worldModel = null!;
 
+    /// <summary>
+    /// The unique ID assigned by the server for this player.
+    /// </summary>
     private static int playerId = -1;
 
+    /// <summary>
+    /// Counter used for FPS computation.
+    /// </summary>
     private static int frameNumber = 0;
 
+    /// <summary>
+    /// Stopwatch use the measure the time since rendering began.
+    /// Helps compute the AvgFPs
+    /// </summary>
     private static Stopwatch gameTimer = new();
+
 
     static SnakeGame()
     {
@@ -80,8 +93,19 @@ public partial class SnakeGame
         gameTimer.Restart();
     }
 }
+
+/// <summary>
+/// Canvas drawing helper class for drawing the snake.
+/// </summary>
 public static class ContextExtensions
 {
+
+    /// <summary>
+    ///  Draws the full snake to the canvas.
+    /// </summary>
+    /// <param name="context">Canvas context</param>
+    /// <param name="s">Snake to draw.</param>
+    /// <returns>????</returns>
     public static async Task Draw(this Canvas2DContext context, Snake s)
     {
         await context.BeginPathAsync();
@@ -90,6 +114,7 @@ public static class ContextExtensions
         {
             await context.MoveToAsync(s.Body[i].X, s.Body[i].Y);
         }
+        await.SetstrokeWidth( 10)
         await context.LineToAsync(s.Tail.X, s.Tail.Y);
         await context.StrokeAsync();
     }
