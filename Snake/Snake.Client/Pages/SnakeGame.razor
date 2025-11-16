@@ -210,7 +210,7 @@
 
             // Draw Background.
             await context.SetFillStyleAsync( "darkblue" );
-            await context.FillRectAsync( 0, 0, CanvasWidth, CanvasHeight);
+            await context.FillRectAsync( 0, 0, canvasReference.Width, canvasReference.Height);
 
             // Draw "World Model" (i.e., rectangles)
             IEnumerable<Snake> currentSnakes;
