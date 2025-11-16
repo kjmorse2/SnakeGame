@@ -2,8 +2,6 @@
 
 namespace CS3500.Snake.Models;
 
-
-
 /// <summary>
 /// TODO Document PowerUp class
 /// </summary>

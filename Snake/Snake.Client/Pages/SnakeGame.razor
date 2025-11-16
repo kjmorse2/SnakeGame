@@ -10,6 +10,7 @@
 @using System.Text.Json
 @using CS3500.Snake.Models
 
+@inject IJSRuntime JsRuntime;
 @inject ILogger<Program> Logger;
 
 @namespace CS3500.Snake.Client.Pages.SnakeGame 
@@ -37,7 +38,7 @@
         }
         else
         {
-            <button class="btn btn-primary" @onclick="ConnectToServer">Connect</button>
+            <button class="btn btn-primary" @onclick="Connect">Connect</button>
         }
         <div class="@spinner"></div>
     </div>
@@ -129,11 +130,11 @@
     {
         if ( firstRender )
         {
-            // _jsModule = await JsRuntime.InvokeAsync<IJSObjectReference>( "import", "./Pages/Snake.razor.js" );
+            _jsModule = await JsRuntime.InvokeAsync<IJSObjectReference>( "import", "./Pages/SnakeGame.razor.js" );
             context = await canvasReference.CreateCanvas2DAsync();
 
-            // await _jsModule.InvokeVoidAsync( "initJS", DotNetObjectReference.Create( this ) );
-            // await _jsModule.InvokeVoidAsync( "ToggleAnimation", true );
+            await _jsModule.InvokeVoidAsync( "initJS", DotNetObjectReference.Create( this ) );
+            await _jsModule.InvokeVoidAsync( "ToggleAnimation", true );
         }
     }
 
@@ -165,10 +166,12 @@
         }
     }
 
-    public async Task DrawFrame()
+    [JSInvokable]
+    public async Task Draw()
     {
         try
         {
+            frameNumber++;
             // Group all the draw commands into one large single draw.
             await context.BeginBatchAsync();
 
@@ -205,11 +208,12 @@
                 }
             }
 
+            await context.SetFillStyleAsync( "green" );
             foreach (var powerUp in currentPowerUps)
             {
                 await context.ArcAsync(powerUp.Position.X, powerUp.Position.Y, 8, 0, 360);
             }
-            
+
             await context.SetFillStyleAsync( "red" );
             foreach (var wall in currentWalls)
             {

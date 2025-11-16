@@ -15,7 +15,6 @@ export function ToggleAnimation( on )
     {
         window.cancelAnimationFrame(animationFrameId);
     }
-
 }
 
 /**
