@@ -207,13 +207,16 @@
 
             foreach (var powerUp in currentPowerUps)
             {
+                await context.SetFillStyleAsync("yellow");
                 await context.ArcAsync(powerUp.Position.X, powerUp.Position.Y, 8, 0, 360);
+                await context.FillAsync();
+
             }
             
             await context.SetFillStyleAsync( "red" );
             foreach (var wall in currentWalls)
             {
-                await context.FillRectAsync(wall.Start.X, wall.Start.Y, 10, 10);
+                await context.FillRectAsync(wall.Start.X, wall.Start.Y, 50, 50);
             }
 
             // Draw Heads Up Display - do this last so it is on top
