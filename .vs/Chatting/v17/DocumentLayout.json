@@ -1,26 +1,18 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\",
+  "WorkspaceRootPath": "C:\\Users\\Kenneth Morse\\src\\Assign08_Chatting\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D6CE9C5A-42F9-4859-A621-EF872F64EFA8}|Snake\\Snake.Client\\Snake.Client.csproj|c:\\users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\snake\\snake.client\\pages\\snakegame.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{D6CE9C5A-42F9-4859-A621-EF872F64EFA8}|Snake\\Snake.Client\\Snake.Client.csproj|solutionrelative:snake\\snake.client\\pages\\snakegame.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{71F05536-F6DC-4F72-B312-732CDC287560}|Networking\\Networking.csproj|c:\\users\\kenneth morse\\src\\assign08_chatting\\networking\\networkconnection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71F05536-F6DC-4F72-B312-732CDC287560}|Networking\\Networking.csproj|solutionrelative:networking\\networkconnection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D6CE9C5A-42F9-4859-A621-EF872F64EFA8}|Snake\\Snake.Client\\Snake.Client.csproj|c:\\users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\snake\\snake.client\\pages\\snakegame.razor.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{D6CE9C5A-42F9-4859-A621-EF872F64EFA8}|Snake\\Snake.Client\\Snake.Client.csproj|solutionrelative:snake\\snake.client\\pages\\snakegame.razor.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D6CE9C5A-42F9-4859-A621-EF872F64EFA8}|Snake\\Snake.Client\\Snake.Client.csproj|c:\\users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\snake\\snake.client\\models\\world.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D6CE9C5A-42F9-4859-A621-EF872F64EFA8}|Snake\\Snake.Client\\Snake.Client.csproj|solutionrelative:snake\\snake.client\\models\\world.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D6CE9C5A-42F9-4859-A621-EF872F64EFA8}|Snake\\Snake.Client\\Snake.Client.csproj|c:\\users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\snake\\snake.client\\models\\wall.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D6CE9C5A-42F9-4859-A621-EF872F64EFA8}|Snake\\Snake.Client\\Snake.Client.csproj|solutionrelative:snake\\snake.client\\models\\wall.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D6CE9C5A-42F9-4859-A621-EF872F64EFA8}|Snake\\Snake.Client\\Snake.Client.csproj|c:\\users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\snake\\snake.client\\pages\\snakegame.razor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{D6CE9C5A-42F9-4859-A621-EF872F64EFA8}|Snake\\Snake.Client\\Snake.Client.csproj|c:\\users\\kenneth morse\\src\\assign08_chatting\\snake\\snake.client\\pages\\snakegame.razor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D6CE9C5A-42F9-4859-A621-EF872F64EFA8}|Snake\\Snake.Client\\Snake.Client.csproj|solutionrelative:snake\\snake.client\\pages\\snakegame.razor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Kenneth Morse\\src\\Assign08_Chatting\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
     }
   ],
   "DocumentGroupContainers": [
@@ -29,107 +21,68 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 9,
+          "DockedWidth": 187,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
-              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:130:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:131:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+              "Name": "ST:0:0:{e78e0cf7-2e4e-48a7-bf7f-a94d9330a3be}"
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:132:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:132:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+              "Name": "ST:0:0:{80c411e8-fd5e-4b16-914b-0d9d84172cc1}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "SnakeGame.razor.js",
-              "DocumentMoniker": "C:\\Users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\Snake\\Snake.Client\\Pages\\SnakeGame.razor.js",
-              "RelativeDocumentMoniker": "Snake\\Snake.Client\\Pages\\SnakeGame.razor.js",
-              "ToolTip": "C:\\Users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\Snake\\Snake.Client\\Pages\\SnakeGame.razor.js",
-              "RelativeToolTip": "Snake\\Snake.Client\\Pages\\SnakeGame.razor.js",
-              "ViewState": "AgIAADwAAAAAAAAAAAAYwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-11-16T19:26:35.965Z",
+              "DocumentIndex": 0,
+              "Title": "NetworkConnection.cs",
+              "DocumentMoniker": "C:\\Users\\Kenneth Morse\\src\\Assign08_Chatting\\Networking\\NetworkConnection.cs",
+              "RelativeDocumentMoniker": "Networking\\NetworkConnection.cs",
+              "ToolTip": "C:\\Users\\Kenneth Morse\\src\\Assign08_Chatting\\Networking\\NetworkConnection.cs*",
+              "RelativeToolTip": "Networking\\NetworkConnection.cs*",
+              "ViewState": "AgIAAL0AAAAAAAAAAAAkwM0AAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-16T19:57:09.78Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Wall.cs",
-              "DocumentMoniker": "C:\\Users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\Snake\\Snake.Client\\Models\\Wall.cs",
-              "RelativeDocumentMoniker": "Snake\\Snake.Client\\Models\\Wall.cs",
-              "ToolTip": "C:\\Users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\Snake\\Snake.Client\\Models\\Wall.cs",
-              "RelativeToolTip": "Snake\\Snake.Client\\Models\\Wall.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAxAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "SnakeGame.razor.cs",
+              "DocumentMoniker": "C:\\Users\\Kenneth Morse\\src\\Assign08_Chatting\\Snake\\Snake.Client\\Pages\\SnakeGame.razor.cs",
+              "RelativeDocumentMoniker": "Snake\\Snake.Client\\Pages\\SnakeGame.razor.cs",
+              "ToolTip": "C:\\Users\\Kenneth Morse\\src\\Assign08_Chatting\\Snake\\Snake.Client\\Pages\\SnakeGame.razor.cs",
+              "RelativeToolTip": "Snake\\Snake.Client\\Pages\\SnakeGame.razor.cs",
+              "ViewState": "AgIAAEwAAAAAAAAAAAAuwFEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-15T19:14:34.148Z",
+              "WhenOpened": "2025-11-16T19:55:55.61Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "World.cs",
-              "DocumentMoniker": "C:\\Users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\Snake\\Snake.Client\\Models\\World.cs",
-              "RelativeDocumentMoniker": "Snake\\Snake.Client\\Models\\World.cs",
-              "ToolTip": "C:\\Users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\Snake\\Snake.Client\\Models\\World.cs",
-              "RelativeToolTip": "Snake\\Snake.Client\\Models\\World.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADwAAAAlAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-15T18:41:43.374Z",
+              "Title": "README.md",
+              "DocumentMoniker": "C:\\Users\\Kenneth Morse\\src\\Assign08_Chatting\\README.md",
+              "RelativeDocumentMoniker": "README.md",
+              "ToolTip": "C:\\Users\\Kenneth Morse\\src\\Assign08_Chatting\\README.md",
+              "RelativeToolTip": "README.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "OverriddenGroupName": "",
+              "WhenOpened": "2025-11-16T19:55:34.541Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "SnakeGame.razor",
-              "DocumentMoniker": "C:\\Users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\Snake\\Snake.Client\\Pages\\SnakeGame.razor",
-              "RelativeDocumentMoniker": "Snake\\Snake.Client\\Pages\\SnakeGame.razor",
-              "ToolTip": "C:\\Users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\Snake\\Snake.Client\\Pages\\SnakeGame.razor",
-              "RelativeToolTip": "Snake\\Snake.Client\\Pages\\SnakeGame.razor",
-              "ViewState": "AgIAALwAAAAAAAAAAAAYwNUAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-12T16:45:52.683Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "SnakeGame.razor.cs",
-              "DocumentMoniker": "C:\\Users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\Snake\\Snake.Client\\Pages\\SnakeGame.razor.cs",
-              "RelativeDocumentMoniker": "Snake\\Snake.Client\\Pages\\SnakeGame.razor.cs",
-              "ToolTip": "C:\\Users\\hunte\\source\\repos\\assignment-eight-chatting-kj_hunter_game\\Snake\\Snake.Client\\Pages\\SnakeGame.razor.cs",
-              "RelativeToolTip": "Snake\\Snake.Client\\Pages\\SnakeGame.razor.cs",
-              "ViewState": "AgIAAEQAAAAAAAAAAAAkwEQAAAAQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-12T18:10:36.689Z",
-              "EditorCaption": ""
-            }
-          ]
-        },
-        {
-          "DockedWidth": 800,
-          "SelectedChildIndex": -1,
-          "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{e1b7d1f8-9b3c-49b1-8f4f-bfc63a88835d}"
             }
           ]
         }

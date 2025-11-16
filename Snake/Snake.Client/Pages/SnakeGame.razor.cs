@@ -91,5 +91,6 @@ public static class ContextExtensions
             await context.MoveToAsync(s.Body[i].X, s.Body[i].Y);
         }
         await context.LineToAsync(s.Tail.X, s.Tail.Y);
+        await context.StrokeAsync();
     }
 }
