@@ -24,15 +24,15 @@
 <div id="ConnectionInputs">
     <div class="input-row">
         <label for="name"> Your Name: </label>
-        <input id="name" disabled="@network.IsConnected" type="text" @bind="userName" />
+        <input id="name" disabled="@connection.IsConnected" type="text" @bind="playerName" />
     </div>
 
     <div class="input-row">
         <label for="url"> Server Address: </label>
-        <input id="url" disabled="@network.IsConnected" type="text" @bind="serverNameOrAddress" />
+        <input id="url" disabled="@connection.IsConnected" type="text" @bind="serverHost" />
         <label for="url"> Port: </label>
-        <input id="port" disabled="@network.IsConnected" type="number" @bind="serverPort" class="port" />
-        @if ( network.IsConnected )
+        <input id="port" disabled="@connection.IsConnected" type="number" @bind="serverPort" class="port" />
+        @if ( connection.IsConnected )
         {
             <button class="btn btn-primary" @onclick="DisconnectFromServer">Disconnect</button>
         }
@@ -40,15 +40,11 @@
         {
             <button class="btn btn-primary" @onclick="Connect">Connect</button>
         }
-        <div class="@spinner"></div>
+        <div class="@connectionSpinnerClass"></div>
     </div>
-    @if(!string.IsNullOrEmpty( noServerMessage ) )
+    @if(!string.IsNullOrEmpty( serverStatusMessage ) )
     {
-        <p> @noServerMessage</p>
-    }
-    @{
-        var disconnected = !network.IsConnected;
-        var grayedOut = disconnected ? "grayedOut" : string.Empty;
+        <p> @serverStatusMessage</p>
     }
     <div id="myCanvas">
         <BECanvas Width="CanvasWidth" Height="CanvasHeight" @ref="canvasReference"/>
@@ -62,95 +58,39 @@
     private Canvas2DContext context = null!;
     private IJSObjectReference _jsModule = null!;
 
-    /// <summary>
-    ///     Default server name
-    /// </summary>
-    private string serverNameOrAddress = "localhost";
-
-    /// <summary>
-    ///     Default server port
-    /// </summary>
+    // Connection and user inputs
+    private string serverHost = "localhost";
     private int serverPort = 11000;
+    private string playerName = "Your Name Here";
 
-    /// <summary>
-    ///     The name you want the server to "call" you by.
-    /// </summary>
-    private string userName = "Your Name Here";
-
-    /// <summary>
-    ///     The message if there is no server running at the port.
-    /// </summary>
-    private string noServerMessage = string.Empty;
-
-    /// <summary>
-    ///     Give visual feedback that we are connecting to the server. Empty --> no feedback.
-    ///     "spinner" --> show spinner.
-    /// </summary>
-    private string spinner = string.Empty;
+    // UI state
+    private string serverStatusMessage = string.Empty;
+    private string connectionSpinnerClass = string.Empty;
 
     /// <summary>
     ///     The NetworkConnection object representing a connection with the server.
     /// </summary>
-    /// <remarks>
-    ///     The ! operator is used here to indicate to the compiler that the developer
-    ///     knows that this variable will be initialized before it is used (and thus
-    ///     should not be flagged as an error). See the OnInitialized method below
-    ///     (which is called by the Blazor framework) when the html page is loaded.
-    /// </remarks>
-    private NetworkConnection network = null!;
+    private NetworkConnection connection = null!;
 
     /// <summary>
     /// Serialized command to move up.
     /// </summary>
     private readonly string UpCommand = JsonSerializer.Serialize(new ControlCommand("up"));
-
-    /// <summary>
-    /// Serialized command to move down.
-    /// </summary>
     private readonly string DownCommand = JsonSerializer.Serialize(new ControlCommand("down"));
-
-    /// <summary>
-    /// Serialized command to move right.
-    /// </summary>
     private readonly string RightCommand = JsonSerializer.Serialize(new ControlCommand("right"));
-
-    /// <summary>
-    /// Serialized command to move left.
-    /// </summary>
     private readonly string LeftCommand = JsonSerializer.Serialize(new ControlCommand("left"));
 
-    /// <summary>
-    /// Represent a no movement command.
-    /// </summary>
-    private readonly string NoneCommand = JsonSerializer.Serialize(new ControlCommand("none"));
-
-    /// <summary>
-    /// Pixel width of the drawing canvas.
-    /// </summary>
+    // Canvas dimensions
     private readonly int CanvasWidth = 2000;
-
-    /// <summary>
-    /// Pixel height of the drawing canvas.
-    /// </summary>
     private readonly int CanvasHeight = 2000;
 
-
-    /// <summary>
-    ///     Create a default network object
-    /// </summary>
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        network = new NetworkConnection( Logger );
+        connection = new NetworkConnection( Logger );
         Logger.LogInformation( "Initializing..." );
     }
 
-    /// <summary>
-    ///   The first time we start up, we load our JavaScript and start the animation
-    ///   process.
-    /// </summary>
-    /// <param name="firstRender"></param>
-    /// <returns></returns>
     protected override async Task OnAfterRenderAsync( bool firstRender )
     {
         if ( firstRender )
@@ -166,7 +106,6 @@
     /// Handles keyboard input for WASD and Arrow keys, sending movement command to the server.
     /// Invoked from JS with the pressed key string.
     /// </summary>
-    /// <param name="key">Key string from JavaScript's event.key</param>
     [JSInvokable]
     public void HandleKeyPress(string key)
     {
@@ -180,105 +119,92 @@
         {
             case "arrowup":
             case "w":
-                network.SendLine(UpCommand);
+                connection.SendLine(UpCommand);
                 break;
             case "arrowright":
             case "d":
-                network.SendLine(RightCommand);
+                connection.SendLine(RightCommand);
                 break;
             case "arrowdown":
             case "s":
-                network.SendLine(DownCommand);
+                connection.SendLine(DownCommand);
                 break;
             case "arrowleft":
             case "a":
-                network.SendLine(LeftCommand);
+                connection.SendLine(LeftCommand);
                 break;
             default:
-                // ignore other keys
                 break;
         }
-
-        return;
     }
 
     /// <summary>
-    /// Draws a single frame of the game to the canvas based on the current state of the WorldModel.
-    /// This method is called repeatedly in the render loop.
+    /// Draw a single frame to the canvas based on the current World state.
+    /// Invoked continuously by JavaScript with a timestamp.
     /// </summary>
-    /// <returns>A task representing the drawing operation.</returns>
     [JSInvokable]
     public async Task Draw(double _)
     {
         try
         {
-            frameNumber++;
+            frameCount++;
             await context.BeginBatchAsync();
+
+            // Clip to canvas, center origin, and draw background
             await context.BeginPathAsync();
-            await context.RectAsync( 0, 0, 2000, 2000);
+            await context.RectAsync( 0, 0, CanvasWidth, CanvasHeight );
             await context.ClipAsync();
 
             await context.SaveAsync();
-            await context.TranslateAsync( 2000 / 2, 2000/ 2 );
+            var halfW = CanvasWidth / 2;
+            var halfH = CanvasHeight / 2;
+            await context.TranslateAsync( halfW, halfH );
 
-
-            // Draw Background.
             await context.SetFillStyleAsync( "darkblue" );
-            await context.FillRectAsync( -1000, -1000, canvasReference.Width, canvasReference.Height);
+            await context.FillRectAsync( -halfW, -halfH, canvasReference.Width, canvasReference.Height );
 
-            // Draw "World Model" (i.e., rectangles)
-            IEnumerable<Snake> currentSnakes;
-            IEnumerable<PowerUp> currentPowerUps;
-            IEnumerable<Wall> currentWalls;
-            lock (worldModel)
+            // Capture snapshots to avoid holding the lock during drawing
+            IEnumerable<Snake> snakes;
+            IEnumerable<PowerUp> powerUps;
+            IEnumerable<Wall> walls;
+            lock (world)
             {
-                currentSnakes = worldModel.Snakes.Values;
-                currentPowerUps = worldModel.PowerUps.Values;
-                currentWalls = worldModel.Walls.Values;
+                snakes = world.Snakes.Values;
+                powerUps = world.PowerUps.Values;
+                walls = world.Walls.Values;
             }
 
-            foreach (var snake in currentSnakes)
+            // Snakes
+            foreach (var snake in snakes)
             {
-                //TODO make art style better
                 await context.Draw(snake);
-                // await context.FillTextAsync(snake.Name, snake.Head.X + 10, snake.Head.Y - 10);
-                // if (!snake.Died)
-                // {
-                //     await context.BeginPathAsync();
-                //     await context.SetFillStyleAsync("red");
-                //     await context.ArcAsync(snake.Head.X, snake.Head.Y, 5, 0, 360);
-                //     await context.FillAsync();
-                // }
             }
 
-            foreach (var powerUp in currentPowerUps)
+            // Power-ups
+            foreach (var powerUp in powerUps)
             {
-                if (powerUp.IsDead)
-                {
-                    //TODO make more memory efficent (remove dead powerups).
-                    continue;
-                }
+                if (powerUp.IsDead) continue;
                 await context.SetFillStyleAsync("yellow");
                 await context.FillRectAsync(powerUp.Position.X - 8, powerUp.Position.Y - 8, 16, 16);
-
             }
 
-            int segmentSize = 50;
-            foreach (var wall in currentWalls)
+            // Walls
+            const int segmentSize = 50;
+            await context.SetFillStyleAsync("red");
+            foreach (var wall in walls)
             {
-                await context.SetFillStyleAsync("red");
                 foreach (Point2D segment in wall.GetSegments())
                 {
-                    await context.FillRectAsync(segment.X -25, segment.Y - 25, segmentSize, segmentSize);
+                    await context.FillRectAsync(segment.X - 25, segment.Y - 25, segmentSize, segmentSize);
                 }
             }
 
-            // Draw Heads Up Display - do this last so it is on top
+            // HUD
             await context.SetFontAsync( "30px Arial" );
             await context.SetFillStyleAsync( "white" );
             await context.FillTextAsync( $"FPS: {AvgFps:F1}", 400, 30 );
-            await context.RestoreAsync();
 
+            await context.RestoreAsync();
             await context.EndBatchAsync();
         }
         catch ( Exception e )
