@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
-using System.Text.Json;
 using CS3500.Networking;
-using System.Threading.Tasks;
 using Blazor.Extensions.Canvas.Canvas2D;
 using Microsoft.JSInterop;
 
@@ -18,36 +16,36 @@ public partial class SnakeGame
     /// <summary>
     /// The authoritative world model as provided by the server.
     /// </summary>
-    private static World world = null!;
+    private static World World = null!;
 
     /// <summary>
     /// The unique ID assigned by the server for this player.
     /// </summary>
-    private static int playerId = -1;
+    private static int PlayerId = -1;
 
     /// <summary>
     /// Frame counter used for FPS computation.
     /// </summary>
-    private static int frameCount = 0;
+    private static int FrameCount;
 
     /// <summary>
     /// Wall-clock timer used to compute average frames-per-second.
     /// </summary>
-    private static readonly Stopwatch gameTimer = new();
+    private static readonly Stopwatch GameTimer = new();
 
     /// <summary>
     /// Static ctor to begin timing immediately. FPS resets when reconnecting.
     /// </summary>
     static SnakeGame()
     {
-        gameTimer.Start();
+        GameTimer.Start();
     }
 
     /// <summary>
-    /// Average frames per second since <see cref="gameTimer"/> was started or last restarted.
+    /// Average frames per second since <see cref="GameTimer"/> was started or last restarted.
     /// Used only for HUD display.
     /// </summary>
-    private float AvgFps => frameCount / (float)gameTimer.Elapsed.TotalSeconds;
+    private float AvgFps => FrameCount / (float)GameTimer.Elapsed.TotalSeconds;
 
     /// <summary>
     /// Disconnects from the server and resets the <see cref="connection"/> instance.
@@ -69,8 +67,8 @@ public partial class SnakeGame
     private async void Connect()
     {
         Logger.LogInformation("Attempting to connect to server {Host}:{Port} as '{Player}'.", serverHost, serverPort, playerName);
-        gameTimer.Restart();
-        frameCount = 0;
+        GameTimer.Restart();
+        FrameCount = 0;
         await Task.Run(() =>
         {
             // Show spinner while establishing connection
@@ -92,9 +90,9 @@ public partial class SnakeGame
 
             // Server replies with our player id and world size.
             // TODO: Consider validating and catching parse exceptions for server responses.
-            playerId = int.Parse(connection.ReceiveLine());
-            world = new World(int.Parse(connection.ReceiveLine()));
-            Logger.LogInformation("Received player id {PlayerId} and world size {WorldSize}.", playerId, world.Size);
+            PlayerId = int.Parse(connection.ReceiveLine());
+            World = new World(int.Parse(connection.ReceiveLine()));
+            Logger.LogInformation("Received player id {PlayerId} and world size {WorldSize}.", PlayerId, World.Size);
 
             // Start JS-driven animation loop now that the world exists.
             // TODO: Consider catching JS interop errors and handling gracefully.
@@ -109,7 +107,7 @@ public partial class SnakeGame
                 if (!string.IsNullOrWhiteSpace(message))
                 {
                     // Update the world with the server-provided JSON payload
-                    world.UpdateElement(message);
+                    World.UpdateElement(message);
                 }
             }
 
@@ -158,7 +156,7 @@ public static class ContextExtensions
     /// <param name="snakes">The sequence of snakes to render.</param>
     public static async Task Draw(this Canvas2DContext context, IEnumerable<Snake> snakes)
     {
-        foreach (var snake in snakes)
+        foreach (Snake snake in snakes)
         {
             await context.Draw(snake);
         }
@@ -181,7 +179,7 @@ public static class ContextExtensions
     /// <param name="powerUps">The sequence of power-ups to render.</param>
     public static async Task Draw(this Canvas2DContext context, IEnumerable<PowerUp> powerUps)
     {
-        foreach (var powerUp in powerUps)
+        foreach (PowerUp powerUp in powerUps)
         {
             await context.SetFillStyleAsync("yellow");
             if (powerUp.IsDead)
@@ -201,7 +199,7 @@ public static class ContextExtensions
     public static async Task Draw(this Canvas2DContext context, IEnumerable<Wall> walls)
     {
         await context.SetFillStyleAsync("red");
-        foreach (var wall in walls)
+        foreach (Wall wall in walls)
         {
             await context.Draw(wall);
         }

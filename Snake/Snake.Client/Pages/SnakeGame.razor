@@ -6,7 +6,6 @@
 @using Blazor.Extensions.Canvas
 @using Blazor.Extensions.Canvas.Canvas2D
 @using CS3500.Networking
-@using Microsoft.Extensions.Logging.Abstractions
 @using System.Text.Json
 @using CS3500.Snake.Models
 
@@ -56,7 +55,7 @@
     /// <summary>
     /// Reference to the BECanvas component instance, assigned by Blazor via @ref after first render.
     /// </summary>
-    private BECanvasComponent canvasReference;
+    private BECanvasComponent canvasReference = null!;
 
     /// <summary>
     /// 2D drawing context created for the canvas. Used to issue all drawing commands.
@@ -89,13 +88,13 @@
 
     /// <summary>
     /// Status message shown under the connection controls (e.g., errors or info).
-    /// TODO make usefull
+    /// TODO make useful
     /// </summary>
-    private string serverStatusMessage = string.Empty;
+    private readonly string serverStatusMessage = string.Empty;
 
     /// <summary>
     /// CSS class name for the connection spinner ("spinner" to show, empty to hide).
-    /// TODO make usefull
+    /// TODO make useful
     /// </summary>
     private string connectionSpinnerClass = string.Empty;
 
@@ -191,13 +190,11 @@
             case "a":
                 connection.SendLine(LeftCommand);
                 break;
-            default:
-                break;
         }
     }
 
     /// <summary>
-    /// Renders a single frame to the canvas based on the current <see cref="world"/> state.
+    /// Renders a single frame to the canvas based on the current <see cref="World"/> state.
     /// This is invoked from JavaScript on each animation frame (typically ~60FPS) with a timestamp.
     /// </summary>
     /// <param name="_">Timestamp from <c>requestAnimationFrame</c> (unused).</param>
@@ -206,7 +203,7 @@
     {
         try
         {
-            frameCount++;
+            FrameCount++;
             await context.BeginBatchAsync();
 
             // Clip to canvas, center origin, and draw background
@@ -221,10 +218,10 @@
             await context.TranslateAsync( halfW, halfH );
 
             // Snapshot current world state references
-            IEnumerable<Snake> snakes = world.Snakes.Values;
-            Point2D head = world.Snakes[playerId].Head;
-            IEnumerable<PowerUp> powerUps = world.PowerUps.Values;
-            IEnumerable<Wall> walls = world.Walls.Values;
+            IEnumerable<Snake> snakes = World.Snakes.Values;
+            Point2D head = World.Snakes[PlayerId].Head;
+            IEnumerable<PowerUp> powerUps = World.PowerUps.Values;
+            IEnumerable<Wall> walls = World.Walls.Values;
 
             // Camera follow: translate so the player's head is centered
             await context.TranslateAsync( -head.X, -head.Y );
@@ -232,7 +229,7 @@
             // Draw background over everything
             // TODO is not filling "outside" world, and looks wierd on respawn.
             await context.SetFillStyleAsync( "darkblue" );
-            await context.FillRectAsync( -world.Size / 2, -world.Size / 2, world.Size, world.Size);
+            await context.FillRectAsync( -World.Size / 2, -World.Size / 2, World.Size, World.Size);
 
             // Draw each of the element types:
             await context.Draw(snakes);      // Snakes
@@ -240,7 +237,7 @@
             await context.Draw(walls);       // Walls
 
 
-            // HUD 
+            // HUD
             await context.SetFontAsync( "30px Arial" );
             await context.SetFillStyleAsync( "white" );
             await context.FillTextAsync( $"FPS: {AvgFps:F1}", 400, 30 );
