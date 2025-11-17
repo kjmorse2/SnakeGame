@@ -44,8 +44,10 @@ public partial class SnakeGame
     private void DisconnectFromServer()
     {
         Logger.LogInformation("Disconnecting from server.");
+        // TODO: Consider catching and handling disconnect exceptions gracefully.
         connection.Disconnect();
         connection = new NetworkConnection(Logger);
+        Logger.LogInformation("Disconnected and reset connection instance.");
     }
 
     /// <summary>
@@ -53,43 +55,53 @@ public partial class SnakeGame
     /// </summary>
     private async void Connect()
     {
+        Logger.LogInformation("Attempting to connect to server {Host}:{Port} as '{Player}'.", serverHost, serverPort, playerName);
         await Task.Run(() =>
         {
             connectionSpinnerClass = "spinner";
             InvokeAsync(StateHasChanged); // update UI to show connection status
 
-            //TODO prevent commands before walls
-            //TODO prevent client from sending more than one command per frame.
-
+            // TODO: Catch and handle connection exceptions (e.g., server not reachable, refused, DNS issues) and update UI.
             connection.Connect(serverHost, serverPort);
+            Logger.LogInformation("Connected to server.");
+
             connectionSpinnerClass = string.Empty;
             InvokeAsync(StateHasChanged);
 
             // Send first message: the username
-            Logger.LogInformation($"Connected to server, sending username: {playerName}");
+            Logger.LogInformation("Sending username to server.");
+            // TODO: Consider catching send exceptions gracefully.
             connection.SendLine(playerName);
 
             // Server replies with our player id and world size
+            // TODO: Consider validating and catching parse exceptions for server responses.
             playerId = int.Parse(connection.ReceiveLine());
             world = new World(int.Parse(connection.ReceiveLine()));
+            Logger.LogInformation("Received player id {PlayerId} and world size {WorldSize}.", playerId, world.Size);
 
             // Begin JS animation loop after successful connection
+            // TODO: Consider catching JS interop errors and handling gracefully.
             _jsModule.InvokeVoidAsync("ToggleAnimation", true);
+            Logger.LogInformation("Animation loop started via JS interop.");
 
-            // Receive world updates
+            // Receive world updates (no logging inside tight loop to avoid noise)
             while (connection.IsConnected)
             {
+                // TODO: Consider handling network read exceptions and malformed messages gracefully.
                 string message = connection.ReceiveLine();
                 if (!string.IsNullOrWhiteSpace(message))
                 {
                     world.UpdateElement(message);
                 }
             }
+
+            Logger.LogWarning("Connection closed by server or client.");
         });
 
         // Reset FPS metrics after connection loop
         frameCount = 0;
         gameTimer.Restart();
+        Logger.LogInformation("FPS metrics reset after connection end.");
     }
 }
 

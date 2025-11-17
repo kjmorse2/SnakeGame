@@ -88,17 +88,20 @@
     {
         base.OnInitialized();
         connection = new NetworkConnection( Logger );
-        Logger.LogInformation( "Initializing..." );
+        Logger.LogInformation("SnakeGame component initializing network connection object.");
+        // TODO: Consider handling initialization failures (connection object creation) gracefully.
     }
 
     protected override async Task OnAfterRenderAsync( bool firstRender )
     {
         if ( firstRender )
         {
+            Logger.LogInformation("First render: importing JS module and creating canvas context.");
+            // TODO: Consider wrapping JS import and canvas creation in try/catch and surface user-friendly errors.
             _jsModule = await JsRuntime.InvokeAsync<IJSObjectReference>( "import", "./Pages/SnakeGame.razor.js" );
             context = await canvasReference.CreateCanvas2DAsync();
-
             await _jsModule.InvokeVoidAsync( "initJS", DotNetObjectReference.Create( this ) );
+            Logger.LogInformation("Initialized JS interop and canvas context.");
         }
     }
 
@@ -114,6 +117,7 @@
             return;
         }
 
+        // TODO: Consider try/catch to handle send failures gracefully.
         var k = key.ToLowerInvariant();
         switch (k)
         {
@@ -190,7 +194,9 @@
         }
         catch ( Exception e )
         {
+            // Error-level logging permitted in draw loop
             Logger.LogError(e, "Error drawing");
+            // TODO: Consider surfacing a non-intrusive UI notification and stopping animation on repeated failures.
         }
     }
 }
