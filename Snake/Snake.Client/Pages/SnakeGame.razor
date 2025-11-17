@@ -53,37 +53,86 @@
 
 @code
 {
-    // Drawing/Canvas variables here.
+    /// <summary>
+    /// Reference to the BECanvas component instance, assigned by Blazor via @ref after first render.
+    /// </summary>
     private BECanvasComponent canvasReference;
+
+    /// <summary>
+    /// 2D drawing context created for the canvas. Used to issue all drawing commands.
+    /// </summary>
     private Canvas2DContext context = null!;
+
+    /// <summary>
+    /// JavaScript module backing this component (imported from SnakeGame.razor.js) for animation and input.
+    /// </summary>
     private IJSObjectReference _jsModule = null!;
 
-    // Connection and user inputs
+    // Connection and user inputs -----------------------------------------------------
+
+    /// <summary>
+    /// Hostname or IP address of the Snake server to connect to.
+    /// </summary>
     private string serverHost = "localhost";
+
+    /// <summary>
+    /// TCP port of the Snake server.
+    /// </summary>
     private int serverPort = 11000;
+
+    /// <summary>
+    /// Display name sent to the server on connect.
+    /// </summary>
     private string playerName = "Your Name Here";
 
-    // UI state
+    // UI state ----------------------------------------------------------------------
+
+    /// <summary>
+    /// Status message shown under the connection controls (e.g., errors or info).
+    /// TODO make usefull
+    /// </summary>
     private string serverStatusMessage = string.Empty;
+
+    /// <summary>
+    /// CSS class name for the connection spinner ("spinner" to show, empty to hide).
+    /// TODO make usefull
+    /// </summary>
     private string connectionSpinnerClass = string.Empty;
 
     /// <summary>
-    ///     The NetworkConnection object representing a connection with the server.
+    /// Connection to the Snake server, used to send/receive lines (JSON payloads).
     /// </summary>
     private NetworkConnection connection = null!;
 
-    /// <summary>
-    /// Serialized command to move up.
-    /// </summary>
+    // Pre-serialized control commands ----------------------------------------------
+
+    /// <summary>Serialized command to move up.</summary>
     private readonly string UpCommand = JsonSerializer.Serialize(new ControlCommand("up"));
+
+    /// <summary>Serialized command to move down.</summary>
     private readonly string DownCommand = JsonSerializer.Serialize(new ControlCommand("down"));
+
+    /// <summary>Serialized command to move right.</summary>
     private readonly string RightCommand = JsonSerializer.Serialize(new ControlCommand("right"));
+
+    /// <summary>Serialized command to move left.</summary>
     private readonly string LeftCommand = JsonSerializer.Serialize(new ControlCommand("left"));
 
-    // Canvas dimensions
+    // Canvas dimensions -------------------------------------------------------------
+
+    /// <summary>
+    /// Width of the drawing canvas in pixels.
+    /// </summary>
     private readonly int CanvasWidth = 1000;
+
+    /// <summary>
+    /// Height of the drawing canvas in pixels.
+    /// </summary>
     private readonly int CanvasHeight = 1000;
 
+    /// <summary>
+    /// Initializes the connection object and prepares component state. Runs once when the component is created.
+    /// </summary>
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -92,6 +141,10 @@
         // TODO: Consider handling initialization failures (connection object creation) gracefully.
     }
 
+    /// <summary>
+    /// On first render, imports the JavaScript module, creates the Canvas2D context, and performs JS interop setup.
+    /// </summary>
+    /// <param name="firstRender">True if this is the initial render.</param>
     protected override async Task OnAfterRenderAsync( bool firstRender )
     {
         if ( firstRender )
@@ -106,9 +159,10 @@
     }
 
     /// <summary>
-    /// Handles keyboard input for WASD and Arrow keys, sending movement command to the server.
-    /// Invoked from JS with the pressed key string.
+    /// Handles keyboard input for WASD and Arrow keys sent from JavaScript and forwards control to the server.
+    /// Exposed to JavaScript via JS interop.
     /// </summary>
+    /// <param name="key">The value of <c>event.key</c> from the DOM keydown event.</param>
     [JSInvokable]
     public void HandleKeyPress(string key)
     {
@@ -143,9 +197,10 @@
     }
 
     /// <summary>
-    /// Draw a single frame to the canvas based on the current World state.
-    /// Invoked continuously by JavaScript with a timestamp.
+    /// Renders a single frame to the canvas based on the current <see cref="world"/> state.
+    /// This is invoked from JavaScript on each animation frame (typically ~60FPS) with a timestamp.
     /// </summary>
+    /// <param name="_">Timestamp from <c>requestAnimationFrame</c> (unused).</param>
     [JSInvokable]
     public async Task Draw(double _)
     {
@@ -160,31 +215,32 @@
             await context.ClipAsync();
             await context.SaveAsync();
 
+            // Use integer halves to keep coordinate math simple here
             var halfW = CanvasWidth / 2;
             var halfH = CanvasHeight / 2;
             await context.TranslateAsync( halfW, halfH );
 
+            // Snapshot current world state references
             IEnumerable<Snake> snakes = world.Snakes.Values;
             Point2D head = world.Snakes[playerId].Head;
             IEnumerable<PowerUp> powerUps = world.PowerUps.Values;
             IEnumerable<Wall> walls = world.Walls.Values;
+
+            // Camera follow: translate so the player's head is centered
             await context.TranslateAsync( -head.X, -head.Y );
 
-
+            // Draw background over everything
+            // TODO is not filling "outside" world, and looks wierd on respawn.
             await context.SetFillStyleAsync( "darkblue" );
             await context.FillRectAsync( -world.Size / 2, -world.Size / 2, world.Size, world.Size);
 
             // Draw each of the element types:
-
-            // Snakes
-            await context.Draw(snakes);
-            // Power Ups
-            await context.Draw(powerUps);
-            // Walls
-            await context.Draw(walls);
+            await context.Draw(snakes);      // Snakes
+            await context.Draw(powerUps);    // Power Ups
+            await context.Draw(walls);       // Walls
 
 
-            // HUD
+            // HUD 
             await context.SetFontAsync( "30px Arial" );
             await context.SetFillStyleAsync( "white" );
             await context.FillTextAsync( $"FPS: {AvgFps:F1}", 400, 30 );
