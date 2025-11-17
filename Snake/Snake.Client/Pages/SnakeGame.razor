@@ -81,8 +81,8 @@
     private readonly string LeftCommand = JsonSerializer.Serialize(new ControlCommand("left"));
 
     // Canvas dimensions
-    private readonly int CanvasWidth = 2000;
-    private readonly int CanvasHeight = 2000;
+    private readonly int CanvasWidth = 1000;
+    private readonly int CanvasHeight = 1000;
 
     protected override void OnInitialized()
     {
@@ -154,22 +154,21 @@
             await context.BeginPathAsync();
             await context.RectAsync( 0, 0, CanvasWidth, CanvasHeight );
             await context.ClipAsync();
-
             await context.SaveAsync();
+
             var halfW = CanvasWidth / 2;
             var halfH = CanvasHeight / 2;
             await context.TranslateAsync( halfW, halfH );
 
-            await context.SetFillStyleAsync( "darkblue" );
-            await context.FillRectAsync( -halfW, -halfH, canvasReference.Width, canvasReference.Height );
+            IEnumerable<Snake> snakes = world.Snakes.Values;
+            Point2D head = world.Snakes[playerId].Head;
+            IEnumerable<PowerUp> powerUps = world.PowerUps.Values;
+            IEnumerable<Wall> walls = world.Walls.Values;
+            await context.TranslateAsync( -head.X, -head.Y );
 
-            // Capture snapshots to avoid holding the lock during drawing
-            IEnumerable<Snake> snakes;
-            IEnumerable<PowerUp> powerUps;
-            IEnumerable<Wall> walls;
-            snakes = world.Snakes.Values;
-            powerUps = world.PowerUps.Values;
-            walls = world.Walls.Values;
+
+            await context.SetFillStyleAsync( "darkblue" );
+            await context.FillRectAsync( -world.Size / 2, -world.Size / 2, world.Size, world.Size);
 
             // Draw each of the element types:
 
