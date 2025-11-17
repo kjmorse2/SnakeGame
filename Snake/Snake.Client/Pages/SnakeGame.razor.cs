@@ -74,7 +74,10 @@ public partial class SnakeGame
             Logger.LogInformation($"Connected to server, sending username: {userName}");
             network.SendLine(userName);
             playerId = int.Parse(network.ReceiveLine());
-            worldModel = new(int.Parse(network.ReceiveLine()));
+            lock(worldModel)
+            {
+                worldModel = new(int.Parse(network.ReceiveLine()));
+            }
             while (network.IsConnected)
             {
                 string line = network.ReceiveLine();
