@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Concurrent;
+using System.Text.Json;
 using CS3500.Networking;
 
 namespace CS3500.Snake.Models;
@@ -53,15 +54,15 @@ public class World
     /// <summary>
     /// Gets a list of snakes in the current game world.
     /// </summary>
-    public Dictionary<int, Snake> Snakes { get; } = new(100);
+    public ConcurrentDictionary<int, Snake> Snakes { get; } = new();
 
     /// <summary>
     /// Gets a list of walls in the current game world.
     /// </summary>
-    public Dictionary<int, Wall> Walls { get; } = new(100);
+    public ConcurrentDictionary<int, Wall> Walls { get; } = new();
 
     /// <summary>
     /// Gets a list of power-ups in the current game world.
     /// </summary>
-    public Dictionary<int, PowerUp> PowerUps { get; } = new();
+    public ConcurrentDictionary<int, PowerUp> PowerUps { get; } = new();
 }

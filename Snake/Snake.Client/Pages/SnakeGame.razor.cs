@@ -82,10 +82,7 @@ public partial class SnakeGame
                 string message = connection.ReceiveLine();
                 if (!string.IsNullOrWhiteSpace(message))
                 {
-                    lock (world)
-                    {
-                        world.UpdateElement(message);
-                    }
+                    world.UpdateElement(message);
                 }
             }
         });
@@ -105,20 +102,63 @@ public static class ContextExtensions
     ///  Draws the full snake to the canvas.
     /// </summary>
     /// <param name="context">Canvas context</param>
-    /// <param name="s">Snake to draw.</param>
-    public static async Task Draw(this Canvas2DContext context, Snake s)
+    /// <param name="snake">Snake to draw.</param>
+    public static async Task Draw(this Canvas2DContext context, Snake snake)
     {
         float oldLineWidth = context.LineWidth;
         await context.SetLineWidthAsync(10);
         await context.BeginPathAsync();
-        await context.MoveToAsync(s.Tail.X, s.Tail.Y);
-        for (int i = 1; i < s.Body.Count - 1; i++)
+        await context.MoveToAsync(snake.Tail.X, snake.Tail.Y);
+        for (int i = 1; i < snake.Body.Count - 1; i++)
         {
-            await context.LineToAsync(s.Body[i].X, s.Body[i].Y);
+            await context.LineToAsync(snake.Body[i].X, snake.Body[i].Y);
         }
-        await context.LineToAsync(s.Head.X, s.Head.Y);
+        await context.LineToAsync(snake.Head.X, snake.Head.Y);
         await context.SetStrokeStyleAsync("green");
         await context.StrokeAsync();
         await context.SetLineWidthAsync(oldLineWidth);
+    }
+
+    public static async Task Draw(this Canvas2DContext context, IEnumerable<Snake> snakes)
+    {
+        foreach (var snake in snakes)
+        {
+            await context.Draw(snake);
+        }
+    }
+
+    public static async Task Draw(this Canvas2DContext context, PowerUp powerUp)
+    {
+        await context.FillRectAsync(powerUp.Position.X - 8, powerUp.Position.Y - 8, 16, 16);
+    }
+    public static async Task Draw(this Canvas2DContext context, IEnumerable<PowerUp> powerUps)
+    {
+        foreach (var powerUp in powerUps)
+        {
+            await context.SetFillStyleAsync("yellow");
+            if (powerUp.IsDead)
+            {
+                // TODO make memory efficient.
+                continue;
+            }
+            await context.Draw(powerUp);
+        }
+    }
+
+    public static async Task Draw(this Canvas2DContext context, IEnumerable<Wall> walls)
+    {
+        await context.SetFillStyleAsync("red");
+        foreach (var wall in walls)
+        {
+            await context.Draw(wall);
+        }
+    }
+
+    public static async Task Draw(this Canvas2DContext context, Wall wall)
+    {
+        foreach (Point2D segment in wall.GetSegments())
+        {
+            await context.FillRectAsync(segment.X - 25, segment.Y - 25, Wall.SegmentSize, Wall.SegmentSize);
+        }
     }
 }

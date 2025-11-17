@@ -167,37 +167,19 @@
             IEnumerable<Snake> snakes;
             IEnumerable<PowerUp> powerUps;
             IEnumerable<Wall> walls;
-            lock (world)
-            {
-                snakes = world.Snakes.Values;
-                powerUps = world.PowerUps.Values;
-                walls = world.Walls.Values;
-            }
+            snakes = world.Snakes.Values;
+            powerUps = world.PowerUps.Values;
+            walls = world.Walls.Values;
+
+            // Draw each of the element types:
 
             // Snakes
-            foreach (var snake in snakes)
-            {
-                await context.Draw(snake);
-            }
-
-            // Power-ups
-            foreach (var powerUp in powerUps)
-            {
-                if (powerUp.IsDead) continue;
-                await context.SetFillStyleAsync("yellow");
-                await context.FillRectAsync(powerUp.Position.X - 8, powerUp.Position.Y - 8, 16, 16);
-            }
-
+            await context.Draw(snakes);
+            // Power Ups
+            await context.Draw(powerUps);
             // Walls
-            const int segmentSize = 50;
-            await context.SetFillStyleAsync("red");
-            foreach (var wall in walls)
-            {
-                foreach (Point2D segment in wall.GetSegments())
-                {
-                    await context.FillRectAsync(segment.X - 25, segment.Y - 25, segmentSize, segmentSize);
-                }
-            }
+            await context.Draw(walls);
+
 
             // HUD
             await context.SetFontAsync( "30px Arial" );

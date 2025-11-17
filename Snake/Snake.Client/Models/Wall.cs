@@ -12,6 +12,7 @@ namespace CS3500.Snake.Models;
 /// </summary>
 public class Wall
 {
+    public static readonly int SegmentSize = 50;
     /// <summary>
     /// Gets or sets a unique identifier for the wall.
     /// </summary>
