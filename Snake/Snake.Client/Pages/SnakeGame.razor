@@ -159,7 +159,6 @@
             context = await canvasReference.CreateCanvas2DAsync();
 
             await _jsModule.InvokeVoidAsync( "initJS", DotNetObjectReference.Create( this ) );
-            await _jsModule.InvokeVoidAsync( "ToggleAnimation", true );
         }
     }
 
@@ -215,10 +214,17 @@
         {
             frameNumber++;
             await context.BeginBatchAsync();
+            await context.BeginPathAsync();
+            await context.RectAsync( 0, 0, 2000, 2000);
+            await context.ClipAsync();
+
+            await context.SaveAsync();
+            await context.TranslateAsync( 2000 / 2, 2000/ 2 );
+
 
             // Draw Background.
             await context.SetFillStyleAsync( "darkblue" );
-            await context.FillRectAsync( 0, 0, canvasReference.Width, canvasReference.Height);
+            await context.FillRectAsync( -1000, -1000, canvasReference.Width, canvasReference.Height);
 
             // Draw "World Model" (i.e., rectangles)
             IEnumerable<Snake> currentSnakes;
@@ -271,6 +277,7 @@
             await context.SetFontAsync( "30px Arial" );
             await context.SetFillStyleAsync( "white" );
             await context.FillTextAsync( $"FPS: {AvgFps:F1}", 400, 30 );
+            await context.RestoreAsync();
 
             await context.EndBatchAsync();
         }
