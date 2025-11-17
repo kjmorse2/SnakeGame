@@ -221,7 +221,6 @@ public sealed class NetworkConnection : IDisposable
         networkLogger.LogDebug($"NetworkConnection is attempting to send message: {message}");
         try
         {
-            Console.WriteLine(message);
             networkWriter!.WriteLine(message.Trim());
             networkLogger.LogDebug($"NetworkConnection sent message: {message}");
         }

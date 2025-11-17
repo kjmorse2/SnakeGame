@@ -50,9 +50,8 @@
         var disconnected = !network.IsConnected;
         var grayedOut = disconnected ? "grayedOut" : string.Empty;
     }
-    <div id="myCanvas"
-         @onkeydown = "HandleKeyPress">
-    <BECanvas Width="CanvasWidth" Height="CanvasHeight" @ref="canvasReference"/>
+    <div id="myCanvas">
+        <BECanvas Width="CanvasWidth" Height="CanvasHeight" @ref="canvasReference"/>
     </div>
 </div>
 
@@ -166,55 +165,56 @@
 
     /// <summary>
     /// Handles keyboard input for WASD and Arrow keys, sending movement command to the server.
+    /// Invoked from JS with the pressed key string.
     /// </summary>
-    /// <param name="e"><Keeyboard event./param>
+    /// <param name="key">Key string from JavaScript's event.key</param>
     [JSInvokable]
-    private void HandleKeyPress(KeyboardEventArgs e)
+    public void HandleKeyPress(string key)
     {
-        switch (e.Key)
+        if (string.IsNullOrEmpty(key))
         {
-            case "ArrowUp":
-            case "W":
+            return;
+        }
+
+        var k = key.ToLowerInvariant();
+        switch (k)
+        {
+            case "arrowup":
+            case "w":
                 network.SendLine(UpCommand);
                 break;
-
-            case "ArrowRight":
-            case "D":
+            case "arrowright":
+            case "d":
                 network.SendLine(RightCommand);
                 break;
-
-            case "ArrowDown":
-            case "S":
+            case "arrowdown":
+            case "s":
                 network.SendLine(DownCommand);
                 break;
-
-            case "ArrowLeft":
-            case "A":
+            case "arrowleft":
+            case "a":
                 network.SendLine(LeftCommand);
                 break;
-                //TODO is default necessary?
+            default:
+                // ignore other keys
+                break;
         }
+
+        return;
     }
 
-    [JSInvokable]
     /// <summary>
     /// Draws a single frame of the game to the canvas based on the current state of the WorldModel.
     /// This method is called repeatedly in the render loop.
     /// </summary>
     /// <returns>A task representing the drawing operation.</returns>
-    public async Task Draw()
+    [JSInvokable]
+    public async Task Draw(double _)
     {
         try
         {
             frameNumber++;
-            // Group all the draw commands into one large single draw.
             await context.BeginBatchAsync();
-            
-
-
-
-            //int viewWidth = CanvasWidth;
-            //int viewHeight = CanvasHeight;
 
             // Draw Background.
             await context.SetFillStyleAsync( "darkblue" );
@@ -277,5 +277,3 @@
         }
     }
 }
-
-
