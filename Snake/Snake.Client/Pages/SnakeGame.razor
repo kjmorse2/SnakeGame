@@ -247,6 +247,11 @@
 
             foreach (var powerUp in currentPowerUps)
             {
+                if (powerUp.IsDead)
+                {
+                    //TODO make more memory efficent (remove dead powerups).
+                    continue;
+                }
                 await context.SetFillStyleAsync("yellow");
                 await context.FillRectAsync(powerUp.Position.X - 8, powerUp.Position.Y - 8, 16, 16);
                 await context.FillAsync();
