@@ -231,19 +231,18 @@
                 currentWalls = worldModel.Walls.Values;
             }
 
-            await context.SetFillStyleAsync( "yellow" );
             foreach (var snake in currentSnakes)
             {
                 //TODO make art style better
                 await context.Draw(snake);
-                await context.FillTextAsync(snake.Name, snake.Head.X + 10, snake.Head.Y - 10);
-                if (!snake.Died)
-                {
-                    await context.BeginPathAsync();
-                    await context.SetFillStyleAsync("red");
-                    await context.ArcAsync(snake.Head.X, snake.Head.Y, 5, 0, 360);
-                    await context.FillAsync();
-                }
+                // await context.FillTextAsync(snake.Name, snake.Head.X + 10, snake.Head.Y - 10);
+                // if (!snake.Died)
+                // {
+                //     await context.BeginPathAsync();
+                //     await context.SetFillStyleAsync("red");
+                //     await context.ArcAsync(snake.Head.X, snake.Head.Y, 5, 0, 360);
+                //     await context.FillAsync();
+                // }
             }
 
             foreach (var powerUp in currentPowerUps)

@@ -111,13 +111,13 @@ public static class ContextExtensions
         float oldLineWidth = context.LineWidth;
         await context.SetLineWidthAsync(10);
         await context.BeginPathAsync();
-        await context.MoveToAsync(s.Head.X, s.Head.Y);
+        await context.MoveToAsync(s.Tail.X, s.Tail.Y);
         for (int i = 1; i < s.Body.Count - 1; i++)
         {
-            await context.MoveToAsync(s.Body[i].X, s.Body[i].Y);
+            await context.LineToAsync(s.Body[i].X, s.Body[i].Y);
         }
+        await context.LineToAsync(s.Head.X, s.Head.Y);
         await context.SetStrokeStyleAsync("green");
-        await context.LineToAsync(s.Tail.X, s.Tail.Y);
         await context.StrokeAsync();
         await context.SetLineWidthAsync(oldLineWidth);
     }
