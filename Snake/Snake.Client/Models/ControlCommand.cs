@@ -7,31 +7,23 @@ using System.Text.Json.Serialization;
 namespace CS3500.Snake.Models;
 
 /// <summary>
-/// TODO Document ControlCommand class
+/// Represents a client control command indicating the desired movement direction for a snake.
+/// Serialized and sent to the server; the server interprets the direction string.
 /// </summary>
-public class ControlCommand
+public class ControlCommand(string direction)
 {
-    public ControlCommand()
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ControlCommand"/> class with an empty direction.
+    /// Required for JSON deserialization.
+    /// </summary>
+    public ControlCommand() : this(string.Empty)
     {
-        Direction = string.Empty;
     }
 
-    public ControlCommand(string direction)
-    {
-        this.Direction =  direction;
-    }
     /// <summary>
-    /// <p>
-    /// Gets or sets the direction the snake is moving.
-    /// </p>
-    /// Possible values are:
-    /// <list type="bullet">
-    /// "up" - Move the snake up.
-    /// "down" - Move the snake down.
-    /// "left" - Move the snake left.
-    /// "right" - Move the snake right.
-    /// </list>
+    /// Gets or sets the movement direction requested by the player.
+    /// Valid values: "up", "down", "left", "right". An empty string represents no movement.
     /// </summary>
     [JsonPropertyName("moving")]
-    public string Direction { get; set; }
+    public string Direction { get; set; } = direction;
 }

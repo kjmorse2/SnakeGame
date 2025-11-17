@@ -3,84 +3,67 @@
 namespace CS3500.Snake.Models;
 
 /// <summary>
-/// Notes:
-///     Walls are always axis-aligned.
-///     Walls can be anywhere, as long as the distance between p1 and p2 is a multiple of 50.
-///     Order of p1 and p2 does not matter.
-///     Walls can overlap
-/// TODO Document Wall class
+/// Represents an axis-aligned wall occupying a continuous span of 50px segments between two endpoints.
+/// Endpoints may be given in any order. Overlapping walls are allowed.
 /// </summary>
 public class Wall
 {
-    public static readonly int SegmentSize = 50;
     /// <summary>
-    /// Gets or sets a unique identifier for the wall.
+    /// Size (width and height) in pixels of each wall segment.
+    /// </summary>
+    public static readonly int SegmentSize = 50;
+
+    /// <summary>
+    /// Gets the unique identifier for the wall.
     /// </summary>
     [JsonPropertyName("wall")]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     /// <summary>
-    /// Gets or sets the starting point of the wall.
+    /// Gets the first endpoint (unordered) of the wall span.
     /// </summary>
     [JsonPropertyName("p1")]
-    public Point2D p1 { get; set; }
+    public required Point2D P1 { get; init; }
 
     /// <summary>
-    /// Gets or sets the ending point of the wall.
+    /// Gets the second endpoint (unordered) of the wall span.
     /// </summary>
     [JsonPropertyName("p2")]
-    public Point2D p2 { get; set; }
+    public required Point2D P2 { get; init; }
 
-    private bool IsVertical
-    {
-        get
-        {
-            return p1.X == p2.X;
-        }
-    }
+    /// <summary>
+    /// Gets a value indicating whether the wall is vertical (same X coordinate).
+    /// </summary>
+    private bool IsVertical => P1.X == P2.X;
 
-    public Point2D Start
-    {
-        get
-        {
-            return new Point2D
-            {
-                X = Math.Min(p1.X, p2.X),
-                Y = Math.Min(p1.Y, p2.Y)
-            };
-        }
-    }
+    /// <summary>
+    /// Gets the normalized minimum (top-left) endpoint regardless of input order.
+    /// </summary>
+    private Point2D Start => new() { X = Math.Min(P1.X, P2.X), Y = Math.Min(P1.Y, P2.Y) };
 
-    public Point2D End
-    {
-        get
-        {
-            return new Point2D
-            {
-                X = Math.Max(p1.X, p2.X),
-                Y = Math.Max(p1.Y, p2.Y)
-            };
-        }
-    }
+    /// <summary>
+    /// Gets the normalized maximum (bottom-right) endpoint regardless of input order.
+    /// </summary>
+    private Point2D End => new() { X = Math.Max(P1.X, P2.X), Y = Math.Max(P1.Y, P2.Y) };
 
+    /// <summary>
+    /// Enumerates each discrete 50px segment position along the wall span.
+    /// </summary>
+    /// <returns>Sequence of segment center points aligned to the grid.</returns>
     public IEnumerable<Point2D> GetSegments()
     {
-        if (p1 != null && p2 != null)
+        if (IsVertical)
         {
-            if (IsVertical)
+            for (int y = Start.Y; y <= End.Y; y += SegmentSize)
             {
-                for (int y = Start.Y; y <= End.Y; y += 50)
-                {
-                    yield return new Point2D { X = p1.X, Y = y } ;
-                }
+                yield return new Point2D { X = P1.X, Y = y } ;
             }
-            else
+        }
+        else
+        {
+            for (int x = Start.X; x <= End.X; x += SegmentSize)
             {
-
-                for (int x = Start.X; x <= End.X; x += 50)
-                {
-                    yield return new Point2D { X = x, Y = p1.Y };
-                }
+                yield return new Point2D { X = x, Y = P1.Y };
             }
         }
     }

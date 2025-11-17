@@ -2,78 +2,73 @@
 
 namespace CS3500.Snake.Models;
 
+/// <summary>
+/// Represents a player-controlled snake composed of an ordered list of body segment coordinates
+/// (tail first, head last). Transient flags (Died, Join, Dc) indicate state transitions for a single tick.
+/// </summary>
 public class Snake
 {
     /// <summary>
-    /// Gets or sets a unique identifier for the snake.
+    /// Gets the unique identifier for the snake.
     /// </summary>
     [JsonPropertyName("snake")]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     /// <summary>
-    /// Gets or sets the name of the player controlling this snake.
+    /// Gets the display name of the player controlling this snake.
     /// </summary>
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public required string Name { get; init; }
 
     /// <summary>
-    /// Gets or sets the list of points representing the snake's body.
+    /// Gets the ordered body segment coordinates; index 0 is the tail, last index is the head.
     /// </summary>
     [JsonPropertyName("body")]
-    public List<Point2D> Body { get; set; } = new();
-
-    public Point2D Head
-    {
-        get
-        {
-           return Body[Body.Count - 1];
-        }
-    }
-
-    public Point2D Tail
-    {
-        get
-        {
-            return Body[0];
-        }
-    }
+    public List<Point2D> Body { get; init; } = new();
 
     /// <summary>
-    /// Gets or sets the direction vector of the snake.
+    /// Gets the head coordinate (last element of <see cref="Body"/>).
+    /// </summary>
+    public Point2D Head => Body[^1];
+
+    /// <summary>
+    /// Gets the tail coordinate (first element of <see cref="Body"/>).
+    /// </summary>
+    public Point2D Tail => Body[0];
+
+    /// <summary>
+    /// Gets the current movement direction vector (delta per tick) reported by the server.
     /// </summary>
     [JsonPropertyName("dir")]
-    public Point2D Dir { get; set; } = new();
+    public Point2D Dir { get; init; } = new();
 
     /// <summary>
-    /// Gets or sets the score of the snake.
+    /// Gets the accumulated score for this snake.
     /// </summary>
     [JsonPropertyName("score")]
-    public int Score { get; set; }
+    public int Score { get; init; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the snake has died.
-    /// This property is true only on the exact tick the snake dies.
+    /// Gets a value indicating whether the snake has died (true only on the death tick).
     /// </summary>
     [JsonPropertyName("died")]
-    public bool Died { get; set; }
+    public bool Died { get; init; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the snake is alive.
+    /// Gets a value indicating whether the snake is alive (inverse of permanent death condition).
     /// </summary>
     [JsonPropertyName("alive")]
-    public bool Alive { get; set; }
+    public bool Alive { get; init; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the snake is disconnected.
-    /// Used to remove players from the model when they leave the game.
+    /// Gets a value indicating whether the player disconnected (true only on the disconnect tick).
     /// </summary>
     [JsonPropertyName("dc")]
-    public bool Dc { get; set; }
+    public bool Dc { get; init; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the snake has joined the game.
-    /// This property is true only on the exact tick the snake joins.
+    /// Gets a value indicating whether the player just joined (true only on the join tick).
     /// </summary>
     [JsonPropertyName("join")]
-    public bool Join { get; set; }
+    public bool Join { get; init; }
 }

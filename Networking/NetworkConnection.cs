@@ -201,7 +201,7 @@ public sealed class NetworkConnection : IDisposable
         }
         catch (Exception e)
         {
-            //TODO disconnect gracefully.
+            // TODO disconnect gracefully.
             networkLogger.LogDebug("Message not received, other error occurred: " + e.Message);
             throw new IOException("Error getting message: " + e.Message);
         }

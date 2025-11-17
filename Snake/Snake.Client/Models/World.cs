@@ -1,68 +1,72 @@
 ﻿using System.Collections.Concurrent;
 using System.Text.Json;
-using CS3500.Networking;
 
 namespace CS3500.Snake.Models;
 
 /// <summary>
-/// TODO document.
+/// Represents the authoritative state of the game world for a single client: square boundary size and
+/// collections of snakes, walls, and power-ups keyed by unique IDs. Collections are concurrent to allow
+/// safe updates from a background receive loop while rendering.
 /// </summary>
 public class World
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="World"/> class.
+    /// Initializes a new instance of the <see cref="World"/> class with a square size in pixels.
     /// </summary>
-    /// <param name="size">The size of the world, worlds are always square.</param>
+    /// <param name="size">Square dimension (width == height) of the playable area.</param>
     public World(int size)
     {
         this.Size = size;
     }
 
     /// <summary>
-    /// Updates the corresponding game element based on the provided JSON string.
+    /// Deserializes and applies a JSON update for a single game element (snake, power-up, wall).
+    /// The element type is inferred from the 3rd character of the JSON string (index 2).
     /// </summary>
-    /// <remarks>The method deserializes the JSON string into the appropriate object type based on the type
-    /// identifier ('s', 'p', or 'w') and updates the corresponding collection with the deserialized object. The object
-    /// is identified by its unique ID.</remarks>
-    /// <param name="jsonString">A JSON-formatted string representing the game element to update. The third character in the string determines
-    /// the type of the element: 's' for a snake, 'p' for a power-up, and 'w' for a wall.</param>
+    /// <param name="jsonString">JSON payload representing an update from the server.</param>
+    /// <remarks>
+    /// Expected leading type markers:
+    /// 's' => <see cref="Snake"/>, 'p' => <see cref="PowerUp"/>, 'w' => <see cref="Wall"/>.
+    /// TODO: Validate JSON structure and handle malformed input gracefully instead of throwing.
+    /// </remarks>
     public void UpdateElement(string jsonString)
     {
         char type = jsonString[2];
         switch(type)
         {
+            // TODO: Handle exceptions thrown when invalid object is sent, could be here or higher in call stack.
             case 's':
-               Snake receivedSnake = JsonSerializer.Deserialize<Snake>(jsonString);
+                Snake receivedSnake = JsonSerializer.Deserialize<Snake>(jsonString) ?? throw new InvalidOperationException();
                 Snakes[receivedSnake.Id] = receivedSnake;
                 break;
             case 'p':
-                PowerUp receivedPowerUp = JsonSerializer.Deserialize<PowerUp>(jsonString);
+                PowerUp receivedPowerUp = JsonSerializer.Deserialize<PowerUp>(jsonString) ?? throw new InvalidOperationException();
                 PowerUps[receivedPowerUp.Id] = receivedPowerUp;
                 break;
-            case'w':
-                Wall receivedWall = JsonSerializer.Deserialize<Wall>(jsonString);
+            case 'w':
+                Wall receivedWall = JsonSerializer.Deserialize<Wall>(jsonString) ?? throw new InvalidOperationException();
                 Walls[receivedWall.Id] = receivedWall;
                 break;
         }
     }
 
     /// <summary>
-    /// Gets the size of this world.
+    /// Gets the world square size in pixels.
     /// </summary>
     public int Size { get; }
 
     /// <summary>
-    /// Gets a list of snakes in the current game world.
+    /// Gets the collection of snakes keyed by id.
     /// </summary>
     public ConcurrentDictionary<int, Snake> Snakes { get; } = new();
 
     /// <summary>
-    /// Gets a list of walls in the current game world.
+    /// Gets the collection of walls keyed by id.
     /// </summary>
     public ConcurrentDictionary<int, Wall> Walls { get; } = new();
 
     /// <summary>
-    /// Gets a list of power-ups in the current game world.
+    /// Gets the collection of power-ups keyed by id.
     /// </summary>
     public ConcurrentDictionary<int, PowerUp> PowerUps { get; } = new();
 }
