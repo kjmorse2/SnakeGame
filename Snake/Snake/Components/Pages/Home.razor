@@ -1,7 +1,87 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<PageTitle>Snake Game Client Homepage</PageTitle>
 
-Welcome to your new app.
+<h1>Snake Client – CS 3500 Assignment 9</h1>
+
+<p>
+    This project is a networked Snake client built in Blazor that connects
+    to the provided Snake server application. The server owns all game logic; this client
+    is responsible for rendering the world and sending player input.
+</p>
+
+<h2>How to Run</h2>
+<ol>
+    <li>Start the provided Snake Server application with settings.xml in the same folder.</li>
+    <li>If you want ai snakes start the provided AIClient application as well.</li>
+    <li>Run the Blazor Snake client from Visual Studio.</li>
+    <li>
+        In the Snake page:
+        <ul>
+            <li>Enter your player name.</li>
+            <li>Enter the server host (usually localhost) and port (11000 by default).</li>
+            <li>Click Connect.</li>
+        </ul>
+    </li>
+    <li>Use WASD or the Arrow keys to control your snake.</li>
+</ol>
+
+<h2>Design Overview</h2>
+
+<h3>Models (World, Snake, Wall, PowerUp, Point2D, ControlCommand)</h3>
+<ul>
+    <li>World: holds the authoritative world state: all snakes, walls, and powerups.</li>
+    <li>Snake: mirrors the JSON from the server (ID, name, body, direction, score, alive/died/dc/join flags).</li>
+    <li>Wall: represents axis-aligned wall segments and can expand itself into 50×50 blocks.</li>
+    <li>PowerUp: represents collectible items, including their “died” state.</li>
+    <li>Point2D: is a simple integer (X,Y) world coordinate.</li>
+    <li>ControlCommand: sends serialized JSON to the server based on user keyboard clicks.</li>
+</ul>
+
+<h3>Networking</h3>
+<ul>
+    <li>Reuses the NetworkConnection and ServerConnection library from Assignment 8.</li>
+    <li>
+        The client sends:
+        <ul>
+            <li>Player name (first line).</li>
+            <li>Control commands for movement.</li>
+        </ul>
+    </li>
+    <li>
+        The client receives:
+        <ul>
+            <li>Player ID  and world size .</li>
+            <li>JSON lines for walls, snakes, and powerups each frame.</li>
+        </ul>
+    </li>
+</ul>
+
+<h3>View / Rendering</h3>
+<ul>
+    <li>Uses Blazor.Extensions.Canvas for a 2D drawing surface.</li>
+    <li>A JavaScript animation loop calls back into C# every frame to run Draw.</li>
+    <li>The camera is centered on the local player’s snake head using canvas transforms.</li>
+    <li>Walls, snakes, and powerups are drawn in world-space; FPS and scoreboard are drawn in screen-space HUD.</li>
+</ul>
+
+<h2>Controls & HUD</h2>
+<ul>
+    <li>Movement: W / A / S / D or Arrow keys.</li>
+    <li>
+       HUD shows:
+        <ul>
+            <li>Average FPS.</li>
+            <li>A scoreboard with player names and scores, highlighting the local player.</li>
+            <li>Player names drawn above each snake in the world.</li>
+        </ul>
+    </li>
+</ul>
+
+<h2>Known Limitations / Notes</h2>
+<ul>
+//TODO
+</ul>
+
+
