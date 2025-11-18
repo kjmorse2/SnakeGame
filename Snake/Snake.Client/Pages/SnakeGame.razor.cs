@@ -133,7 +133,7 @@ public partial class SnakeGame
             }
             catch(Exception e)
             {
-                Logger.LogInformation("Error occured while updating your world: " + e.Message);
+                Logger.LogInformation("Error occurred while updating your world: " + e.Message);
                 DisconnectFromServer();
             }
         });
@@ -147,7 +147,9 @@ public partial class SnakeGame
 /// </summary>
 public static class ContextExtensions
 {
-
+    /// <summary>
+    /// Array of colors to for the snake to be drawn in .
+    /// </summary>
     private static readonly string[ ] SnakeColors =
      {
       "lime", "cyan", "yellow", "orange", "magenta", "red", "blue", "white",
