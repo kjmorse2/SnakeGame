@@ -97,6 +97,7 @@ export function initJS( DotNetSide )
 
 document.addEventListener('keydown', function (event)
 {
+    event.preventDefault();
     // Optionally log the key for testing
     console.log('Key pressed:', event.key);
 
