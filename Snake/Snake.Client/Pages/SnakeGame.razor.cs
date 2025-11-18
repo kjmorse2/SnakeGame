@@ -147,16 +147,23 @@ public partial class SnakeGame
 /// </summary>
 public static class ContextExtensions
 {
+
+    private static readonly string[ ] SnakeColors =
+     {
+      "lime", "cyan", "yellow", "orange", "magenta", "red", "blue", "white"
+    };
     /// <summary>
     /// Draws a single snake as a stroked polyline from tail to head.
     /// </summary>
     /// <param name="context">The canvas 2D context to draw with.</param>
     /// <param name="snake">The snake to render.</param>
+    
     public static async Task Draw(this Canvas2DContext context, Snake snake)
     {
         // Temporarily set stroke thickness for snake geometry
         float oldLineWidth = context.LineWidth;
         await context.SetLineWidthAsync(10);
+        await context.SetLineCapAsync("round");
 
         await context.BeginPathAsync();
         await context.MoveToAsync(snake.Tail.X, snake.Tail.Y);
@@ -166,8 +173,12 @@ public static class ContextExtensions
         }
         await context.LineToAsync(snake.Head.X, snake.Head.Y);
 
-        await context.SetStrokeStyleAsync("green");
+        await context.SetStrokeStyleAsync(SnakeColors[ snake.Id % SnakeColors.Length ]);
         await context.StrokeAsync();
+
+        await context.SetFontAsync("14px Arial");
+        await context.SetFillStyleAsync("white");
+        await context.FillTextAsync(snake.Name, snake.Head.X, snake.Head.Y);
 
         // Restore previous stroke thickness
         await context.SetLineWidthAsync(oldLineWidth);
