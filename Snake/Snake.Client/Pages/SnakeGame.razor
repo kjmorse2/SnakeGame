@@ -205,6 +205,8 @@
         {
             FrameCount++;
             await context.BeginBatchAsync();
+            await context.SetFillStyleAsync("lightblue");
+            await context.FillRectAsync(0, 0, CanvasWidth, CanvasHeight);
 
             // Clip to canvas, center origin, and draw background
             await context.BeginPathAsync();
