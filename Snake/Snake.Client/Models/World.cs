@@ -49,6 +49,31 @@ public class World
                 break;
         }
     }
+    public bool UpdateElement(string jsonString, int playerId)
+    {
+        char type = jsonString[2];
+        switch(type)
+        {
+            // TODO: Handle exceptions thrown when invalid object is sent, could be here or higher in call stack.
+            case 's':
+                Snake receivedSnake = JsonSerializer.Deserialize<Snake>(jsonString) ?? throw new InvalidOperationException();
+                Snakes[receivedSnake.Id] = receivedSnake;
+                if(playerId == receivedSnake.Id)
+                {
+                    return true;
+                }
+                break;
+            case 'p':
+                PowerUp receivedPowerUp = JsonSerializer.Deserialize<PowerUp>(jsonString) ?? throw new InvalidOperationException();
+                PowerUps[receivedPowerUp.Id] = receivedPowerUp;
+                break;
+            case 'w':
+                Wall receivedWall = JsonSerializer.Deserialize<Wall>(jsonString) ?? throw new InvalidOperationException();
+                Walls[receivedWall.Id] = receivedWall;
+                break;
+        }
+        return false;
+    }
 
     /// <summary>
     /// Gets the world square size in pixels.

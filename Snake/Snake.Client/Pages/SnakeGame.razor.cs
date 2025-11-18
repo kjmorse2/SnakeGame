@@ -96,8 +96,24 @@ public partial class SnakeGame
 
             // Start JS-driven animation loop now that the world exists.
             // TODO: Consider catching JS interop errors and handling gracefully.
-            _jsModule.InvokeVoidAsync("ToggleAnimation", true);
             Logger.LogInformation("Animation loop started via JS interop.");
+
+            // TODO: Make more dry? possible to do this without 2 loops? 
+            // Receive world updates.
+            while (connection.IsConnected)
+            {
+                string message = connection.ReceiveLine();
+                if (!string.IsNullOrWhiteSpace(message))
+                {
+                    // Update the world with the server-provided JSON payload
+                    if(World.UpdateElement(message, PlayerId))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            _jsModule.InvokeVoidAsync("ToggleAnimation", true);
 
             // Receive world updates.
             while (connection.IsConnected)
