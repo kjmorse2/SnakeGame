@@ -150,8 +150,8 @@ public static class ContextExtensions
 
     private static readonly string[ ] SnakeColors =
      {
-      "lime", "cyan", "yellow", "orange", "magenta", "red", "blue", "white"
-    };
+      "lime", "cyan", "yellow", "orange", "magenta", "red", "blue", "white",
+     };
     /// <summary>
     /// Draws a single snake as a stroked polyline from tail to head.
     /// </summary>
@@ -163,7 +163,8 @@ public static class ContextExtensions
         // Temporarily set stroke thickness for snake geometry
         float oldLineWidth = context.LineWidth;
         await context.SetLineWidthAsync(10);
-        await context.SetLineCapAsync("round");
+        await context.SetLineCapAsync(LineCap.Round);
+        await context.SetLineJoinAsync(LineJoin.Round);
 
         await context.BeginPathAsync();
         await context.MoveToAsync(snake.Tail.X, snake.Tail.Y);
