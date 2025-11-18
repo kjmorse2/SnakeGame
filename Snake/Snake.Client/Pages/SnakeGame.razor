@@ -205,6 +205,8 @@
         {
             FrameCount++;
             await context.BeginBatchAsync();
+
+            // Overwrite entire canvas with light blue to clear previous frame
             await context.SetFillStyleAsync("lightblue");
             await context.FillRectAsync(0, 0, CanvasWidth, CanvasHeight);
 
@@ -220,8 +222,9 @@
             await context.TranslateAsync( halfW, halfH );
 
             // Snapshot current world state references
-            IEnumerable<Snake> snakes = World.Snakes.Values;
-            Point2D head = World.Snakes[PlayerId].Head;
+            var snakeDictionary = World.Snakes;
+            IEnumerable<Snake> snakes = snakeDictionary.Values;
+            Point2D head = snakeDictionary[PlayerId].Head; 
             IEnumerable<PowerUp> powerUps = World.PowerUps.Values;
             IEnumerable<Wall> walls = World.Walls.Values;
 
@@ -229,7 +232,6 @@
             await context.TranslateAsync( -head.X, -head.Y );
 
             // Draw background over everything
-            // TODO is not filling "outside" world, and looks wierd on respawn.
             await context.SetFillStyleAsync( "darkblue" );
             await context.FillRectAsync( -World.Size / 2, -World.Size / 2, World.Size, World.Size);
 
