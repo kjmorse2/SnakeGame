@@ -24,9 +24,6 @@
     <div class="input-row">
         <label for="name"> Your Name: </label>
         <input id="name" disabled="@connection.IsConnected" type="text" @bind="playerName" />
-    </div>
-
-    <div class="input-row">
         <label for="url"> Server Address: </label>
         <input id="url" disabled="@connection.IsConnected" type="text" @bind="serverHost" />
         <label for="url"> Port: </label>
@@ -39,7 +36,9 @@
         {
             <button class="btn btn-primary" @onclick="Connect">Connect</button>
         }
-        <div class="@connectionSpinnerClass"></div>
+    </div>
+    <div>
+          <span>FPS: @MathF.Round(AvgFps)</span>
     </div>
     @if(!string.IsNullOrEmpty( serverStatusMessage ) )
     {
@@ -240,14 +239,10 @@
             await context.Draw(powerUps);    // Power Ups
             await context.Draw(walls);       // Walls
 
-
-            // HUD
-            await context.SetFontAsync( "30px Arial" );
-            await context.SetFillStyleAsync( "white" );
-            await context.FillTextAsync( $"FPS: {AvgFps:F1}", 400, 30 );
-
             await context.RestoreAsync();
             await context.EndBatchAsync();
+
+            StateHasChanged();
         }
         catch ( Exception e )
         {
