@@ -30,7 +30,7 @@
         <input id="port" disabled="@connection.IsConnected" type="number" @bind="serverPort" class="port" />
         @if ( connection.IsConnected )
         {
-            <button class="btn btn-primary" @onclick="DisconnectFromServer">Disconnect</button>
+            <button class="btn btn-primary" @onclick="DisconnectFromServerAsync">Disconnect</button>
         }
         else
         {
@@ -61,7 +61,6 @@
                     </ul>
                 }
             </div>
-
         </div>
 
     </div>
@@ -101,7 +100,6 @@
     /// Display name sent to the server on connect.
     /// </summary>
     private string playerName = "Your Name Here";
-
     // UI state ----------------------------------------------------------------------
 
     /// <summary>
@@ -151,9 +149,9 @@
             connection = new NetworkConnection(Logger);
             Logger.LogInformation("SnakeGame component initializing network connection object.");
         }
-        catch
+        catch (Exception e)
         {
-            // TODO error JS Popup.
+            AlertPopupDisconnect($"Error initializing network connection:{e.Message}");
         }
     }
 
@@ -178,7 +176,7 @@
             catch ( Exception e )
             {
                 Logger.LogError(e, "Error during OnAfterRenderAsync initialization.");
-                // TODO error JS Popup.
+                AlertPopupDisconnect($"Error during initialization, disconnecting");
             }
         }
     }
@@ -191,7 +189,9 @@
     [JSInvokable]
     public void HandleKeyPress(string key)
     {
-        if (string.IsNullOrEmpty(key))
+        if (
+            string.IsNullOrEmpty(key)
+            ||!connection.IsConnected)
         {
             return;
         }
@@ -222,7 +222,7 @@
         catch (Exception e)
         {
             Logger.LogError(e, "Failed to send control command for key '{Key}'", key);
-            // TODO: JS popup error.
+            AlertPopupDisconnect("Error sending input to server, disconnecting.");
         }
     }
 
@@ -284,7 +284,7 @@
         {
             // Error-level logging permitted in draw loop
             Logger.LogError(e, "Error drawing");
-            // TODO: JSPOPUP. 
+            AlertPopupDisconnect("Error during rendering of game, disconnecting.");
         }
     }
 
@@ -313,5 +313,29 @@
         await context.SetFillStyleAsync("white");
         await context.FillTextAsync("Not connected to game :(", CanvasWidth / 2 - 50, CanvasHeight / 2);
         await context.EndBatchAsync();
+    }
+
+    private void AlertPopup(string message)
+    {
+        _ = InvokeAsync(async () =>
+        {
+            try
+            {
+                await JsRuntime.InvokeAsync<bool>("confirm", message);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Failed to show alert popup with message: {Message}", message);
+            }
+        });
+    }
+
+    private void AlertPopupDisconnect(string message)
+    {
+        _ = InvokeAsync(async () =>
+        {
+            AlertPopup(message);
+            await DisconnectFromServerAsync();
+        });
     }
 }

@@ -52,11 +52,16 @@ public partial class SnakeGame : IDisposable
     /// </summary>
     private float AvgFps => FrameCount / (float)GameTimer.Elapsed.TotalSeconds;
 
+    private void DisconnectFromServer()
+    {
+        _ = DisconnectFromServerAsync();
+    }
+
     /// <summary>
     /// Disconnects from the server and resets the <see cref="connection"/> instance.
     /// Safe to call when not connected.
     /// </summary>
-    private async Task DisconnectFromServer()
+    private async Task DisconnectFromServerAsync()
     {
         // Signal any background receive loop to stop before touching the socket
         _receiveCts?.Cancel();
@@ -82,7 +87,7 @@ public partial class SnakeGame : IDisposable
     private Task DisconnectFromServer(string errorMessage)
     {
         Logger.LogInformation("Disconnecting from server due to error: " + errorMessage);
-        return DisconnectFromServer();
+        return DisconnectFromServerAsync();
     }
 
     /// <summary>
@@ -97,6 +102,7 @@ public partial class SnakeGame : IDisposable
         _receiveCts = new CancellationTokenSource();
         var token = _receiveCts.Token;
 
+        string popupMessage = String.Empty;
         Logger.LogInformation("Attempting to connect to server {Host}:{Port} as '{Player}'.", serverHost, serverPort, playerName);
         await Task.Run(() =>
         {
@@ -107,7 +113,15 @@ public partial class SnakeGame : IDisposable
                 InvokeAsync(StateHasChanged); // update UI to show connection status
 
                 // Connect to the server. This can throw on network errors.
-                connection.Connect(serverHost, serverPort);
+                try
+                {
+                    connection.Connect(serverHost, serverPort);
+                }
+                catch
+                {
+                    popupMessage = "Could not connect to server, please check the host and port.";
+                    throw;
+                }
                 Logger.LogInformation("Connected to server.");
 
                 connectionSpinnerClass = string.Empty;
@@ -115,7 +129,15 @@ public partial class SnakeGame : IDisposable
 
                 // Send first message: the username so the server can label us.
                 Logger.LogInformation("Sending username to server.");
-                connection.SendLine(playerName);
+                try
+                {
+                    connection.SendLine(playerName);
+                }
+                catch
+                {
+                    popupMessage = "Could not send username to server.";
+                    throw;
+                }
 
                 // Server replies with our player id and world size.
                 PlayerId = int.Parse(connection.ReceiveLine());
@@ -125,12 +147,20 @@ public partial class SnakeGame : IDisposable
                 // Start JS-driven animation loop now that the world exists.
 
                 // First reception loop, runs until our snake appears in the world.
-                while (!token.IsCancellationRequested
-                       && connection.IsConnected
-                       && !World.Snakes.TryGetValue(PlayerId, out Snake? _ ))
+                try
                 {
-                    string message = connection.ReceiveLine();
-                    World.UpdateElement(message);
+                    while (!token.IsCancellationRequested
+                           && connection.IsConnected
+                           && !World.Snakes.TryGetValue(PlayerId, out Snake? _))
+                    {
+                        string message = connection.ReceiveLine();
+                        World.UpdateElement(message);
+                    }
+                }
+                catch
+                {
+                    popupMessage = "Connection lost while waiting for game to start.";
+                    throw;
                 }
 
                 // Now that our snake exists, start the animation loop
@@ -144,14 +174,23 @@ public partial class SnakeGame : IDisposable
                 GameTimer.Restart();
                 FrameCount = 0;
 
-                // Receive world updates while drawing.
-                while (!token.IsCancellationRequested && connection.IsConnected)
+                try
                 {
-                    string message = connection.ReceiveLine();
-                    // Update the world with the server-provided JSON payload
-                    World.UpdateElement(message);
+                    // Receive world updates while drawing.
+                    while (!token.IsCancellationRequested && connection.IsConnected)
+                    {
+                        string message = connection.ReceiveLine();
+                        // Update the world with the server-provided JSON payload
+                        World.UpdateElement(message);
+                    }
+
+                    Logger.LogInformation("Connection closed by server or client.");
                 }
-                Logger.LogInformation("Connection closed by server or client.");
+                catch
+                {
+                    popupMessage = "Connection lost during game.";
+                    throw;
+                }
             }
             catch(Exception e)
             {
@@ -159,10 +198,12 @@ public partial class SnakeGame : IDisposable
                 if (token.IsCancellationRequested)
                 {
                     Logger.LogInformation("Receive loop canceled by user disconnect");
+                    DisconnectFromServer();
                 }
                 else
                 {
                     Console.WriteLine(e.Message);
+                    AlertPopup(popupMessage);
                     DisconnectFromServer(e.Message);
                 }
             }
