@@ -18,6 +18,8 @@ public class World
     {
         this.Size = size;
     }
+    
+    private static Point2D DefaultPoint => new Point2D { X = 0, Y = 0 };
 
     /// <summary>
     /// Deserializes and applies a JSON update for a single game element (snake, power-up, wall).
@@ -44,11 +46,19 @@ public class World
                     Snake receivedSnake = JsonSerializer.Deserialize<Snake>(jsonString) ??
                                           throw new InvalidOperationException();
                     Snakes[ receivedSnake.Id ] = receivedSnake;
+                    if (receivedSnake.Dc)
+                    {
+                        RemoveSnakeIds.Add(receivedSnake.Id);
+                    }
                     break;
                 case 'p':
                     PowerUp receivedPowerUp = JsonSerializer.Deserialize<PowerUp>(jsonString) ??
                                               throw new InvalidOperationException();
                     PowerUps[ receivedPowerUp.Id ] = receivedPowerUp;
+                    if (receivedPowerUp.IsDead)
+                    {
+                        RemovePowerUpIDs.Add(receivedPowerUp.Id);
+                    }
                     break;
                 case 'w':
                     Wall receivedWall = JsonSerializer.Deserialize<Wall>(jsonString) ??
@@ -65,6 +75,34 @@ public class World
         {
             throw new InvalidOperationException("An error occurred while updating the world element.", e);
         }
+    }
+
+    public void CleanupDeadElements()
+    {
+        while (RemoveSnakeIds.TryTake(out int snakeId))
+        {
+            Snakes.TryRemove(snakeId, out _);
+        }
+        while (RemovePowerUpIDs.TryTake(out int powerUpId))
+        {
+            PowerUps.TryRemove(powerUpId, out _);
+        }
+    }
+
+    public Point2D GetHead(int playerId)
+    {
+        if (Snakes.TryGetValue(playerId, out Snake? snake))
+        {
+            return snake.Head;
+        }
+        return DefaultPoint;
+    }
+
+    public void Clear()
+    {
+        Snakes.Clear();
+        Walls.Clear();
+        PowerUps.Clear();
     }
 
     /// <summary>
@@ -86,4 +124,8 @@ public class World
     /// Gets the collection of power-ups keyed by id.
     /// </summary>
     public ConcurrentDictionary<int, PowerUp> PowerUps { get; } = new();
+
+    private ConcurrentBag<int> RemoveSnakeIds { get; } = new();
+
+    private ConcurrentBag<int> RemovePowerUpIDs { get; } = new();
 }

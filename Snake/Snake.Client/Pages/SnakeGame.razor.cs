@@ -11,7 +11,7 @@ using CS3500.Snake.Models;
 /// Code-behind for the SnakeGame Razor component. Manages the network connection,
 /// world state, animation timing metrics, and JS interop entry points used by the view.
 /// </summary>
-public partial class SnakeGame
+public partial class SnakeGame : IDisposable
 {
     /// <summary>
     /// The authoritative world model as provided by the server.
@@ -56,14 +56,14 @@ public partial class SnakeGame
     /// Disconnects from the server and resets the <see cref="connection"/> instance.
     /// Safe to call when not connected.
     /// </summary>
-    private void DisconnectFromServer()
+    private async Task DisconnectFromServer()
     {
         // Signal any background receive loop to stop before touching the socket
         _receiveCts?.Cancel();
         _receiveCts?.Dispose();
         _receiveCts = null;
 
-        _jsModule.InvokeVoidAsync("ToggleAnimation", false);
+        await _jsModule.InvokeVoidAsync("ToggleAnimation", false);
         Logger.LogInformation("Disconnecting from server.");
         try
         {
@@ -75,12 +75,14 @@ public partial class SnakeGame
         }
         connection = new NetworkConnection(Logger);
         Logger.LogInformation("Disconnected and reset connection instance.");
+        await DisconnectScreenAsync();
+        World.Clear();
     }
 
-    private void DisconnectFromServer(string errorMessage)
+    private Task DisconnectFromServer(string errorMessage)
     {
         Logger.LogInformation("Disconnecting from server due to error: " + errorMessage);
-        DisconnectFromServer();
+        return DisconnectFromServer();
     }
 
     /// <summary>
@@ -172,6 +174,22 @@ public partial class SnakeGame
 
         Logger.LogInformation("FPS metrics reset after connection end.");
     }
+
+    public void Dispose()
+    {
+        context.Dispose();
+        if (_jsModule is IDisposable jsModuleDisposable)
+        {
+            jsModuleDisposable.Dispose();
+        }
+        else
+        {
+            _ = _jsModule.DisposeAsync().AsTask();
+        }
+
+        connection.Dispose();
+        _receiveCts?.Dispose();
+    }
 }
 
 /// <summary>
@@ -252,11 +270,6 @@ public static class ContextExtensions
         foreach (PowerUp powerUp in powerUps)
         {
             await context.SetFillStyleAsync("yellow");
-            if (powerUp.IsDead)
-            {
-                // TODO: Consider removing dead items earlier to avoid per-frame checks.
-                continue;
-            }
             await context.Draw(powerUp);
         }
     }
