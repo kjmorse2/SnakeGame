@@ -1,1 +1,46 @@
-﻿.snakePage
+﻿/*Whole Page*/
+.snakePage{
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+}
+
+/*FPS*/
+.hudTop{
+    width: 100%;
+    text-align: left;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px
+}
+
+
+.snakeLayout{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%
+}
+
+
+#myCanvas{
+    margin-right: 30px;
+}
+
+.hudScoreboard{
+    min-width: 200px;
+    padding: 10px;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    border-radius: 6px;
+}
+
+.hudScoreboard ul{
+    list-style: none;
+    padding-left: 0;
+}
+
+.hudScoreboard li{
+    margin: 4px;
+}
+

@@ -14,7 +14,7 @@
 
 @namespace CS3500.Snake.Client.Pages.SnakeGame 
 
-<PageTitle>Snake Game</PageTitle>
+<PageTitle>Chat Client</PageTitle>
 
 <script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.min.js"></script>
 
@@ -49,6 +49,7 @@
                 <BECanvas Width="CanvasWidth" Height="CanvasHeight" @ref="canvasReference"/>
             </div>
 
+            <!--Scoreboard-->
             <div class="hudScoreboard">
                 @if (World is not null && World.Snakes.Count > 0)
                 {
