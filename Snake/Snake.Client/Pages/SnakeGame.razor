@@ -45,10 +45,6 @@
 
         <div class="snakeLayout">
             <!--Canvas-->
-            @if(!string.IsNullOrEmpty( serverStatusMessage ) )
-            {
-            <p> @serverStatusMessage</p>
-            }
             <div id="myCanvas">
                 <BECanvas Width="CanvasWidth" Height="CanvasHeight" @ref="canvasReference"/>
             </div>
@@ -69,8 +65,6 @@
         </div>
 
     </div>
-
-</div>
 
 
 @code
@@ -108,12 +102,6 @@
     private string playerName = "Your Name Here";
 
     // UI state ----------------------------------------------------------------------
-
-    /// <summary>
-    /// Status message shown under the connection controls (e.g., errors or info).
-    /// TODO make useful
-    /// </summary>
-    private readonly string serverStatusMessage = string.Empty;
 
     /// <summary>
     /// CSS class name for the connection spinner ("spinner" to show, empty to hide).
@@ -177,6 +165,7 @@
             context = await canvasReference.CreateCanvas2DAsync();
             await _jsModule.InvokeVoidAsync( "initJS", DotNetObjectReference.Create( this ) );
             Logger.LogInformation("Initialized JS interop and canvas context.");
+            await DisconnectScreenAsync();
         }
     }
 
@@ -247,7 +236,7 @@
             // Snapshot current world state references
             var snakeDictionary = World.Snakes;
             IEnumerable<Snake> snakes = snakeDictionary.Values;
-            Point2D head = snakeDictionary[PlayerId].Head; 
+            Point2D head = World.GetHead(PlayerId);
             IEnumerable<PowerUp> powerUps = World.PowerUps.Values;
             IEnumerable<Wall> walls = World.Walls.Values;
 
@@ -266,6 +255,8 @@
             await context.RestoreAsync();
             await context.EndBatchAsync();
 
+            World.CleanupDeadElements();
+
             StateHasChanged();
         }
         catch ( Exception e )
@@ -274,5 +265,32 @@
             Logger.LogError(e, "Error drawing");
             // TODO: Consider surfacing a non-intrusive UI notification and stopping animation on repeated failures.
         }
+    }
+
+    // Safe to call from sync code; marshals onto the renderer thread
+    private void DisconnectScreen()
+    {
+        _ = InvokeAsync(async () =>
+        {
+            try
+            {
+                await DisconnectScreenAsync();
+                StateHasChanged();
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Failed to draw black canvas.");
+            }
+        });
+    }
+
+    private async Task DisconnectScreenAsync()
+    {
+        await context.BeginBatchAsync();
+        await context.SetFillStyleAsync("black");
+        await context.FillRectAsync(0, 0, CanvasWidth, CanvasHeight);
+        await context.SetFillStyleAsync("white");
+        await context.FillTextAsync("Not connected to game :(", CanvasWidth / 2 - 50, CanvasHeight / 2);
+        await context.EndBatchAsync();
     }
 }
