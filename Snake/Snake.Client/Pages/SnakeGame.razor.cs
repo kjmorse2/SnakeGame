@@ -253,11 +253,6 @@ public static class ContextExtensions
         foreach (PowerUp powerUp in powerUps)
         {
             await context.SetFillStyleAsync("yellow");
-            if (powerUp.IsDead)
-            {
-                // TODO: Consider removing dead items earlier to avoid per-frame checks.
-                continue;
-            }
             await context.Draw(powerUp);
         }
     }

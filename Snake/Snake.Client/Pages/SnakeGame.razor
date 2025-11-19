@@ -57,10 +57,6 @@
          }
     </div>
 
-    @if(!string.IsNullOrEmpty( serverStatusMessage ) )
-    {
-        <p> @serverStatusMessage</p>
-    }
     <div id="myCanvas">
         <BECanvas Width="CanvasWidth" Height="CanvasHeight" @ref="canvasReference"/>
     </div>
@@ -101,12 +97,6 @@
     private string playerName = "Your Name Here";
 
     // UI state ----------------------------------------------------------------------
-
-    /// <summary>
-    /// Status message shown under the connection controls (e.g., errors or info).
-    /// TODO make useful
-    /// </summary>
-    private readonly string serverStatusMessage = string.Empty;
 
     /// <summary>
     /// CSS class name for the connection spinner ("spinner" to show, empty to hide).
@@ -241,7 +231,7 @@
             // Snapshot current world state references
             var snakeDictionary = World.Snakes;
             IEnumerable<Snake> snakes = snakeDictionary.Values;
-            Point2D head = snakeDictionary[PlayerId].Head; 
+            Point2D head = World.GetHead(PlayerId);
             IEnumerable<PowerUp> powerUps = World.PowerUps.Values;
             IEnumerable<Wall> walls = World.Walls.Values;
 
@@ -259,6 +249,8 @@
 
             await context.RestoreAsync();
             await context.EndBatchAsync();
+
+            World.CleanupDeadElements();
 
             StateHasChanged();
         }
