@@ -29,7 +29,6 @@ public class World
     /// <remarks>
     /// Expected leading type markers:
     /// 's' => <see cref="Snake"/>, 'p' => <see cref="PowerUp"/>, 'w' => <see cref="Wall"/>.
-    /// TODO: Validate JSON structure and handle malformed input gracefully instead of throwing.
     /// </remarks>
     public void UpdateElement(string jsonString)
     {

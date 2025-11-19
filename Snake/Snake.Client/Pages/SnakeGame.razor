@@ -106,7 +106,6 @@
 
     /// <summary>
     /// CSS class name for the connection spinner ("spinner" to show, empty to hide).
-    /// TODO make useful
     /// </summary>
     private string connectionSpinnerClass = string.Empty;
 
@@ -147,9 +146,15 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        connection = new NetworkConnection( Logger );
-        Logger.LogInformation("SnakeGame component initializing network connection object.");
-        // TODO: Consider handling initialization failures (connection object creation) gracefully.
+        try
+        {
+            connection = new NetworkConnection(Logger);
+            Logger.LogInformation("SnakeGame component initializing network connection object.");
+        }
+        catch
+        {
+            // TODO error JS Popup.
+        }
     }
 
 
@@ -161,13 +166,20 @@
     {
         if ( firstRender )
         {
-            Logger.LogInformation("First render: importing JS module and creating canvas context.");
-            // TODO: Consider wrapping JS import and canvas creation in try/catch and surface user-friendly errors.
-            _jsModule = await JsRuntime.InvokeAsync<IJSObjectReference>( "import", "./Pages/SnakeGame.razor.js" );
-            context = await canvasReference.CreateCanvas2DAsync();
-            await _jsModule.InvokeVoidAsync( "initJS", DotNetObjectReference.Create( this ) );
-            Logger.LogInformation("Initialized JS interop and canvas context.");
-            await DisconnectScreenAsync();
+            try
+            {
+                Logger.LogInformation("First render: importing JS module and creating canvas context.");
+                _jsModule = await JsRuntime.InvokeAsync<IJSObjectReference>( "import", "./Pages/SnakeGame.razor.js" );
+                context = await canvasReference.CreateCanvas2DAsync();
+                await _jsModule.InvokeVoidAsync( "initJS", DotNetObjectReference.Create( this ) );
+                Logger.LogInformation("Initialized JS interop and canvas context.");
+                await DisconnectScreenAsync();
+            }
+            catch ( Exception e )
+            {
+                Logger.LogError(e, "Error during OnAfterRenderAsync initialization.");
+                // TODO error JS Popup.
+            }
         }
     }
 
@@ -184,26 +196,33 @@
             return;
         }
 
-        // TODO: Consider try/catch to handle send failures gracefully.
         var k = key.ToLowerInvariant();
-        switch (k)
+        try
         {
-            case "arrowup":
-            case "w":
-                connection.SendLine(UpCommand);
-                break;
-            case "arrowright":
-            case "d":
-                connection.SendLine(RightCommand);
-                break;
-            case "arrowdown":
-            case "s":
-                connection.SendLine(DownCommand);
-                break;
-            case "arrowleft":
-            case "a":
-                connection.SendLine(LeftCommand);
-                break;
+            switch (k)
+            {
+                case "arrowup":
+                case "w":
+                    connection.SendLine(UpCommand);
+                    break;
+                case "arrowright":
+                case "d":
+                    connection.SendLine(RightCommand);
+                    break;
+                case "arrowdown":
+                case "s":
+                    connection.SendLine(DownCommand);
+                    break;
+                case "arrowleft":
+                case "a":
+                    connection.SendLine(LeftCommand);
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "Failed to send control command for key '{Key}'", key);
+            // TODO: JS popup error.
         }
     }
 
@@ -265,7 +284,7 @@
         {
             // Error-level logging permitted in draw loop
             Logger.LogError(e, "Error drawing");
-            // TODO: Consider surfacing a non-intrusive UI notification and stopping animation on repeated failures.
+            // TODO: JSPOPUP. 
         }
     }
 
