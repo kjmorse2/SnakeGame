@@ -34,6 +34,11 @@ public partial class SnakeGame
     private static readonly Stopwatch GameTimer = new();
 
     /// <summary>
+    /// Cancellation token source used to stop background network receive loops on user disconnect.
+    /// </summary>
+    private CancellationTokenSource? _receiveCts;
+
+    /// <summary>
     /// Static ctor to begin timing immediately. FPS resets when reconnecting.
     /// </summary>
     static SnakeGame()
@@ -53,12 +58,29 @@ public partial class SnakeGame
     /// </summary>
     private void DisconnectFromServer()
     {
-        Logger.LogInformation("Disconnecting from server.");
-        // TODO: Consider catching and handling disconnect exceptions gracefully.
-        connection.Disconnect();
+        // Signal any background receive loop to stop before touching the socket
+        _receiveCts?.Cancel();
+        _receiveCts?.Dispose();
+        _receiveCts = null;
+
         _jsModule.InvokeVoidAsync("ToggleAnimation", false);
+        Logger.LogInformation("Disconnecting from server.");
+        try
+        {
+            connection.Disconnect();
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("Error during disconnect: " + e.Message);
+        }
         connection = new NetworkConnection(Logger);
         Logger.LogInformation("Disconnected and reset connection instance.");
+    }
+
+    private void DisconnectFromServer(string errorMessage)
+    {
+        Logger.LogInformation("Disconnecting from server due to error: " + errorMessage);
+        DisconnectFromServer();
     }
 
     /// <summary>
@@ -67,6 +89,12 @@ public partial class SnakeGame
     /// </summary>
     private async void Connect()
     {
+        // Ensure any previous receive task is canceled before starting a new one
+        _receiveCts?.Cancel();
+        _receiveCts?.Dispose();
+        _receiveCts = new CancellationTokenSource();
+        var token = _receiveCts.Token;
+
         Logger.LogInformation("Attempting to connect to server {Host}:{Port} as '{Player}'.", serverHost, serverPort, playerName);
         await Task.Run(() =>
         {
@@ -77,7 +105,6 @@ public partial class SnakeGame
                 InvokeAsync(StateHasChanged); // update UI to show connection status
 
                 // Connect to the server. This can throw on network errors.
-                // TODO: Catch and handle connection exceptions (e.g., server not reachable, refused, DNS issues) and update UI.
                 connection.Connect(serverHost, serverPort);
                 Logger.LogInformation("Connected to server.");
 
@@ -86,57 +113,62 @@ public partial class SnakeGame
 
                 // Send first message: the username so the server can label us.
                 Logger.LogInformation("Sending username to server.");
-                // TODO: Consider catching send exceptions gracefully.
                 connection.SendLine(playerName);
 
                 // Server replies with our player id and world size.
-                // TODO: Consider validating and catching parse exceptions for server responses.
                 PlayerId = int.Parse(connection.ReceiveLine());
                 World = new World(int.Parse(connection.ReceiveLine()));
                 Logger.LogInformation("Received player id {PlayerId} and world size {WorldSize}.", PlayerId, World.Size);
 
                 // Start JS-driven animation loop now that the world exists.
-                // TODO: Consider catching JS interop errors and handling gracefully.
-                Logger.LogInformation("Animation loop started via JS interop.");
 
-                // TODO: Make more dry? possible to do this without 2 loops? 
-                // Receive world updates.
-                while (connection.IsConnected)
+                // First reception loop, runs until our snake appears in the world.
+                while (!token.IsCancellationRequested
+                       && connection.IsConnected
+                       && !World.Snakes.TryGetValue(PlayerId, out Snake? _ ))
                 {
                     string message = connection.ReceiveLine();
-                    if (!string.IsNullOrWhiteSpace(message))
-                    {
-                        // Update the world with the server-provided JSON payload
-                        if (World.UpdateElement(message, PlayerId))
-                        {
-                            break;
-                        }
-                    }
+                    World.UpdateElement(message);
                 }
 
+                // Now that our snake exists, start the animation loop
+                if (!token.IsCancellationRequested)
+                {
+                    _jsModule.InvokeVoidAsync("ToggleAnimation", token, true);
+                    Logger.LogInformation("Animation loop started via JS interop.");
+                }
+
+                // Start tracking FPS from this point forward
                 GameTimer.Restart();
                 FrameCount = 0;
-                _jsModule.InvokeVoidAsync("ToggleAnimation", true);
 
-                // Receive world updates.
-                while (connection.IsConnected)
+                // Receive world updates while drawing.
+                while (!token.IsCancellationRequested && connection.IsConnected)
                 {
-                    // TODO: Consider handling network read exceptions and malformed messages gracefully.
                     string message = connection.ReceiveLine();
-                    if (!string.IsNullOrWhiteSpace(message))
-                    {
-                        // Update the world with the server-provided JSON payload
-                        World.UpdateElement(message);
-                    }
+                    // Update the world with the server-provided JSON payload
+                    World.UpdateElement(message);
                 }
                 Logger.LogInformation("Connection closed by server or client.");
             }
             catch(Exception e)
             {
-                Logger.LogInformation("Error occurred while updating your world: " + e.Message);
-                DisconnectFromServer();
+                // If cancellation was requested, treat any exceptions from ReceiveLine/IO as expected during shutdown
+                if (token.IsCancellationRequested)
+                {
+                    Logger.LogInformation("Receive loop canceled by user disconnect");
+                }
+                else
+                {
+                    Console.WriteLine(e.Message);
+                    DisconnectFromServer(e.Message);
+                }
             }
-        });
+        }, token);
+
+        // Cleanup CTS after background task completes
+        _receiveCts?.Dispose();
+        _receiveCts = null;
 
         Logger.LogInformation("FPS metrics reset after connection end.");
     }
@@ -159,7 +191,7 @@ public static class ContextExtensions
     /// </summary>
     /// <param name="context">The canvas 2D context to draw with.</param>
     /// <param name="snake">The snake to render.</param>
-    
+
     public static async Task Draw(this Canvas2DContext context, Snake snake)
     {
         // Temporarily set stroke thickness for snake geometry
