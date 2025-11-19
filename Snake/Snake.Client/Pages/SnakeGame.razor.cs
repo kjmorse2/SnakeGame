@@ -56,14 +56,14 @@ public partial class SnakeGame
     /// Disconnects from the server and resets the <see cref="connection"/> instance.
     /// Safe to call when not connected.
     /// </summary>
-    private void DisconnectFromServer()
+    private async Task DisconnectFromServer()
     {
         // Signal any background receive loop to stop before touching the socket
         _receiveCts?.Cancel();
         _receiveCts?.Dispose();
         _receiveCts = null;
 
-        _jsModule.InvokeVoidAsync("ToggleAnimation", false);
+        await _jsModule.InvokeVoidAsync("ToggleAnimation", false);
         Logger.LogInformation("Disconnecting from server.");
         try
         {
@@ -75,12 +75,13 @@ public partial class SnakeGame
         }
         connection = new NetworkConnection(Logger);
         Logger.LogInformation("Disconnected and reset connection instance.");
+        await DisconnectScreenAsync();
     }
 
-    private void DisconnectFromServer(string errorMessage)
+    private Task DisconnectFromServer(string errorMessage)
     {
         Logger.LogInformation("Disconnecting from server due to error: " + errorMessage);
-        DisconnectFromServer();
+        return DisconnectFromServer();
     }
 
     /// <summary>

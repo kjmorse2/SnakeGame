@@ -53,7 +53,11 @@ export function initJS( DotNetSide )
 
 document.addEventListener('keydown', function (event)
 {
-    if(event.key === "arrowdown" || event.key === "arrowup" || event.key === "arrowleft" || event.key === "arrowright"){
+    if( event.key === "arrowdown" 
+        || event.key === "arrowup" 
+        || event.key === "arrowleft" 
+        || event.key === "arrowright" )
+    {
         event.preventDefault();
     }
     // Optionally log the key for testing

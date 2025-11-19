@@ -170,6 +170,7 @@
             context = await canvasReference.CreateCanvas2DAsync();
             await _jsModule.InvokeVoidAsync( "initJS", DotNetObjectReference.Create( this ) );
             Logger.LogInformation("Initialized JS interop and canvas context.");
+            await DisconnectScreenAsync();
         }
     }
 
@@ -267,5 +268,32 @@
             Logger.LogError(e, "Error drawing");
             // TODO: Consider surfacing a non-intrusive UI notification and stopping animation on repeated failures.
         }
+    }
+
+    // Safe to call from sync code; marshals onto the renderer thread
+    private void DisconnectScreen()
+    {
+        _ = InvokeAsync(async () =>
+        {
+            try
+            {
+                await DisconnectScreenAsync();
+                StateHasChanged();
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Failed to draw black canvas.");
+            }
+        });
+    }
+
+    private async Task DisconnectScreenAsync()
+    {
+        await context.BeginBatchAsync();
+        await context.SetFillStyleAsync("black");
+        await context.FillRectAsync(0, 0, CanvasWidth, CanvasHeight);
+        await context.SetFillStyleAsync("white");
+        await context.FillTextAsync("Not connected to game :(", CanvasWidth / 2 - 50, CanvasHeight / 2);
+        await context.EndBatchAsync();
     }
 }
