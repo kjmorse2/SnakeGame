@@ -12,14 +12,13 @@
 @inject IJSRuntime JsRuntime;
 @inject ILogger<Program> Logger;
 
-@namespace CS3500.Snake.Client.Pages.SnakeGame 
+@namespace CS3500.Snake.Client.Pages.SnakeGame
 
 <PageTitle>Snake Game</PageTitle>
 
 <script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.min.js"></script>
 
 <h1>Snake Game</h1>
-
 <div id="ConnectionInputs">
     <div class="input-row">
         <label for="name"> Your Name: </label>
@@ -28,7 +27,7 @@
         <input id="url" disabled="@connection.IsConnected" type="text" @bind="serverHost" />
         <label for="url"> Port: </label>
         <input id="port" disabled="@connection.IsConnected" type="number" @bind="serverPort" class="port" />
-        @if ( connection.IsConnected )
+        @if (connection.IsConnected)
         {
             <button class="btn btn-primary" @onclick="DisconnectFromServerAsync">Disconnect</button>
         }
@@ -37,7 +36,6 @@
             <button class="btn btn-primary" @onclick="Connect">Connect</button>
         }
     </div>
-
     <div class="snakePage">
         <div class="hudTop">
             <span>FPS: @MathF.Round(AvgFps)</span>
@@ -46,7 +44,7 @@
         <div class="snakeLayout">
             <!--Canvas-->
             <div id="myCanvas">
-                <BECanvas Width="CanvasWidth" Height="CanvasHeight" @ref="canvasReference"/>
+                <BECanvas Width="CanvasWidth" Height="CanvasHeight" @ref="canvasReference" />
             </div>
 
             <!--Scoreboard-->
@@ -55,19 +53,22 @@
                 {
                     <h4>Scoreboard</h4>
                     <ul>
-                        @foreach(var snake in World.Snakes.Values.OrderByDescending(s => s.Score))
+                        @{
+                            int count = 1;
+                        }
+                        @foreach (var snake in World.Snakes.Values.OrderByDescending(s => s.Score))
                         {
-                            <li>@snake.Name:   @snake.Score</li>
+                            <li> @count. @snake.Name: @snake.Score</li>
+                            count++;
                         }
                     </ul>
                 }
             </div>
-        </div>
+       </div>
 
     </div>
 
 </div>
-
 @code
 {
     /// <summary>
@@ -161,20 +162,20 @@
     /// On first render, imports the JavaScript module, creates the Canvas2D context, and performs JS interop setup.
     /// </summary>
     /// <param name="firstRender">True if this is the initial render.</param>
-    protected override async Task OnAfterRenderAsync( bool firstRender )
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if ( firstRender )
+        if (firstRender)
         {
             try
             {
                 Logger.LogInformation("First render: importing JS module and creating canvas context.");
-                _jsModule = await JsRuntime.InvokeAsync<IJSObjectReference>( "import", "./Pages/SnakeGame.razor.js" );
+                _jsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Pages/SnakeGame.razor.js");
                 context = await canvasReference.CreateCanvas2DAsync();
-                await _jsModule.InvokeVoidAsync( "initJS", DotNetObjectReference.Create( this ) );
+                await _jsModule.InvokeVoidAsync("initJS", DotNetObjectReference.Create(this));
                 Logger.LogInformation("Initialized JS interop and canvas context.");
                 await DisconnectScreenAsync();
             }
-            catch ( Exception e )
+            catch (Exception e)
             {
                 Logger.LogError(e, "Error during OnAfterRenderAsync initialization.");
                 AlertPopupDisconnect($"Error during initialization, disconnecting");
@@ -192,7 +193,7 @@
     {
         if (
             string.IsNullOrEmpty(key)
-            ||!connection.IsConnected)
+            || !connection.IsConnected)
         {
             return;
         }
@@ -246,14 +247,14 @@
 
             // Clip to canvas, center origin, and draw background
             await context.BeginPathAsync();
-            await context.RectAsync( 0, 0, CanvasWidth, CanvasHeight );
+            await context.RectAsync(0, 0, CanvasWidth, CanvasHeight);
             await context.ClipAsync();
             await context.SaveAsync();
 
             // Use integer halves to keep coordinate math simple here
             var halfW = CanvasWidth / 2;
             var halfH = CanvasHeight / 2;
-            await context.TranslateAsync( halfW, halfH );
+            await context.TranslateAsync(halfW, halfH);
 
             // Snapshot current world state references
             var snakeDictionary = World.Snakes;
@@ -263,11 +264,11 @@
             IEnumerable<Wall> walls = World.Walls.Values;
 
             // Camera follow: translate so the player's head is centered
-            await context.TranslateAsync( -head.X, -head.Y );
+            await context.TranslateAsync(-head.X, -head.Y);
 
             // Draw background over everything
-            await context.SetFillStyleAsync( "darkblue" );
-            await context.FillRectAsync( -World.Size / 2, -World.Size / 2, World.Size, World.Size);
+            await context.SetFillStyleAsync("darkblue");
+            await context.FillRectAsync(-World.Size / 2, -World.Size / 2, World.Size, World.Size);
 
             // Draw each of the element types:
             await context.Draw(snakes);      // Snakes
@@ -281,7 +282,7 @@
 
             StateHasChanged();
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
             // Error-level logging permitted in draw loop
             Logger.LogError(e, "Error drawing");

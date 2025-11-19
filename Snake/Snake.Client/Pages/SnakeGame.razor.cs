@@ -215,22 +215,26 @@ public partial class SnakeGame : IDisposable
 
         Logger.LogInformation("FPS metrics reset after connection end.");
     }
-
     public void Dispose()
     {
-        context.Dispose();
-        if (_jsModule is IDisposable jsModuleDisposable)
+        if (context != null)
         {
-            jsModuleDisposable.Dispose();
-        }
-        else
-        {
-            _ = _jsModule.DisposeAsync().AsTask();
+            context.Dispose();
         }
 
-        connection.Dispose();
+        if (_jsModule is IDisposable jsSync)
+        {
+            jsSync.Dispose();
+        }
+        else if (_jsModule is IAsyncDisposable jsAsync)
+        {
+            jsAsync.DisposeAsync();
+        }
+
+        connection?.Dispose();
         _receiveCts?.Dispose();
     }
+
 }
 
 /// <summary>
