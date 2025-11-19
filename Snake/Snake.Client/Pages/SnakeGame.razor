@@ -14,11 +14,11 @@
 
 @namespace CS3500.Snake.Client.Pages.SnakeGame 
 
-<PageTitle>Chat Client</PageTitle>
+<PageTitle>Snake Game</PageTitle>
 
 <script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.min.js"></script>
 
-<h1>Chat Client</h1>
+<h1>Snake Game</h1>
 
 <div id="ConnectionInputs">
     <div class="input-row">
@@ -38,33 +38,40 @@
         }
     </div>
 
-    <div class="hud">
-        <div class="hudTopRow">
+    <div class="snakePage">
+        <div class="hudTop">
             <span>FPS: @MathF.Round(AvgFps)</span>
         </div>
 
-         @if (World is not null && World.Snakes.Count > 0)
-         {
-         <div class="hudScoreboard">
-             <h4>Scoreboard</h4>
-             <ul>
-                 @foreach(var snake in World.Snakes.Values.OrderByDescending(s => s.Score))
-                    {
-                        <li>@snake.Name:   @snake.Score</li>
-                    }
-                </ul>
-         </div>
-         }
+        <div class="snakeLayout">
+            <!--Canvas-->
+            @if(!string.IsNullOrEmpty( serverStatusMessage ) )
+            {
+            <p> @serverStatusMessage</p>
+            }
+            <div id="myCanvas">
+                <BECanvas Width="CanvasWidth" Height="CanvasHeight" @ref="canvasReference"/>
+            </div>
+
+            <div class="hudScoreboard">
+                @if (World is not null && World.Snakes.Count > 0)
+                {
+                    <h4>Scoreboard</h4>
+                    <ul>
+                        @foreach(var snake in World.Snakes.Values.OrderByDescending(s => s.Score))
+                        {
+                            <li>@snake.Name:   @snake.Score</li>
+                        }
+                    </ul>
+                }
+            </div>
+
+        </div>
+
     </div>
 
-    @if(!string.IsNullOrEmpty( serverStatusMessage ) )
-    {
-        <p> @serverStatusMessage</p>
-    }
-    <div id="myCanvas">
-        <BECanvas Width="CanvasWidth" Height="CanvasHeight" @ref="canvasReference"/>
-    </div>
 </div>
+
 
 @code
 {
