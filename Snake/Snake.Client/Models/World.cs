@@ -31,48 +31,40 @@ public class World
     /// </remarks>
     public void UpdateElement(string jsonString)
     {
-        char type = jsonString[2];
-        switch(type)
+        if (string.IsNullOrWhiteSpace(jsonString))
         {
-            // TODO: Handle exceptions thrown when invalid object is sent, could be here or higher in call stack.
-            case 's':
-                Snake receivedSnake = JsonSerializer.Deserialize<Snake>(jsonString) ?? throw new InvalidOperationException();
-                Snakes[receivedSnake.Id] = receivedSnake;
-                break;
-            case 'p':
-                PowerUp receivedPowerUp = JsonSerializer.Deserialize<PowerUp>(jsonString) ?? throw new InvalidOperationException();
-                PowerUps[receivedPowerUp.Id] = receivedPowerUp;
-                break;
-            case 'w':
-                Wall receivedWall = JsonSerializer.Deserialize<Wall>(jsonString) ?? throw new InvalidOperationException();
-                Walls[receivedWall.Id] = receivedWall;
-                break;
+            return;
         }
-    }
-    public bool UpdateElement(string jsonString, int playerId)
-    {
         char type = jsonString[2];
-        switch(type)
+        try
         {
-            // TODO: Handle exceptions thrown when invalid object is sent, could be here or higher in call stack.
-            case 's':
-                Snake receivedSnake = JsonSerializer.Deserialize<Snake>(jsonString) ?? throw new InvalidOperationException();
-                Snakes[receivedSnake.Id] = receivedSnake;
-                if(playerId == receivedSnake.Id)
-                {
-                    return true;
-                }
-                break;
-            case 'p':
-                PowerUp receivedPowerUp = JsonSerializer.Deserialize<PowerUp>(jsonString) ?? throw new InvalidOperationException();
-                PowerUps[receivedPowerUp.Id] = receivedPowerUp;
-                break;
-            case 'w':
-                Wall receivedWall = JsonSerializer.Deserialize<Wall>(jsonString) ?? throw new InvalidOperationException();
-                Walls[receivedWall.Id] = receivedWall;
-                break;
+            switch (type)
+            {
+                case 's':
+                    Snake receivedSnake = JsonSerializer.Deserialize<Snake>(jsonString) ??
+                                          throw new InvalidOperationException();
+                    Snakes[ receivedSnake.Id ] = receivedSnake;
+                    break;
+                case 'p':
+                    PowerUp receivedPowerUp = JsonSerializer.Deserialize<PowerUp>(jsonString) ??
+                                              throw new InvalidOperationException();
+                    PowerUps[ receivedPowerUp.Id ] = receivedPowerUp;
+                    break;
+                case 'w':
+                    Wall receivedWall = JsonSerializer.Deserialize<Wall>(jsonString) ??
+                                        throw new InvalidOperationException();
+                    Walls[ receivedWall.Id ] = receivedWall;
+                    break;
+            }
         }
-        return false;
+        catch (JsonException e)
+        {
+            throw new InvalidOperationException("Failed to deserialize JSON string.", e);
+        }
+        catch (Exception e)
+        {
+            throw new InvalidOperationException("An error occurred while updating the world element.", e);
+        }
     }
 
     /// <summary>
