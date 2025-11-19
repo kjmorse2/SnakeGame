@@ -11,7 +11,7 @@ using CS3500.Snake.Models;
 /// Code-behind for the SnakeGame Razor component. Manages the network connection,
 /// world state, animation timing metrics, and JS interop entry points used by the view.
 /// </summary>
-public partial class SnakeGame
+public partial class SnakeGame : IDisposable
 {
     /// <summary>
     /// The authoritative world model as provided by the server.
@@ -76,6 +76,7 @@ public partial class SnakeGame
         connection = new NetworkConnection(Logger);
         Logger.LogInformation("Disconnected and reset connection instance.");
         await DisconnectScreenAsync();
+        World.Clear();
     }
 
     private Task DisconnectFromServer(string errorMessage)
@@ -172,6 +173,22 @@ public partial class SnakeGame
         _receiveCts = null;
 
         Logger.LogInformation("FPS metrics reset after connection end.");
+    }
+
+    public void Dispose()
+    {
+        context.Dispose();
+        if (_jsModule is IDisposable jsModuleDisposable)
+        {
+            jsModuleDisposable.Dispose();
+        }
+        else
+        {
+            _ = _jsModule.DisposeAsync().AsTask();
+        }
+
+        connection.Dispose();
+        _receiveCts?.Dispose();
     }
 }
 

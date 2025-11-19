@@ -98,6 +98,13 @@ public class World
         return DefaultPoint;
     }
 
+    public void Clear()
+    {
+        Snakes.Clear();
+        Walls.Clear();
+        PowerUps.Clear();
+    }
+
     /// <summary>
     /// Gets the world square size in pixels.
     /// </summary>
