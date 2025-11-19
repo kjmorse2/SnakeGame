@@ -181,7 +181,7 @@ public static class ContextExtensions
 
         await context.SetFontAsync("14px Arial");
         await context.SetFillStyleAsync("white");
-        await context.FillTextAsync(snake.Name, snake.Head.X - 20, snake.Head.Y + 30);
+        await context.FillTextAsync($" {snake.Name}:{snake.Score}", snake.Head.X - 20, snake.Head.Y + 30);
 
         // Restore previous stroke thickness
         await context.SetLineWidthAsync(oldLineWidth);

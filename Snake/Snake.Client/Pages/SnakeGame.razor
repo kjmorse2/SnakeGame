@@ -37,9 +37,26 @@
             <button class="btn btn-primary" @onclick="Connect">Connect</button>
         }
     </div>
-    <div>
-          <span>FPS: @MathF.Round(AvgFps)</span>
+
+    <div class="hud">
+        <div class="hudTopRow">
+            <span>FPS: @MathF.Round(AvgFps)</span>
+        </div>
+
+         @if (World is not null && World.Snakes.Count > 0)
+         {
+         <div class="hudScoreboard">
+             <h4>Scoreboard</h4>
+             <ul>
+                 @foreach(var snake in World.Snakes.Values.OrderByDescending(s => s.Score))
+                    {
+                        <li>@snake.Name:   @snake.Score</li>
+                    }
+                </ul>
+         </div>
+         }
     </div>
+
     @if(!string.IsNullOrEmpty( serverStatusMessage ) )
     {
         <p> @serverStatusMessage</p>
