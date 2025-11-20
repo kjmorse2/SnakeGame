@@ -14,14 +14,12 @@
     margin-bottom: 10px
 }
 
-
 .snakeLayout{
     display: flex;
     flex-direction: row;
     justify-content: center;
     width: 100%
 }
-
 
 #myCanvas{
     margin-right: 30px; 

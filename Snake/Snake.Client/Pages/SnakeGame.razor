@@ -22,7 +22,7 @@
 <div id="ConnectionInputs">
     <div class="input-row">
         <label for="name"> Your Name: </label>
-        <input id="name" disabled="@connection.IsConnected" type="text" @bind="playerName" />
+        <input id="name" disabled="@connection.IsConnected" type="text" maxlength = "10" @bind="playerName" />
         <label for="url"> Server Address: </label>
         <input id="url" disabled="@connection.IsConnected" type="text" @bind="serverHost" />
         <label for="url"> Port: </label>
@@ -332,6 +332,10 @@
         });
     }
 
+    /// <summary>
+    /// Shows an alert popup notifying the user that the connection to the server was lost.
+    /// </summary>
+    /// <param name="message"></param>
     private void AlertPopupDisconnect(string message)
     {
         _ = InvokeAsync(async () =>

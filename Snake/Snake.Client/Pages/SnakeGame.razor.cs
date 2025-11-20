@@ -52,6 +52,9 @@ public partial class SnakeGame : IDisposable
     /// </summary>
     private float AvgFps => FrameCount / (float)GameTimer.Elapsed.TotalSeconds;
 
+    /// <summary>
+    /// Safely disconnects the client from the Snake server and resets the state.
+    /// </summary>
     private void DisconnectFromServer()
     {
         _ = DisconnectFromServerAsync();
@@ -84,6 +87,11 @@ public partial class SnakeGame : IDisposable
         World.Clear();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="errorMessage"></param>
+    /// <returns></returns>
     private Task DisconnectFromServer(string errorMessage)
     {
         Logger.LogInformation("Disconnecting from server due to error: " + errorMessage);
@@ -215,6 +223,10 @@ public partial class SnakeGame : IDisposable
 
         Logger.LogInformation("FPS metrics reset after connection end.");
     }
+
+    /// <summary>
+    /// Releases all unmanaged and manage resources held by the SnakeGame component.
+    /// </summary>
     public void Dispose()
     {
         if (context != null)
@@ -249,6 +261,7 @@ public static class ContextExtensions
      {
       "lime", "cyan", "yellow", "orange", "magenta", "red", "blue", "white",
      };
+
     /// <summary>
     /// Draws a single snake as a stroked polyline from tail to head.
     /// </summary>
