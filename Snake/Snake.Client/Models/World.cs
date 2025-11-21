@@ -1,4 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿#pragma warning disable SA1636
+// <copyright file="PowerUp.cs" company="U of U CS3500">
+#pragma warning restore SA1636
+// Copyright (c) U of U CS3500, Kenneth Morse, and Hunter Simmons. All rights reserved.
+// </copyright>
+using System.Collections.Concurrent;
 using System.Text.Json;
 
 namespace CS3500.Snake.Models;
