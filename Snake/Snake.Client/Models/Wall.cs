@@ -22,7 +22,7 @@ public class Wall
     /// <summary>
     ///     Gets or sets the reference to the wall image.
     /// </summary>
-    public static ElementReference Wall_Image_Refernce { get; set; }
+    public static ElementReference WallImageReference { get; set; }
 
     /// <summary>
     ///     Gets the unique identifier for the wall.

@@ -60,6 +60,8 @@ public partial class SnakeGame : IDisposable
     /// </summary>
     public void Dispose()
     {
+        // Necessary because context could technically not exist before Dispose is called.
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (context != null)
         {
             context.Dispose();
@@ -82,7 +84,6 @@ public partial class SnakeGame : IDisposable
     ///     Connects to the server, negotiates identity, initializes the world, and begins receiving updates.
     ///     The receive loop runs on a background thread. The render loop is driven from JS via requestAnimationFrame.
     /// </summary>
-
     // ReSharper disable once UnusedMember.Local
     private async void Connect()
     {
@@ -127,14 +128,7 @@ public partial class SnakeGame : IDisposable
                     Logger.LogInformation("Sending username to server.");
                     try
                     {
-                        if (playerName.Length > 16)
-                        {
-                            connection.SendLine(playerName.Substring(0, 16));
-                        }
-                        else
-                        {
-                            connection.SendLine(playerName);
-                        }
+                        connection.SendLine(playerName.Length > 16 ? playerName.Substring(0, 16) : playerName);
                     }
                     catch
                     {

@@ -44,7 +44,10 @@ public class World
     /// </summary>
     public ConcurrentDictionary<int, Wall> Walls { get; } = new();
 
-    public bool WallsLoaded { get; set; } = false;
+    /// <summary>
+    /// Gets or sets a value indicating whether the walls have been loaded.
+    /// </summary>
+    public bool WallsLoaded { get; set; }
 
     private static Point2D DefaultPoint => new() { X = 0, Y = 0 };
 
@@ -68,6 +71,9 @@ public class World
         }
     }
 
+    /// <summary>
+    /// Clears all world elements from the collections.
+    /// </summary>
     public void Clear()
     {
         Snakes.Clear();
@@ -75,6 +81,11 @@ public class World
         PowerUps.Clear();
     }
 
+    /// <summary>
+    /// Gets the head position of the snake with the given player ID.
+    /// </summary>
+    /// <param name="playerId">The payer ID of the snake to get the head for.</param>
+    /// <returns>A 2D point representing the head.</returns>
     public Point2D GetHead(int playerId)
     {
         if (Snakes.TryGetValue(playerId, out Snake? snake))

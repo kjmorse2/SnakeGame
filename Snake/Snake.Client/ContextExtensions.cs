@@ -134,7 +134,7 @@ public static class ContextExtensions
         foreach (Point2D segment in wall.GetSegments())
         {
             await context.DrawImageAsync(
-                Wall.Wall_Image_Refernce,
+                Wall.WallImageReference,
                 segment.X - 25,
                 segment.Y - 25,
                 Wall.SegmentSize,

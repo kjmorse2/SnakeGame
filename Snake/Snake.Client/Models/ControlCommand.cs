@@ -17,7 +17,8 @@ public class ControlCommand(string direction)
     ///     Initializes a new instance of the <see cref="ControlCommand" /> class with an empty direction.
     ///     Required for JSON deserialization.
     /// </summary>
-    public ControlCommand() : this(string.Empty)
+    public ControlCommand()
+        : this(string.Empty)
     {
     }
 
