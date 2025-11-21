@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Components;
 
 namespace CS3500.Snake.Models;
 
@@ -30,6 +31,8 @@ public class Wall
     /// </summary>
     [JsonPropertyName("p2")]
     public required Point2D P2 { get; init; }
+
+    public static ElementReference Wall_Image_Refernce { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether the wall is vertical (same X coordinate).

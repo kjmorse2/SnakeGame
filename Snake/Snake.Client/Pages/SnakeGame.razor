@@ -18,6 +18,8 @@
 
 <script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.min.js"></script>
 
+<img src="images/background.png" @ref = "background_image" hidden/>
+<img src="images/Wall2.png" @ref = "wall_image_ref" hidden/>
 <h1>Snake Game</h1>
 <div id="ConnectionInputs">
     <div class="input-row">
@@ -75,6 +77,9 @@
     /// Reference to the BECanvas component instance, assigned by Blazor via @ref after first render.
     /// </summary>
     private BECanvasComponent canvasReference = null!;
+
+    private ElementReference background_image = default!;
+    private ElementReference wall_image_ref = default!;
 
     /// <summary>
     /// 2D drawing context created for the canvas. Used to issue all drawing commands.
@@ -174,6 +179,7 @@
                 await _jsModule.InvokeVoidAsync("initJS", DotNetObjectReference.Create(this));
                 Logger.LogInformation("Initialized JS interop and canvas context.");
                 await DisconnectScreenAsync();
+                Wall.Wall_Image_Refernce = wall_image_ref;
             }
             catch (Exception e)
             {
@@ -268,7 +274,10 @@
 
             // Draw background over everything
             await context.SetFillStyleAsync("darkblue");
-            await context.FillRectAsync(-World.Size / 2, -World.Size / 2, World.Size, World.Size);
+            await context.DrawImageAsync(background_image,
+                -World.Size / 2, -World.Size / 2,
+                World.Size, World.Size);
+            // await context.FillRectAsync(-World.Size / 2, -World.Size / 2, World.Size, World.Size);
 
             // Draw each of the element types:
             await context.Draw(snakes);      // Snakes

@@ -1,5 +1,5 @@
-﻿// <copyright file="ServerConnection.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+﻿// <copyright file="SnakeGame.razor.cs" company="UofU-CS3500">
+// Copyright (c) UofU-CS3500. All rights reserved.
 // </copyright>
 
 using System.Diagnostics;
@@ -259,7 +259,6 @@ public partial class SnakeGame : IDisposable
         connection?.Dispose();
         _receiveCts?.Dispose();
     }
-
 }
 
 /// <summary>
@@ -275,16 +274,16 @@ public static class ContextExtensions
       "lime", "cyan", "yellow", "orange", "magenta", "red", "blue", "white",
      };
 
-    private static readonly string[][] SnakePatterns =
+    private static readonly float[][] SnakePatterns =
     {
-        new double[0] {}, //solid
-        new double[]{10, 10},
-        new double[]{4, 4}, 
-        new double[]{20,5},
-        new double[]{1, 1},
-        new double[]{15, 3, 3, 3},
-        new double[]{20, 3, 3, 3, 3, 3, 3, 3},
-        new double[]{12, 3, 3}
+        new float[0] {}, //solid
+        new float[]{7, 7},
+        new float[]{4, 4}, 
+        new float[]{15, 5},
+        new float[]{3, 1, 4},
+        new float[]{15, 3, 3, 3},
+        new float[]{20, 3, 3, 3, 3, 3, 3, 3},
+        new float[]{12, 3, 3}
     };
 
     /// <summary>
@@ -321,7 +320,7 @@ public static class ContextExtensions
 
         // Restore previous stroke thickness
         await context.SetLineWidthAsync(oldLineWidth);
-        await context.SetLineDashAsync(Array.Empty<double>());
+        await context.SetLineDashAsync(Array.Empty<float>());
     }
 
     /// <summary>
@@ -384,7 +383,8 @@ public static class ContextExtensions
     {
         foreach (Point2D segment in wall.GetSegments())
         {
-            await context.FillRectAsync(segment.X - 25, segment.Y - 25, Wall.SegmentSize, Wall.SegmentSize);
+            await context.DrawImageAsync(Wall.Wall_Image_Refernce, segment.X - 25, segment.Y - 25, Wall.SegmentSize, Wall.SegmentSize);
+            //await context.FillRectAsync(segment.X - 25, segment.Y - 25, Wall.SegmentSize, Wall.SegmentSize);
         }
     }
 }
