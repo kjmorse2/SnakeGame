@@ -3,26 +3,26 @@
 namespace CS3500.Snake.Models;
 
 /// <summary>
-/// Represents a collectible power-up item in the world grid. When collected it is marked dead for one tick
-/// so clients can remove it from their local model.
+///     Represents a collectible power-up item in the world grid. When collected it is marked dead for one tick
+///     so clients can remove it from their local model.
 /// </summary>
 public class PowerUp
 {
     /// <summary>
-    /// Gets the unique identifier for the power-up.
+    ///     Gets the unique identifier for the power-up.
     /// </summary>
-    [JsonPropertyName( "power" )]
+    [JsonPropertyName("power")]
     public int Id { get; init; }
 
     /// <summary>
-    /// Gets the absolute world position where the power-up resides.
+    ///     Gets a value indicating whether the power-up has been collected (dead). True only on the collection tick.
     /// </summary>
-    [JsonPropertyName( "loc" )]
-    public required Point2D Position { get; init;  }
+    [JsonPropertyName("died")]
+    public bool IsDead { get; init; }
 
     /// <summary>
-    /// Gets a value indicating whether the power-up has been collected (dead). True only on the collection tick.
+    ///     Gets the absolute world position where the power-up resides.
     /// </summary>
-    [JsonPropertyName( "died" )]
-    public bool IsDead { get; init; }
+    [JsonPropertyName("loc")]
+    public required Point2D Position { get; init; }
 }

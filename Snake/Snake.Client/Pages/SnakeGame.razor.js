@@ -2,17 +2,13 @@ var framecount = 0;
 var animationFrameId = 0;
 var animating = false;
 
-export function ToggleAnimation( on )
-{
+export function ToggleAnimation(on) {
     console.log("N: Toggle Animation " + on);
 
     animating = on;
-    if (on)
-    {
-        window.requestAnimationFrame( AnimationLoopJS );
-    }
-    else
-    {
+    if (on) {
+        window.requestAnimationFrame(AnimationLoopJS);
+    } else {
         window.cancelAnimationFrame(animationFrameId);
     }
 }
@@ -28,13 +24,11 @@ export function ToggleAnimation( on )
  *
  * @param {any} timeStamp
  */
-function AnimationLoopJS(timeStamp)
-{
+function AnimationLoopJS(timeStamp) {
     framecount++;
 
     DotNetSide.invokeMethodAsync('Draw', timeStamp);
-    if ( animating )
-    {
+    if (animating) {
         animationFrameId = window.requestAnimationFrame(AnimationLoopJS);
     }
 }
@@ -46,8 +40,7 @@ function AnimationLoopJS(timeStamp)
  *
  * @param {any} DotNetSide - the C# instance from the razor code.
  */
-export function initJS( DotNetSide )
-{
+export function initJS(DotNetSide) {
     window.DotNetSide = DotNetSide;
 }
 
@@ -70,8 +63,7 @@ export function StartControl(on) {
 /**
  * Stop the animation when we leave the page.
  */
-window.addEventListener("unload", () =>
-{
+window.addEventListener("unload", () => {
     console.log("Networked JS: leaving page.");
     animating = false;
 });

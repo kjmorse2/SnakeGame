@@ -1,13 +1,13 @@
 ﻿@page "/snake"
 
 @rendermode InteractiveServer
-
+@using System.Text.Json
 @using Blazor.Extensions
 @using Blazor.Extensions.Canvas
 @using Blazor.Extensions.Canvas.Canvas2D
 @using CS3500.Networking
-@using System.Text.Json
 @using CS3500.Snake.Models
+@using static global::Snake.Client.ContextExtensions
 
 @inject IJSRuntime JsRuntime;
 @inject ILogger<Program> Logger;
@@ -18,17 +18,19 @@
 
 <script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.min.js"></script>
 
-<img src="images/background.png" @ref = "background_image" hidden/>
-<img src="images/Wall2.png" @ref = "wall_image_ref" hidden/>
+<img src="images/background.png" @ref="backgroundImage" hidden
+     alt="A background image of a circuit board used for the game rendering."/>
+<img src="images/Wall2.png" @ref="wallImageRef" hidden
+     alt="A image of the blue screen of death for use in rendering the game"/>
 <h1>Snake Game</h1>
 <div id="ConnectionInputs">
     <div class="input-row">
         <label for="name"> Your Name: </label>
-        <input id="name" disabled="@connection.IsConnected" type="text" maxlength = "10" @bind="playerName" />
+        <input id="name" disabled="@connection.IsConnected" type="text" maxlength="10" @bind="playerName"/>
         <label for="url"> Server Address: </label>
-        <input id="url" disabled="@connection.IsConnected" type="text" @bind="serverHost" />
+        <input id="url" disabled="@connection.IsConnected" type="text" @bind="serverHost"/>
         <label for="url"> Port: </label>
-        <input id="port" disabled="@connection.IsConnected" type="number" @bind="serverPort" class="port" />
+        <input id="port" disabled="@connection.IsConnected" type="number" @bind="serverPort" class="port"/>
         @if (connection.IsConnected)
         {
             <button class="btn btn-primary" @onclick="DisconnectFromServerAsync">Disconnect</button>
@@ -46,7 +48,7 @@
         <div class="snakeLayout">
             <!--Canvas-->
             <div id="myCanvas">
-                <BECanvas Width="CanvasWidth" Height="CanvasHeight" @ref="canvasReference" />
+                <BECanvas Width="canvasWidth" Height="canvasHeight" @ref="canvasReference"/>
             </div>
 
             <!--Scoreboard-->
@@ -56,7 +58,7 @@
                     <h4>Scoreboard</h4>
                     <ul>
                         @{
-                            int count = 1;
+                            var count = 1;
                         }
                         @foreach (var snake in World.Snakes.Values.OrderByDescending(s => s.Score))
                         {
@@ -66,87 +68,89 @@
                     </ul>
                 }
             </div>
-       </div>
+        </div>
 
     </div>
 
 </div>
+
 @code
 {
     /// <summary>
-    /// Reference to the BECanvas component instance, assigned by Blazor via @ref after first render.
+    ///     Reference to the BECanvas component instance, assigned by Blazor via @ref after first render.
     /// </summary>
     private BECanvasComponent canvasReference = null!;
 
-    private ElementReference background_image = default!;
-    private ElementReference wall_image_ref = default!;
+    private ElementReference backgroundImage;
+    private ElementReference wallImageRef;
 
     /// <summary>
-    /// 2D drawing context created for the canvas. Used to issue all drawing commands.
+    ///     2D drawing context created for the canvas. Used to issue all drawing commands.
     /// </summary>
     private Canvas2DContext context = null!;
 
     /// <summary>
-    /// JavaScript module backing this component (imported from SnakeGame.razor.js) for animation and input.
+    ///     JavaScript module backing this component (imported from SnakeGame.razor.js) for animation and input.
     /// </summary>
-    private IJSObjectReference _jsModule = null!;
+    private IJSObjectReference jsModule = null!;
 
     // Connection and user inputs -----------------------------------------------------
 
     /// <summary>
-    /// Hostname or IP address of the Snake server to connect to.
+    ///     Hostname or IP address of the Snake server to connect to.
     /// </summary>
     private string serverHost = "localhost";
 
     /// <summary>
-    /// TCP port of the Snake server.
+    ///     TCP port of the Snake server.
     /// </summary>
     private int serverPort = 11000;
 
     /// <summary>
-    /// Display name sent to the server on connect.
+    ///     Display name sent to the server on connect.
     /// </summary>
     private string playerName = "Your Name Here";
+
     // UI state ----------------------------------------------------------------------
 
     /// <summary>
-    /// CSS class name for the connection spinner ("spinner" to show, empty to hide).
+    ///     CSS class name for the connection spinner ("spinner" to show, empty to hide).
     /// </summary>
     private string connectionSpinnerClass = string.Empty;
 
     /// <summary>
-    /// Connection to the Snake server, used to send/receive lines (JSON payloads).
+    ///     Connection to the Snake server, used to send/receive lines (JSON payloads).
     /// </summary>
     private NetworkConnection connection = null!;
 
     // Pre-serialized control commands ----------------------------------------------
 
     /// <summary>Serialized command to move up.</summary>
-    private readonly string UpCommand = JsonSerializer.Serialize(new ControlCommand("up"));
+    private readonly string upCommand = JsonSerializer.Serialize(new ControlCommand("up"));
 
     /// <summary>Serialized command to move down.</summary>
-    private readonly string DownCommand = JsonSerializer.Serialize(new ControlCommand("down"));
+    private readonly string downCommand = JsonSerializer.Serialize(new ControlCommand("down"));
 
     /// <summary>Serialized command to move right.</summary>
-    private readonly string RightCommand = JsonSerializer.Serialize(new ControlCommand("right"));
+    private readonly string rightCommand = JsonSerializer.Serialize(new ControlCommand("right"));
 
     /// <summary>Serialized command to move left.</summary>
-    private readonly string LeftCommand = JsonSerializer.Serialize(new ControlCommand("left"));
+    private readonly string leftCommand = JsonSerializer.Serialize(new ControlCommand("left"));
 
     // Canvas dimensions -------------------------------------------------------------
 
     /// <summary>
-    /// Width of the drawing canvas in pixels.
+    ///     Width of the drawing canvas in pixels.
     /// </summary>
-    private readonly int CanvasWidth = 1000;
+    private readonly int canvasWidth = 1000;
 
     /// <summary>
-    /// Height of the drawing canvas in pixels.
+    ///     Height of the drawing canvas in pixels.
     /// </summary>
-    private readonly int CanvasHeight = 1000;
+    private readonly int canvasHeight = 1000;
 
     /// <summary>
-    /// Initializes the connection object and prepares component state. Runs once when the component is created.
+    ///     Initializes the connection object and prepares component state. Runs once when the component is created.
     /// </summary>
     protected override void OnInitialized()
     {
@@ -162,9 +166,8 @@
         }
     }
 
-
     /// <summary>
-    /// On first render, imports the JavaScript module, creates the Canvas2D context, and performs JS interop setup.
+    ///     On first render, imports the JavaScript module, creates the Canvas2D context, and performs JS interop setup.
     /// </summary>
     /// <param name="firstRender">True if this is the initial render.</param>
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -174,24 +177,24 @@
             try
             {
                 Logger.LogInformation("First render: importing JS module and creating canvas context.");
-                _jsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Pages/SnakeGame.razor.js");
+                jsModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Pages/SnakeGame.razor.js");
                 context = await canvasReference.CreateCanvas2DAsync();
-                await _jsModule.InvokeVoidAsync("initJS", DotNetObjectReference.Create(this));
+                await jsModule.InvokeVoidAsync("initJS", DotNetObjectReference.Create(this));
                 Logger.LogInformation("Initialized JS interop and canvas context.");
                 await DisconnectScreenAsync();
-                Wall.Wall_Image_Refernce = wall_image_ref;
+                Wall.Wall_Image_Refernce = wallImageRef;
             }
             catch (Exception e)
             {
                 Logger.LogError(e, "Error during OnAfterRenderAsync initialization.");
-                AlertPopupDisconnect($"Error during initialization, disconnecting");
+                AlertPopupDisconnect("Error during initialization, disconnecting");
             }
         }
     }
 
     /// <summary>
-    /// Handles keyboard input for WASD and Arrow keys sent from JavaScript and forwards control to the server.
-    /// Exposed to JavaScript via JS interop.
+    ///     Handles keyboard input for WASD and Arrow keys sent from JavaScript and forwards control to the server.
+    ///     Exposed to JavaScript via JS interop.
     /// </summary>
     /// <param name="key">The value of <c>event.key</c> from the DOM keydown event.</param>
     [JSInvokable]
@@ -211,19 +214,19 @@
             {
                 case "arrowup":
                 case "w":
-                    connection.SendLine(UpCommand);
+                    connection.SendLine(upCommand);
                     break;
                 case "arrowright":
                 case "d":
-                    connection.SendLine(RightCommand);
+                    connection.SendLine(rightCommand);
                     break;
                 case "arrowdown":
                 case "s":
-                    connection.SendLine(DownCommand);
+                    connection.SendLine(downCommand);
                     break;
                 case "arrowleft":
                 case "a":
-                    connection.SendLine(LeftCommand);
+                    connection.SendLine(leftCommand);
                     break;
             }
         }
@@ -235,8 +238,8 @@
     }
 
     /// <summary>
-    /// Renders a single frame to the canvas based on the current <see cref="World"/> state.
-    /// This is invoked from JavaScript on each animation frame (typically ~60FPS) with a timestamp.
+    ///     Renders a single frame to the canvas based on the current <see cref="World" /> state.
+    ///     This is invoked from JavaScript on each animation frame (typically ~60FPS) with a timestamp.
     /// </summary>
     /// <param name="_">Timestamp from <c>requestAnimationFrame</c> (unused).</param>
     [JSInvokable]
@@ -249,23 +252,23 @@
 
             // Overwrite entire canvas with light blue to clear previous frame
             await context.SetFillStyleAsync("lightblue");
-            await context.FillRectAsync(0, 0, CanvasWidth, CanvasHeight);
+            await context.FillRectAsync(0, 0, canvasWidth, canvasHeight);
 
             // Clip to canvas, center origin, and draw background
             await context.BeginPathAsync();
-            await context.RectAsync(0, 0, CanvasWidth, CanvasHeight);
+            await context.RectAsync(0, 0, canvasWidth, canvasHeight);
             await context.ClipAsync();
             await context.SaveAsync();
 
             // Use integer halves to keep coordinate math simple here
-            var halfW = CanvasWidth / 2;
-            var halfH = CanvasHeight / 2;
+            var halfW = canvasWidth / 2;
+            var halfH = canvasHeight / 2;
             await context.TranslateAsync(halfW, halfH);
 
             // Snapshot current world state references
             var snakeDictionary = World.Snakes;
             IEnumerable<Snake> snakes = snakeDictionary.Values;
-            Point2D head = World.GetHead(PlayerId);
+            var head = World.GetHead(PlayerId);
             IEnumerable<PowerUp> powerUps = World.PowerUps.Values;
             IEnumerable<Wall> walls = World.Walls.Values;
 
@@ -274,15 +277,19 @@
 
             // Draw background over everything
             await context.SetFillStyleAsync("darkblue");
-            await context.DrawImageAsync(background_image,
-                -World.Size / 2, -World.Size / 2,
-                World.Size, World.Size);
+            await context.DrawImageAsync(
+                backgroundImage,
+                -World.Size / 2,
+                -World.Size / 2,
+                World.Size,
+                World.Size);
+
             // await context.FillRectAsync(-World.Size / 2, -World.Size / 2, World.Size, World.Size);
 
             // Draw each of the element types:
-            await context.Draw(snakes);      // Snakes
-            await context.Draw(powerUps);    // Power Ups
-            await context.Draw(walls);       // Walls
+            await context.Draw(snakes); // Snakes
+            await context.Draw(powerUps); // Power Ups
+            await context.Draw(walls); // Walls
 
             await context.RestoreAsync();
             await context.EndBatchAsync();
@@ -300,9 +307,9 @@
     }
 
     // Safe to call from sync code; marshals onto the renderer thread
-    
+
     /// <summary>
-    /// Triggers when the canvas needs to display the disconnected screen.
+    ///     Triggers when the canvas needs to display the disconnected screen.
     /// </summary>
     private void DisconnectScreen()
     {
@@ -321,21 +328,21 @@
     }
 
     /// <summary>
-    /// Draws "not connect to game :(" on a black canvas.
+    ///     Draws "not connect to game :(" on a black canvas.
     /// </summary>
     private async Task DisconnectScreenAsync()
     {
         await context.BeginBatchAsync();
         await context.SetFillStyleAsync("black");
-        await context.FillRectAsync(0, 0, CanvasWidth, CanvasHeight);
+        await context.FillRectAsync(0, 0, canvasWidth, canvasHeight);
         await context.SetFillStyleAsync("white");
-        await context.FillTextAsync("Not connected to game :(", CanvasWidth / 2 - 50, CanvasHeight / 2);
+        await context.FillTextAsync("Not connected to game :(", (canvasWidth / 2) - 50, canvasHeight / 2);
         await context.EndBatchAsync();
     }
 
     /// <summary>
-    /// Shows a popup message notifiying the user with a paramref name="message". The user can confirm the popup.
-    /// <param name="message"> The message displayed in the popup.</param>
+    ///     Shows a popup message notifying the user with a paramref name="message". The user can confirm the popup.
+    ///     <param name="message"> The message displayed in the popup.</param>
     /// </summary>
     private void AlertPopup(string message)
     {
@@ -353,9 +360,9 @@
     }
 
     /// <summary>
-    /// Shows an alert popup notifying the user that the connection to the server was lost.
+    ///     Shows an alert popup notifying the user that the connection to the server was lost.
     /// </summary>
-    /// <param name="message">The messge displayed in the popup.</param>
+    /// <param name="message">The message displayed in the popup.</param>
     private void AlertPopupDisconnect(string message)
     {
         _ = InvokeAsync(async () =>
