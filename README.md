@@ -3,33 +3,68 @@ assignment-eight-chatting-kj_hunter_game created by GitHub Classroom
 ```
 Author:     Kenneth Morse 
 Partner:    Hunter Simmons
-Start Date: 4-Nov-2025
+Start Date: 11-Nov-2025
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  kjmorse2, HunterDSimmons
 Repo:       https://github.com/uofu-cs3500-20-fall2025/assignment-eight-chatting-kj_hunter_game.git
-Commit Date: 7-Nov-2025
-Solution:   Chatting
+Commit Date: 21-Nov-2025
+Solution:   Snake 
 Copyright:  CS 3500, Kenneth Morse,and Hunter Simmons - This work may not be copied for use in Academic Coursework.
 ```
-# Assignment 8:
+# Assignment 9:
 
 ### Overview of the functionality
-This basic chat application allows users to connect to a server and communicate with each other in real-time. 
-The application consists of a server that manages client connections and the ability for any number of clients to connect, 
-send messages, and receive messages from other connected clients.
+This project uses the NetworkConnection project from Assignment 8 to communicate with a SnakeGame 
+server, along wtih a new Snake project to render that game and allow the user to play with the other
+people connected to the same server. 
 
 ### Time Expenditures (in hours):
-Expected Hours: 14 hours total (7 each) 
-Actual Hours:
-- 11/4/25
-  - Paired Programming
-     - 2.5: Read assignment, set up repo, read starter code, and add logging statements to starter code
-     also started basic functionality for sending messages, but multiple users not working yet.
-- 11/5/25
-    - Paired Programming
-      - 2: Allowed multiple clients to connect, save names of users, and broadcast messages to all connected clients.
-- 11/7/25
-    - 2: Added information to the homepage, updated some variable names, and fixed formatting issues.
+Expected Hours: 30 hours total (15 each) 
+Actual Hours 38 total (about 19 each):
+- 11/11/25
+    - Paired programming:
+        - 3 : Added starter code, read through assigment, and started on model classes for json deserialization.
+- 11/12/25
+    - Paired programming:
+        - 2 : Started communicaiton with server, recieved walls and powerups, not rendered yet though 
+    - KJ:
+        - 1: Worked on some connection logic, and also starting on rendering, but does not work
+    - Hunter:
+        -  1: Draws snake name on head, and worked on death animation 
+- 11/15/25: 
+    - Hunter:  
+        - 1: Comments on code so far, worked on drawing more, still bottom right corner only (no translation) 
+    - KJ:
+        - 1: Clean up code for stylecop errors, and experimenting with javascript for rendering (should have started with this)
+- 11/16/25:
+    - Paired programming: 
+        - 3: Decided on javascript for animation, added fps counter back, and draws snakes on view, still not centered though.  
+- 11/ 17/25:
+    - KJ:
+        - 1: Polished snake drawing (for now)
+        - 1: Added control command functionality 
+        - 1: World is translated correctly, but not zoomed
+        - 1: Added commments to code so far, and polished fps counter 
+    - Hunter 
+        - 1: Implemented snake color changing for up to 8 players.
+    - Paired:
+        - 2: Fixed disconnection bugs, program now flows smoothely through all control paths
+- 11/18/25:
+    - Paired: 
+        - 0.5: Removed unused code and refactored some names.
+        - 0.5: Arrow keys no longer scroll on webpage  
+        - 0.5: Added scoreboard
+        - 0.5: Used css to make scoreboard look better. 
+        - 1: General cleanup, added TODO's for rest of project.
+- 11/19/25
+    - Hunter: 
+        - 1: Fixed bug on his end, merged his changes to all project was up-to-date 
+- 11/20/25:
+    - Paired programming
+        - 1: Final code review, checked specs to make sure we adhered to them, and polished comments and readmes.
+
 ### Sources:
 [Microsoft thread safe collections documents](https://learn.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2?view=net-9.0)
-[TcpListener and TcpClient documentation](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/sockets/tcp-classes)
+[Task v.s. Thread](https://stackoverflow.com/questions/4130194/what-is-the-difference-between-task-and-thread)
+[Cancelation Tokens](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtokensource?view=net-9.0)
+[Asyncronous and Await](https://www.geeksforgeeks.org/c-sharp/async-and-await-in-c-sharp/)

@@ -1,4 +1,8 @@
-﻿using System.Diagnostics;
+﻿// <copyright file="ServerConnection.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using System.Diagnostics;
 using CS3500.Networking;
 using Blazor.Extensions.Canvas.Canvas2D;
 using Microsoft.JSInterop;
@@ -139,7 +143,14 @@ public partial class SnakeGame : IDisposable
                 Logger.LogInformation("Sending username to server.");
                 try
                 {
-                    connection.SendLine(playerName);
+                    if(playerName.Length > 16)
+                    {
+                        connection.SendLine(playerName.Substring(0, 16));
+                    }
+                    else
+                    {
+                        connection.SendLine(playerName);
+                    }
                 }
                 catch
                 {
@@ -171,6 +182,8 @@ public partial class SnakeGame : IDisposable
                     throw;
                 }
 
+                World.WallsLoaded = true;
+                _jsModule.InvokeVoidAsync("StartControl", token, true);
                 // Now that our snake exists, start the animation loop
                 if (!token.IsCancellationRequested)
                 {
@@ -262,6 +275,18 @@ public static class ContextExtensions
       "lime", "cyan", "yellow", "orange", "magenta", "red", "blue", "white",
      };
 
+    private static readonly string[][] SnakePatterns =
+    {
+        new double[0] {}, //solid
+        new double[]{10, 10},
+        new double[]{4, 4}, 
+        new double[]{20,5},
+        new double[]{1, 1},
+        new double[]{15, 3, 3, 3},
+        new double[]{20, 3, 3, 3, 3, 3, 3, 3},
+        new double[]{12, 3, 3}
+    };
+
     /// <summary>
     /// Draws a single snake as a stroked polyline from tail to head.
     /// </summary>
@@ -284,7 +309,10 @@ public static class ContextExtensions
         }
         await context.LineToAsync(snake.Head.X, snake.Head.Y);
 
-        await context.SetStrokeStyleAsync(SnakeColors[ snake.Id % SnakeColors.Length ]);
+        //Set a color
+        await context.SetStrokeStyleAsync(SnakeColors[ snake.Id % SnakeColors.Length]);
+        // Set a dash pattern
+        await context.SetLineDashAsync(SnakePatterns[ snake.Id % SnakePatterns.Length]);
         await context.StrokeAsync();
 
         await context.SetFontAsync("14px Arial");
@@ -293,6 +321,7 @@ public static class ContextExtensions
 
         // Restore previous stroke thickness
         await context.SetLineWidthAsync(oldLineWidth);
+        await context.SetLineDashAsync(Array.Empty<double>());
     }
 
     /// <summary>

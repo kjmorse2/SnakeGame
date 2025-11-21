@@ -30,8 +30,5 @@ We only consulted each other for this assignment.
 
 This only includes commonly referenced sources, see each project's README for more specific details.
 
-- [StyleCop Documentation](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation)
-- [Microsoft C# Documentation](https://learn.microsoft.com/en-us/dotnet/api/)
-- [ChatGPT 4.1/5 Copilot (GitHub)](https://github.com/copilot) For documentations, code style, and understanding C#,
-  helpful for autocompleting repetitive docs. Scans code and looks for grammatical errors/typos.
-- [IDisposable](https://learn.microsoft.com/en-us/dotnet/api/system.idisposable?view=net-9.0)
+[Canvas API_ develop](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API_)
+[CSS,SCSS and Less](https://code.visualstudio.com/docs/language/css)

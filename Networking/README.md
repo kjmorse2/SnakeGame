@@ -9,7 +9,7 @@ Start Date: 4-Nov-2025
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  kjmorse2, HunterDSimmons
 Repo:       https://github.com/uofu-cs3500-20-fall2025/assignment-eight-chatting-kj_hunter_game.git
-Commit Date: 7-Nov-2025
+Commit Date: 21-Nov-2025
 Project:    Networking
 Copyright:  CS 3500, Kenneth Morse,and Hunter Simmons - This work may not be copied for use in Academic Coursework.
 ```

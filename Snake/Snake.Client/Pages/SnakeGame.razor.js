@@ -51,16 +51,21 @@ export function initJS( DotNetSide )
     window.DotNetSide = DotNetSide;
 }
 
-document.addEventListener('keydown', function (event)
-{
-    if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(event.code) > -1) {
-        event.preventDefault();
-    }
-    // Optionally log the key for testing
-    console.log('Key pressed:', event.key);
+export function StartControl(on) {
+    if (on) {
+        document.addEventListener('keydown', function (event) {
+            if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(event.code) > -1) {
+                event.preventDefault();
+            }
+            // Optionally log the key for testing
+            console.log('Key pressed:', event.key);
 
-    DotNetSide.invokeMethodAsync('HandleKeyPress', event.key);
-});
+            DotNetSide.invokeMethodAsync('HandleKeyPress', event.key);
+        });
+    } else {
+        document.removeEventListener('keydown');
+    }
+}
 
 /**
  * Stop the animation when we leave the page.

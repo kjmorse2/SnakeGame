@@ -124,6 +124,8 @@ public class World
     /// </summary>
     public ConcurrentDictionary<int, PowerUp> PowerUps { get; } = new();
 
+    public bool WallsLoaded { get; set; } = false;
+
     private ConcurrentBag<int> RemoveSnakeIds { get; } = new();
 
     private ConcurrentBag<int> RemovePowerUpIDs { get; } = new();
