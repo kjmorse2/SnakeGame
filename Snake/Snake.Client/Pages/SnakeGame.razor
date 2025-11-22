@@ -253,7 +253,7 @@
             await context.BeginBatchAsync();
 
             // Overwrite entire canvas with light blue to clear previous frame
-            await context.SetFillStyleAsync("lightblue");
+            await context.SetFillStyleAsync("black");
             await context.FillRectAsync(0, 0, canvasWidth, canvasHeight);
 
             // Clip to canvas, center origin, and draw background
@@ -285,8 +285,6 @@
                 -World.Size / 2,
                 World.Size,
                 World.Size);
-
-            // await context.FillRectAsync(-World.Size / 2, -World.Size / 2, World.Size, World.Size);
 
             // Draw each of the element types:
             await context.Draw(snakes); // Snakes
