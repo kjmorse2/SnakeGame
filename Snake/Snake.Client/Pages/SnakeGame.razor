@@ -1,13 +1,13 @@
 ﻿@page "/snake"
-
-@rendermode InteractiveServer
 @using System.Text.Json
 @using Blazor.Extensions
 @using Blazor.Extensions.Canvas
 @using Blazor.Extensions.Canvas.Canvas2D
 @using CS3500.Networking
 @using CS3500.Snake.Models
-@using static global::Snake.Client.ContextExtensions
+@using global::Snake.Client
+
+@rendermode InteractiveServer
 
 @inject IJSRuntime JsRuntime;
 @inject ILogger<Program> Logger;
@@ -240,7 +240,7 @@
     }
 
     /// <summary>
-    ///     Renders a single frame to the canvas based on the current <see cref="World"/> state.
+    ///     Renders a single frame to the canvas based on the current <see cref="World" /> state.
     ///     This is invoked from JavaScript on each animation frame (typically ~60FPS) with a timestamp.
     /// </summary>
     /// <param name="_">Timestamp from <c>requestAnimationFrame</c> (unused).</param>
@@ -314,6 +314,7 @@
     ///     Triggers when the canvas needs to display the disconnected screen.
     ///     Is actually used in several places to show a black canvas with a message.
     /// </summary>
+
     // ReSharper disable once UnusedMember.Local
     private void DisconnectScreen()
     {

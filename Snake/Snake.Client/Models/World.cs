@@ -1,6 +1,8 @@
 ﻿#pragma warning disable SA1636
+
 // <copyright file="PowerUp.cs" company="U of U CS3500">
 #pragma warning restore SA1636
+
 // Copyright (c) U of U CS3500, Kenneth Morse, and Hunter Simmons. All rights reserved.
 // </copyright>
 using System.Collections.Concurrent;
@@ -45,7 +47,7 @@ public class World
     public ConcurrentDictionary<int, Wall> Walls { get; } = new();
 
     /// <summary>
-    /// Gets or sets a value indicating whether the walls have been loaded.
+    ///     Gets or sets a value indicating whether the walls have been loaded.
     /// </summary>
     public bool WallsLoaded { get; set; }
 
@@ -72,7 +74,7 @@ public class World
     }
 
     /// <summary>
-    /// Clears all world elements from the collections.
+    ///     Clears all world elements from the collections.
     /// </summary>
     public void Clear()
     {
@@ -82,7 +84,7 @@ public class World
     }
 
     /// <summary>
-    /// Gets the head position of the snake with the given player ID.
+    ///     Gets the head position of the snake with the given player ID.
     /// </summary>
     /// <param name="playerId">The payer ID of the snake to get the head for.</param>
     /// <returns>A 2D point representing the head.</returns>

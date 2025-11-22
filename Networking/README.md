@@ -16,7 +16,8 @@ Copyright:  CS 3500, Kenneth Morse,and Hunter Simmons - This work may not be cop
 
 ### Comments to Evaluators:
 
-We could not get the stylecop headers for any of the classes to work. Headers would match the stylecop and we would get the SA1636 warning every time.
+We could not get the stylecop headers for any of the classes to work. Headers would match the stylecop and we would get
+the SA1636 warning every time.
 
 ### Assignment Specific Topics:
 

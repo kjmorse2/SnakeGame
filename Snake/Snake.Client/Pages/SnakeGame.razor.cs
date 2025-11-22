@@ -1,6 +1,8 @@
 ﻿#pragma warning disable SA1636
+
 // <copyright file="PowerUp.cs" company="U of U CS3500">
 #pragma warning restore SA1636
+
 // Copyright (c) U of U CS3500, Kenneth Morse, and Hunter Simmons. All rights reserved.
 // </copyright>
 using System.Diagnostics;
@@ -84,6 +86,7 @@ public partial class SnakeGame : IDisposable
     ///     Connects to the server, negotiates identity, initializes the world, and begins receiving updates.
     ///     The receive loop runs on a background thread. The render loop is driven from JS via requestAnimationFrame.
     /// </summary>
+
     // ReSharper disable once UnusedMember.Local
     private async void Connect()
     {
