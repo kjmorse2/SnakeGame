@@ -19,15 +19,18 @@ public static class ContextExtensions
     /// </summary>
     private static readonly string[ ] SnakeColors =
     [
-        "lime", "cyan", "yellow", "orange", "magenta", "red", "blue", "white",
+        "lime", "cyan", "yellow", "orange", "magenta", "red", "blue", "white", "red", "green"
     ];
 
     private static readonly float[ ][ ] SnakePatterns =
     [
-        [ ], // solid
+        
         [ 7, 7 ], [ 4, 4 ], [ 15, 5 ], [ 3, 1, 4 ],
-        [ 15, 3, 3, 3 ], [ 20, 3, 3, 3, 3, 3, 3, 3 ], [ 12, 3, 3 ],
+        [30, 15 ], [ 20, 3, 3, 3, 3, 3, 3, 3 ],
+        [ 12, 20, 12 ], [ 60, 20, ], [ 50, 8 ], [ 2, 18], [ 30, 15]
     ];
+
+};
 
     /// <summary>
     ///     Draws a collection of snakes by delegating to <see cref="Draw(Canvas2DContext, Snake)" />.
@@ -98,7 +101,7 @@ public static class ContextExtensions
 
         // Set a color
         await context.SetStrokeStyleAsync(SnakeColors[ snake.Id % SnakeColors.Length ]);
-
+        
         // Set a dash pattern
         await context.SetLineDashAsync(SnakePatterns[ snake.Id % SnakePatterns.Length ]);
         await context.StrokeAsync();
