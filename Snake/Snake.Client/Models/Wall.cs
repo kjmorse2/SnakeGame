@@ -1,10 +1,7 @@
-﻿#pragma warning disable SA1636
-
-// <copyright file="PowerUp.cs" company="U of U CS3500">
-#pragma warning restore SA1636
-
+﻿// <copyright file="Wall.cs" company="U of U CS3500">
 // Copyright (c) U of U CS3500, Kenneth Morse, and Hunter Simmons. All rights reserved.
 // </copyright>
+
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components;
 
@@ -24,7 +21,7 @@ public class Wall
     /// <summary>
     ///     Gets or sets the reference to the wall image.
     /// </summary>
-    public static ElementReference WallImageReference { get; set; }
+    public static ElementReference ImageReference { get; set; }
 
     /// <summary>
     ///     Gets the unique identifier for the wall.

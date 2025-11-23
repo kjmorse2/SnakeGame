@@ -4,8 +4,8 @@
 @using Blazor.Extensions.Canvas
 @using Blazor.Extensions.Canvas.Canvas2D
 @using CS3500.Networking
-@using CS3500.Snake.Models
 @using global::Snake.Client
+@using CS3500.Snake.Models
 
 @rendermode InteractiveServer
 
@@ -22,6 +22,8 @@
      alt="A background image of a circuit board used for the game rendering."/>
 <img src="images/Wall2.png" @ref="wallImageRef" hidden
      alt="A image of the blue screen of death for use in rendering the game"/>
+<img src="images/powerup.png" @ref="powerupImageRef" hidden
+     alt="An image of a lightning bolt used for the powerup in game rendering."/>
 <h1>Snake Game</h1>
 <div id="ConnectionInputs">
     <div class="input-row">
@@ -57,7 +59,7 @@
                 @if (World is not null && World.Snakes.Count > 0)
                 {
                     <h4>Scoreboard</h4>
-                    <hr class="horizontalLine" />
+                    <hr class="horizontalLine"/>
                     <ul>
                         @{
                             var count = 1;
@@ -71,9 +73,7 @@
                 }
             </div>
         </div>
-
     </div>
-
 </div>
 
 @code
@@ -83,8 +83,20 @@
     /// </summary>
     private BECanvasComponent canvasReference = null!;
 
+    /// <summary>
+    ///     Reference to hidden image for use as the background of the rendering.
+    /// </summary>
     private ElementReference backgroundImage;
+
+    /// <summary>
+    ///     Reference to a hidden image for use as the wall texture in the rendering.
+    /// </summary>
     private ElementReference wallImageRef;
+
+    /// <summary>
+    ///     Reference to a hidden image for use as the powerup texture in the rendering.
+    /// </summary>
+    private ElementReference powerupImageRef;
 
     /// <summary>
     ///     2D drawing context created for the canvas. Used to issue all drawing commands.
@@ -127,16 +139,16 @@
 
     // Pre-serialized control commands ----------------------------------------------
 
-    /// <summary>Serialized command to move up.</summary>
+    /// <summary>Pre serialized command to move up.</summary>
     private readonly string upCommand = JsonSerializer.Serialize(new ControlCommand("up"));
 
-    /// <summary>Serialized command to move down.</summary>
+    /// <summary>Pre serialized command to move down.</summary>
     private readonly string downCommand = JsonSerializer.Serialize(new ControlCommand("down"));
 
-    /// <summary>Serialized command to move right.</summary>
+    /// <summary>Pre serialized command to move right.</summary>
     private readonly string rightCommand = JsonSerializer.Serialize(new ControlCommand("right"));
 
-    /// <summary>Serialized command to move left.</summary>
+    /// <summary>Pre serialized command to move left.</summary>
     private readonly string leftCommand = JsonSerializer.Serialize(new ControlCommand("left"));
 
     // Canvas dimensions -------------------------------------------------------------
@@ -184,7 +196,10 @@
                 await jsModule.InvokeVoidAsync("initJS", DotNetObjectReference.Create(this));
                 Logger.LogInformation("Initialized JS interop and canvas context.");
                 await DisconnectScreenAsync();
-                Wall.WallImageReference = wallImageRef;
+
+                // Provide wall image reference to Wall as static, for use in context Draw extension method.
+                Wall.ImageReference = wallImageRef;
+                PowerUp.ImageReference = powerupImageRef;
             }
             catch (Exception e)
             {
@@ -197,6 +212,7 @@
     /// <summary>
     ///     Handles keyboard input for WASD and Arrow keys sent from JavaScript and forwards control to the server.
     ///     Exposed to JavaScript via JS interop.
+    ///     Uses pre-serialized commands, so no need to serialize every time.
     /// </summary>
     /// <param name="key">The value of <c>event.key</c> from the DOM keydown event.</param>
     [JSInvokable]
@@ -252,22 +268,22 @@
             FrameCount++;
             await context.BeginBatchAsync();
 
-            // Overwrite entire canvas with light blue to clear previous frame
+            // Overwrite entire canvas with black to clear previous frame
             await context.SetFillStyleAsync("black");
             await context.FillRectAsync(0, 0, canvasWidth, canvasHeight);
 
-            // Clip to canvas, center origin, and draw background
+            // Clip to canvas, and draw background
             await context.BeginPathAsync();
             await context.RectAsync(0, 0, canvasWidth, canvasHeight);
             await context.ClipAsync();
             await context.SaveAsync();
 
-            // Use integer halves to keep coordinate math simple here
+            // Translates context to be able to use world coordinates.
             var halfW = canvasWidth / 2;
             var halfH = canvasHeight / 2;
             await context.TranslateAsync(halfW, halfH);
 
-            // Snapshot current world state references
+            // Snapshot current world state references, and get player head to center view.
             var snakeDictionary = World.Snakes;
             IEnumerable<Snake> snakes = snakeDictionary.Values;
             var head = World.GetHead(PlayerId);
@@ -277,7 +293,7 @@
             // Camera follow: translate so the player's head is centered
             await context.TranslateAsync(-head.X, -head.Y);
 
-            // Draw background over everything
+            // Draw background image over everything
             await context.SetFillStyleAsync("darkblue");
             await context.DrawImageAsync(
                 backgroundImage,
@@ -291,9 +307,11 @@
             await context.Draw(powerUps); // Power Ups
             await context.Draw(walls); // Walls
 
+            // Restore and end draw calls
             await context.RestoreAsync();
             await context.EndBatchAsync();
 
+            // Clean up dc'd snakes or dead power-ups.
             World.CleanupDeadElements();
 
             StateHasChanged();
@@ -305,8 +323,6 @@
             AlertPopupDisconnect("Error during rendering of game, disconnecting.");
         }
     }
-
-    // Safe to call from sync code; marshals onto the renderer thread
 
     /// <summary>
     ///     Triggers when the canvas needs to display the disconnected screen.
@@ -339,7 +355,8 @@
         await context.SetFillStyleAsync("black");
         await context.FillRectAsync(0, 0, canvasWidth, canvasHeight);
         await context.SetFillStyleAsync("white");
-        await context.FillTextAsync("Not connected to game :(", (canvasWidth / 2) - 50, canvasHeight / 2);
+        await context.SetFontAsync("40px sans-serif");
+        await context.FillTextAsync("Not connected to game :(", (canvasWidth / 2) - 180, canvasHeight / 2);
         await context.EndBatchAsync();
     }
 

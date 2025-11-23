@@ -1,10 +1,7 @@
-﻿#pragma warning disable SA1636
-
-// <copyright file="PowerUp.cs" company="U of U CS3500">
-#pragma warning restore SA1636
-
+﻿// <copyright file="World.cs" company="U of U CS3500">
 // Copyright (c) U of U CS3500, Kenneth Morse, and Hunter Simmons. All rights reserved.
 // </copyright>
+
 using System.Collections.Concurrent;
 using System.Text.Json;
 
@@ -58,7 +55,7 @@ public class World
     private ConcurrentBag<int> RemoveSnakeIds { get; } = new();
 
     /// <summary>
-    ///     Removes dead snakes and consumed powerups from the snakes and powerups lists.
+    ///     Removes dead snakes and consumed power-ups from the snakes and power-ups lists.
     /// </summary>
     public void CleanupDeadElements()
     {
@@ -86,7 +83,7 @@ public class World
     /// <summary>
     ///     Gets the head position of the snake with the given player ID.
     /// </summary>
-    /// <param name="playerId">The payer ID of the snake to get the head for.</param>
+    /// <param name="playerId">The player ID of the snake to get the head for.</param>
     /// <returns>A 2D point representing the head.</returns>
     public Point2D GetHead(int playerId)
     {
@@ -109,11 +106,16 @@ public class World
     /// </remarks>
     public void UpdateElement(string jsonString)
     {
+        // If the json string is empty, dont do any work.
         if (string.IsNullOrWhiteSpace(jsonString))
         {
             return;
         }
 
+        // The second character of the json string is the start of the object, there are 3 distinct cases.
+        // 's' = snake, parse a snake object.
+        // 'w' = wall, parse a wall object.
+        // 'p' = power-up, parse a power up object.
         char type = jsonString[ 2 ];
         try
         {
@@ -123,6 +125,8 @@ public class World
                     Snake receivedSnake = JsonSerializer.Deserialize<Snake>(jsonString) ??
                                           throw new InvalidOperationException();
                     Snakes[ receivedSnake.Id ] = receivedSnake;
+
+                    // In the case the snake disconnects, remove it from the world.
                     if (receivedSnake.Dc)
                     {
                         RemoveSnakeIds.Add(receivedSnake.Id);
@@ -133,6 +137,8 @@ public class World
                     PowerUp receivedPowerUp = JsonSerializer.Deserialize<PowerUp>(jsonString) ??
                                               throw new InvalidOperationException();
                     PowerUps[ receivedPowerUp.Id ] = receivedPowerUp;
+
+                    // In the case the power-up is dead, remove it from the list.
                     if (receivedPowerUp.IsDead)
                     {
                         RemovePowerUpIDs.Add(receivedPowerUp.Id);

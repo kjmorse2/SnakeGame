@@ -1,5 +1,5 @@
-﻿// <copyright file="ContextExtensions.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+﻿// <copyright file="ContextExtensions.cs" company="U of U CS3500">
+// Copyright (c) U of U CS3500, Kenneth Morse, and Hunter Simmons. All rights reserved.
 // </copyright>
 
 using Blazor.Extensions.Canvas.Canvas2D;
@@ -15,7 +15,7 @@ namespace Snake.Client;
 public static class ContextExtensions
 {
     /// <summary>
-    ///     Array of colors to for the snake to be drawn in .
+    ///     Array of colors for snakes to be drawn in.
     /// </summary>
     private static readonly string[ ] SnakeColors =
     [
@@ -30,11 +30,11 @@ public static class ContextExtensions
     ];
 
     /// <summary>
-    ///     Draws a collection of snakes by delegating to <see cref="Draw(Canvas2DContext, Snake)" />.
+    ///     Draws a collection of snakes by delegating to the per-snake draw overload.
     /// </summary>
     /// <param name="context">The canvas 2D context to draw with.</param>
     /// <param name="snakes">The sequence of snakes to render.</param>
-    /// <returns>>A task representing the asynchronous operation.</returns>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task Draw(this Canvas2DContext context, IEnumerable<CS3500.Snake.Models.Snake> snakes)
     {
         foreach (CS3500.Snake.Models.Snake snake in snakes)
@@ -48,7 +48,7 @@ public static class ContextExtensions
     /// </summary>
     /// <param name="context">The canvas 2D context to draw with.</param>
     /// <param name="powerUps">The sequence of power-ups to render.</param>
-    /// <returns>>A task representing the asynchronous operation.</returns>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task Draw(this Canvas2DContext context, IEnumerable<PowerUp> powerUps)
     {
         foreach (PowerUp powerUp in powerUps)
@@ -63,7 +63,7 @@ public static class ContextExtensions
     /// </summary>
     /// <param name="context">The context to draw each of the walls onto.</param>
     /// <param name="walls">This list of walls to draw.</param>
-    /// <returns>>A task representing the asynchronous operation.</returns>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task Draw(this Canvas2DContext context, IEnumerable<Wall> walls)
     {
         await context.SetFillStyleAsync("red");
@@ -113,14 +113,19 @@ public static class ContextExtensions
     }
 
     /// <summary>
-    ///     Draws a single power-up as a filled square centered on its position.
+    ///     Draws a single power-up using its image centered on its position.
     /// </summary>
     /// <param name="context">The canvas 2D context to draw with.</param>
     /// <param name="powerUp">The power-up to render.</param>
-    /// <returns>>A task representing the asynchronous operation.</returns>
+    /// <returns>A task representing the asynchronous operation.</returns>
     private static async Task Draw(this Canvas2DContext context, PowerUp powerUp)
     {
-        await context.FillRectAsync(powerUp.Position.X - 8, powerUp.Position.Y - 8, 16, 16);
+        await context.DrawImageAsync(
+            PowerUp.ImageReference,
+            powerUp.Position.X - 8,
+            powerUp.Position.Y - 8,
+            16,
+            16);
     }
 
     /// <summary>
@@ -128,19 +133,17 @@ public static class ContextExtensions
     /// </summary>
     /// <param name="context">The context to draw the wall onto.</param>
     /// <param name="wall">The wall object parsed from json to draw.</param>
-    /// <returns>>A task representing the asynchronous operation.</returns>
+    /// <returns>A task representing the asynchronous operation.</returns>
     private static async Task Draw(this Canvas2DContext context, Wall wall)
     {
         foreach (Point2D segment in wall.GetSegments())
         {
             await context.DrawImageAsync(
-                Wall.WallImageReference,
+                Wall.ImageReference,
                 segment.X - 25,
                 segment.Y - 25,
                 Wall.SegmentSize,
                 Wall.SegmentSize);
-
-            // await context.FillRectAsync(segment.X - 25, segment.Y - 25, Wall.SegmentSize, Wall.SegmentSize);
         }
     }
-    }
+}
