@@ -5,6 +5,7 @@
 using System.Diagnostics;
 using CS3500.Networking;
 using CS3500.Snake.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.JSInterop;
 
 namespace CS3500.Snake.Client.Pages.SnakeGame;
@@ -39,6 +40,11 @@ public partial class SnakeGame : IDisposable
     ///     Cancellation token source used to stop background network receive loops on user disconnect.
     /// </summary>
     private CancellationTokenSource? receiveCts;
+
+    /// <summary>
+    /// A database interface for the Snake game.
+    /// </summary>
+    private DatabaseInterface dbInterface = new DatabaseInterface();
 
     /// <summary>
     ///     Initializes static members of the <see cref="SnakeGame" /> class.
@@ -120,6 +126,7 @@ public partial class SnakeGame : IDisposable
                     }
 
                     Logger.LogInformation("Connected to server.");
+                    dbInterface.NewGame();
 
                     connectionSpinnerClass = string.Empty;
                     InvokeAsync(StateHasChanged);
@@ -256,6 +263,11 @@ public partial class SnakeGame : IDisposable
         try
         {
             connection.Disconnect();
+            dbInterface.EndGame();
+        }
+        catch (SqlException e)
+        {
+            Logger.LogError("SQL Error during disconnect: " + e.Message);
         }
         catch (Exception e)
         {
