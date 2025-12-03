@@ -16,7 +16,8 @@ public class DatabaseInterface
 {
     private readonly SqlConnection connection;
     private DateTime startTime;
-    private int currentGameID = -1;
+    private int currentGameId = -1;
+    private static readonly string At = "@";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DatabaseInterface"/> class.
@@ -26,7 +27,7 @@ public class DatabaseInterface
         var builder = new ConfigurationBuilder();
 
         // Bind user secrets to this assembly/type to resolve the generic type symbol
-        builder.AddUserSecrets<SnakeGame>();
+        builder.AddUserSecrets<DatabaseInterface>();
         IConfigurationRoot configuration = builder.Build();
         var selectedSecrets = configuration.GetSection("SnakeSecrets");
 
@@ -40,7 +41,6 @@ public class DatabaseInterface
             Encrypt = false,
         }.ConnectionString;
 
-        // Create instance of database connection.
         this.connection = new SqlConnection(connectionString);
         this.connection.Open();
     }
@@ -50,50 +50,41 @@ public class DatabaseInterface
     /// </summary>
     public int NewGame()
     {
-        int gameID = -1;
         this.startTime = DateTime.Now;
-        // Build the SQL text while avoiding IDE false errors about '@' tokens in strings
-        string at = "@";
-        string cmdText = $"INSERT INTO dbo.GameTable (StartTime) VALUES ({at}StartTime)";
-        using var command = new SqlCommand(cmdText, this.connection);
-        // Bind parameters using names that match the SQL placeholders
-        var pStart = command.Parameters.Add("@StartTime", System.Data.SqlDbType.DateTime);
-        pStart.Value = startTime;
 
-        _ = command.ExecuteNonQuery();
-        cmdText = "SELECT TOP 1 GameID FROM dbo.GameTable ORDER BY GameID DESC;";
-        command.CommandText = cmdText;
-        SqlDataReader reader = command.ExecuteReader();
-        if (reader.Read())
-        {
-            gameID = reader.GetInt32(0);
-            currentGameID = gameID;
-        }
-        reader.Close();
-        return gameID;
+        EnsureOpenConnection();
+
+        // Insert with OUTPUT to get the identity in one round trip
+        string insertSql = $"INSERT INTO dbo.GameTable (StartTime) OUTPUT INSERTED.GameId VALUES ({At}StartTime)";
+        using var command = new SqlCommand(insertSql, this.connection);
+        command.Parameters.Add("@StartTime", SqlDbType.DateTime2).Value = this.startTime;
+
+        object? scalar = command.ExecuteScalar();
+        this.currentGameId = Convert.ToInt32(scalar);
+        return this.currentGameId;
     }
 
     /// <summary>
-    /// Records the end of a game session by inserting a row into the GameTable.
+    /// Records the end of a game session by updating EndTime for the current game.
     /// </summary>
     public void EndGame()
     {
         DateTime endTime = DateTime.Now;
 
-        // Ensure we have an open connection
-        this.connection.Open();
+        EnsureOpenConnection();
 
-        string at = "@";
-        string cmdText = $"UPDATE dbo.GameTable SET EndTime = {at}EndTime WHERE GameID = @GameID;";
-        using var command = new SqlCommand(cmdText, this.connection);
-
-        var pEnd = command.Parameters.Add("@EndTime", System.Data.SqlDbType.DateTime);
-        pEnd.Value = endTime;
-
-        var TEST = command.Parameters.Add("@GameID", SqlDbType.Int);
-        TEST.Value = currentGameID;
-
+        string updateSql = $"UPDATE dbo.GameTable SET EndTime = {At}EndTime WHERE GameId = @GameId";
+        using var command = new SqlCommand(updateSql, this.connection);
+        _ = command.Parameters.Add("@EndTime", SqlDbType.DateTime2).Value = endTime;
+        _ = command.Parameters.Add("@GameId", SqlDbType.Int).Value = this.currentGameId;
         _ = command.ExecuteNonQuery();
-        this.connection.Close();
+    }
+
+    private void EnsureOpenConnection()
+    {
+        if (this.connection.State != ConnectionState.Open)
+        {
+            this.connection.Open();
+        }
     }
 }
