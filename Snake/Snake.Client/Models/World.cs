@@ -4,6 +4,7 @@
 
 using System.Collections.Concurrent;
 using System.Text.Json;
+using CS3500.Snake.Client.Pages.SnakeGame;
 
 namespace CS3500.Snake.Models;
 
@@ -124,11 +125,24 @@ public class World
                 case 's':
                     Snake receivedSnake = JsonSerializer.Deserialize<Snake>(jsonString) ??
                                           throw new InvalidOperationException();
+                    if (!Snakes.TryGetValue(receivedSnake.Id, out Snake? oldSnake))
+                    {
+                        SnakeGame.DbInterface.InsertNewPlayer(receivedSnake);
+                    }
+                    else
+                    {
+                        if (receivedSnake.Score > oldSnake.Score)
+                        {
+                            SnakeGame.DbInterface.UpdatePlayerScore(receivedSnake.Id, receivedSnake.Score);
+                        }
+                    }
+
                     Snakes[ receivedSnake.Id ] = receivedSnake;
 
                     // In the case the snake disconnects, remove it from the world.
                     if (receivedSnake.Dc)
                     {
+                        SnakeGame.DbInterface.PlayerLeft(receivedSnake.Id);
                         RemoveSnakeIds.Add(receivedSnake.Id);
                     }
 

@@ -75,6 +75,4 @@ class WebServer
 
         return sb.ToString();
     }
-
-    public static
 }

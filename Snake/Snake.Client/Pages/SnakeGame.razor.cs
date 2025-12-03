@@ -44,7 +44,7 @@ public partial class SnakeGame : IDisposable
     /// <summary>
     /// A database interface for the Snake game.
     /// </summary>
-    private DatabaseInterface dbInterface = new DatabaseInterface();
+    public static DatabaseInterface DbInterface { get; } = new DatabaseInterface();
 
     /// <summary>
     ///     Initializes static members of the <see cref="SnakeGame" /> class.
@@ -126,7 +126,7 @@ public partial class SnakeGame : IDisposable
                     }
 
                     Logger.LogInformation("Connected to server.");
-                    dbInterface.NewGame();
+                    DbInterface.NewGame();
 
                     connectionSpinnerClass = string.Empty;
                     InvokeAsync(StateHasChanged);
@@ -263,7 +263,7 @@ public partial class SnakeGame : IDisposable
         try
         {
             connection.Disconnect();
-            dbInterface.EndGame();
+            DbInterface.EndGame();
         }
         catch (SqlException e)
         {
