@@ -66,7 +66,7 @@ public sealed class NetworkConnection : IDisposable
             networkReader = new StreamReader(networkTcpClient.GetStream(), Encoding.UTF8);
 
             // AutoFlush ensures data is sent immediately
-            networkWriter = new StreamWriter(networkTcpClient.GetStream(), Encoding.UTF8) { AutoFlush = true };
+            networkWriter = new StreamWriter(networkTcpClient.GetStream(),  new UTF8Encoding(false)) { AutoFlush = true };
         }
     }
 
@@ -108,7 +108,7 @@ public sealed class NetworkConnection : IDisposable
         networkReader = new StreamReader(networkTcpClient.GetStream(), Encoding.UTF8);
 
         // AutoFlush ensures data is sent immediately
-        networkWriter = new StreamWriter(networkTcpClient.GetStream(), Encoding.UTF8) { AutoFlush = true };
+        networkWriter = new StreamWriter(networkTcpClient.GetStream(), new UTF8Encoding(false)) { AutoFlush = true };
     }
 
     /// <summary>
