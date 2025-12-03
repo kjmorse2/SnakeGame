@@ -16,7 +16,7 @@ Copyright:  CS 3500, Kenneth Morse,and Hunter Simmons - This work may not be cop
 
 ### Comments to Evaluators:
 
-TODO 
+TODO
 
 ### Assignment Specific Topics:
 

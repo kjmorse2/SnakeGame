@@ -1,29 +1,26 @@
-﻿using Microsoft.Data.SqlClient; 
-using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Encodings.Web;
+﻿using System.Text;
 using System.Text.Json;
 using CS3500.Networking;
+using Microsoft.Data.SqlClient;
 
 namespace WebServer;
-class WebServer
+
+internal class WebServer
 {
-    
-    static string SnakeSecrets = JsonDocument.Parse(File.ReadAllText("secrets.json")).RootElement.GetProperty("ConnectionSTring").GetString()!;
+    private static readonly string SnakeSecrets = JsonDocument.Parse(File.ReadAllText("secrets.json")).RootElement
+        .GetProperty("ConnectionSTring").GetString()!;
+
     public static void HandleConnection(NetworkConnection connection)
     {
-
         string lineFromBrowser = string.Empty;
-        while (true) {
+        while (true)
+        {
             try
             {
                 lineFromBrowser = connection.ReceiveLine();
                 if (lineFromBrowser.Length == 0)
                 {
                     break;
-
                 }
 
                 string[ ] parts = lineFromBrowser.Split(' ');
@@ -33,7 +30,6 @@ class WebServer
                 if (path == "/")
                 {
                     html = HomePage();
-
                 }
                 else if (path == "/games")
                 {
@@ -44,14 +40,8 @@ class WebServer
             {
                 return;
             }
-
-
-        } }
-
-    private static string HomePage()
-        {
-         return "<html>\n<h3>Welcome to the Snake Games Database!</h3>\n<a href=\"/games\">View Games</a>\n</html>";
         }
+    }
 
     private static string GamesPage()
     {
@@ -60,7 +50,7 @@ class WebServer
         sb.Append("<table border=\"1\">");
         sb.Append("<thead><tr><td>ID</td><td>Start</td><td>End</td></tr></thead><tbody><tr>");
 
-        
+
         using (SqlConnection sqlConn = new(SnakeSecrets))
         {
             try
@@ -68,11 +58,16 @@ class WebServer
                 sqlConn.Open();
                 Console.WriteLine("Connection to Database opened.");
                 string queryString = "";
-                SqlCommand command = new SqlCommand();
+                SqlCommand command = new();
             }
             catch { }
         }
 
         return sb.ToString();
+    }
+
+    private static string HomePage()
+    {
+        return "<html>\n<h3>Welcome to the Snake Games Database!</h3>\n<a href=\"/games\">View Games</a>\n</html>";
     }
 }

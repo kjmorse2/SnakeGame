@@ -76,6 +76,8 @@ public partial class SnakeGame : IDisposable
             jsAsync.DisposeAsync();
         }
 
+        World.Clear();
+
         connection.Dispose();
         receiveCts?.Dispose();
     }

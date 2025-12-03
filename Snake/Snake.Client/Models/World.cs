@@ -16,9 +16,10 @@ namespace CS3500.Snake.Models;
 public class World
 {
     /// <summary>
-    /// A database interface for the Snake game.
+    ///     A database interface for the Snake game.
     /// </summary>
-    private static DatabaseInterface DbInterface = new DatabaseInterface();
+    // 
+    private static readonly DatabaseInterface DbInterface = new();
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="World" /> class with a square size in pixels.

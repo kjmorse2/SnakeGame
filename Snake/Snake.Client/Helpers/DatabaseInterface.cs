@@ -3,71 +3,48 @@
 // </copyright>
 
 using System.Data;
-using System.Runtime.InteropServices;
+using Microsoft.Data.SqlClient;
 
 namespace CS3500.Snake.Client.Pages.SnakeGame;
 
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using CS3500.Snake.Models;
-
 /// <summary>
-/// A database interface for the Snake game.
+///     A database interface for the Snake game.
 /// </summary>
 public class DatabaseInterface
 {
-    private readonly SqlConnection connection;
-    private DateTime startTime;
-    private int currentGameId = -1;
     private static readonly string At = "@";
+    private readonly SqlConnection connection;
+    private int currentGameId = -1;
+    private DateTime startTime;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DatabaseInterface"/> class.
+    ///     Initializes a new instance of the <see cref="DatabaseInterface" /> class.
     /// </summary>
     public DatabaseInterface()
     {
-        var builder = new ConfigurationBuilder();
+        ConfigurationBuilder builder = new();
 
         // Bind user secrets to this assembly/type to resolve the generic type symbol
         builder.AddUserSecrets<DatabaseInterface>();
         IConfigurationRoot configuration = builder.Build();
-        var selectedSecrets = configuration.GetSection("SnakeSecrets");
+        IConfigurationSection selectedSecrets = configuration.GetSection("SnakeSecrets");
 
         string connectionString = new SqlConnectionStringBuilder
         {
             DataSource = "cs3500.eng.utah.edu, 14330",
-            InitialCatalog = selectedSecrets["DB_Name"],
-            UserID = selectedSecrets["Username"],
-            Password = selectedSecrets["Password"],
+            InitialCatalog = selectedSecrets[ "DB_Name" ],
+            UserID = selectedSecrets[ "Username" ],
+            Password = selectedSecrets[ "Password" ],
             ConnectTimeout = 15,
             Encrypt = false,
         }.ConnectionString;
 
-        this.connection = new SqlConnection(connectionString);
-        this.connection.Open();
+        connection = new SqlConnection(connectionString);
+        connection.Open();
     }
 
     /// <summary>
-    /// Marks the start of a game session.
-    /// </summary>
-    public int NewGame()
-    {
-        this.startTime = DateTime.Now;
-
-        EnsureOpenConnection();
-
-        // Insert with OUTPUT to get the identity in one round trip
-        string insertSql = $"INSERT INTO dbo.GameTable (StartTime) OUTPUT INSERTED.GameId VALUES ({At}StartTime)";
-        using var command = new SqlCommand(insertSql, this.connection);
-        command.Parameters.Add("@StartTime", SqlDbType.DateTime2).Value = this.startTime;
-
-        object? scalar = command.ExecuteScalar();
-        this.currentGameId = Convert.ToInt32(scalar);
-        return this.currentGameId;
-    }
-
-    /// <summary>
-    /// Records the end of a game session by updating EndTime for the current game.
+    ///     Records the end of a game session by updating EndTime for the current game.
     /// </summary>
     public void EndGame()
     {
@@ -75,28 +52,35 @@ public class DatabaseInterface
 
         EnsureOpenConnection();
 
-        string updateSql = $"UPDATE dbo.GameTable SET EndTime = {At}EndTime WHERE GameId = @GameId";
-        using var command = new SqlCommand(updateSql, this.connection);
-        command.Parameters.Add("@EndTime", SqlDbType.DateTime).Value = endTime;
-        command.Parameters.Add("@GameId", SqlDbType.Int).Value = this.currentGameId;
-        command.ExecuteNonQuery();
-    }
+        string updateGamesTable = $"UPDATE dbo.GameTable SET EndTime = {At}EndTime WHERE GameId = @GameId";
+        using SqlCommand gameCommand = new(updateGamesTable, connection);
+        gameCommand.Parameters.Add("@EndTime", SqlDbType.DateTime).Value = endTime;
+        gameCommand.Parameters.Add("@GameId", SqlDbType.Int).Value = currentGameId;
+        gameCommand.ExecuteNonQuery();
 
-    private void EnsureOpenConnection()
-    {
-        if (this.connection.State != ConnectionState.Open)
+        string playersToUpdate = "SELECT PlayerId FROM dbo.Players WHERE GameId = @GameId AND LeaveTime IS NULL";
+        using SqlCommand selectCommand = new(playersToUpdate, connection);
+        selectCommand.Parameters.Add("@GameId", SqlDbType.Int).Value = currentGameId;
+        using SqlDataReader reader = selectCommand.ExecuteReader();
+        List<int> players = new();
+        while (reader.Read())
         {
-            this.connection.Open();
+            players.Add(reader.GetInt32(0));
         }
+
+        reader.Close();
+
+        PlayersLeft(players);
     }
 
-    public void InsertNewPlayer(Snake snake)
+    public void InsertNewPlayer(Models.Snake snake)
     {
         EnsureOpenConnection();
 
-        string insertSql = $"INSERT INTO dbo.Players (GameId, PlayerId, Name, MaxScore, EnterTime) VALUES ({At}GameId, {At}PlayerId, {At}Name, {At}MaxScore, {At}EnterTime)";
-        using var command = new SqlCommand(insertSql, this.connection);
-        command.Parameters.Add("@GameId", SqlDbType.Int).Value = this.currentGameId;
+        string insertSql =
+            $"INSERT INTO dbo.Players (GameId, PlayerId, Name, MaxScore, EnterTime) VALUES ({At}GameId, {At}PlayerId, {At}Name, {At}MaxScore, {At}EnterTime)";
+        using SqlCommand command = new(insertSql, connection);
+        command.Parameters.Add("@GameId", SqlDbType.Int).Value = currentGameId;
         command.Parameters.Add("@PlayerId", SqlDbType.Int).Value = snake.Id;
         command.Parameters.Add("@Name", SqlDbType.VarChar).Value = snake.Name;
         command.Parameters.Add("@MaxScore", SqlDbType.Int).Value = snake.Score;
@@ -105,7 +89,31 @@ public class DatabaseInterface
         command.ExecuteNonQuery();
     }
 
-    public void UpdatePlayerScore(Snake newSnake, Snake oldSnake)
+    /// <summary>
+    ///     Marks the start of a game session.
+    /// </summary>
+    public int NewGame()
+    {
+        startTime = DateTime.Now;
+
+        EnsureOpenConnection();
+
+        // Insert with OUTPUT to get the identity in one round trip
+        string insertSql = $"INSERT INTO dbo.GameTable (StartTime) OUTPUT INSERTED.GameId VALUES ({At}StartTime)";
+        using SqlCommand command = new(insertSql, connection);
+        command.Parameters.Add("@StartTime", SqlDbType.DateTime2).Value = startTime;
+
+        object? scalar = command.ExecuteScalar();
+        currentGameId = Convert.ToInt32(scalar);
+        return currentGameId;
+    }
+
+    public void PlayerLeft(int playerId)
+    {
+        PlayerLeft(playerId, DateTime.Now);
+    }
+
+    public void UpdatePlayerScore(Models.Snake newSnake, Models.Snake oldSnake)
     {
         int newScore = newSnake.Score;
         int oldScore = oldSnake.Score;
@@ -118,25 +126,44 @@ public class DatabaseInterface
 
         EnsureOpenConnection();
 
-        string updateSql = $"UPDATE dbo.Players SET MaxScore = {At}MaxScore WHERE GameId = {At}GameId AND PlayerId = {At}PlayerId";
-        using var command = new SqlCommand(updateSql, this.connection);
+        string updateSql =
+            $"UPDATE dbo.Players SET MaxScore = {At}MaxScore WHERE GameId = {At}GameId AND PlayerId = {At}PlayerId";
+        using SqlCommand command = new(updateSql, connection);
         command.Parameters.Add("@MaxScore", SqlDbType.Int).Value = newScore;
-        command.Parameters.Add("@GameId", SqlDbType.Int).Value = this.currentGameId;
+        command.Parameters.Add("@GameId", SqlDbType.Int).Value = currentGameId;
         command.Parameters.Add("@PlayerId", SqlDbType.Int).Value = playerId;
 
         command.ExecuteNonQuery();
     }
 
-    public void PlayerLeft(int playerId)
+    private void EnsureOpenConnection()
+    {
+        if (connection.State != ConnectionState.Open)
+        {
+            connection.Open();
+        }
+    }
+
+    private void PlayerLeft(int playerId, DateTime endTime)
     {
         EnsureOpenConnection();
 
-        string updateSql = $"UPDATE dbo.Players SET LeaveTime = {At}LeaveTime WHERE GameId = {At}GameId AND PlayerId = {At}PlayerId";
-        using var command = new SqlCommand(updateSql, this.connection);
-        command.Parameters.Add("@LeaveTime", SqlDbType.DateTime2).Value = DateTime.Now;
-        command.Parameters.Add("@GameId", SqlDbType.Int).Value = this.currentGameId;
+        string updateSql =
+            $"UPDATE dbo.Players SET LeaveTime = {At}LeaveTime WHERE GameId = {At}GameId AND PlayerId = {At}PlayerId";
+        using SqlCommand command = new(updateSql, connection);
+        command.Parameters.Add("@LeaveTime", SqlDbType.DateTime2).Value = endTime;
+        command.Parameters.Add("@GameId", SqlDbType.Int).Value = currentGameId;
         command.Parameters.Add("@PlayerId", SqlDbType.Int).Value = playerId;
 
         command.ExecuteNonQuery();
+    }
+
+    private void PlayersLeft(List<int> players)
+    {
+        DateTime endTime = DateTime.Now;
+        foreach (int playerId in players)
+        {
+            PlayerLeft(playerId, endTime);
+        }
     }
 }
