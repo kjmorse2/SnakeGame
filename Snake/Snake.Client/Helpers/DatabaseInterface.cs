@@ -3,6 +3,7 @@
 // </copyright>
 
 using System.Data;
+using System.Runtime.InteropServices;
 
 namespace CS3500.Snake.Client.Pages.SnakeGame;
 
@@ -76,9 +77,9 @@ public class DatabaseInterface
 
         string updateSql = $"UPDATE dbo.GameTable SET EndTime = {At}EndTime WHERE GameId = @GameId";
         using var command = new SqlCommand(updateSql, this.connection);
-        _ = command.Parameters.Add("@EndTime", SqlDbType.DateTime).Value = endTime;
-        _ = command.Parameters.Add("@GameId", SqlDbType.Int).Value = this.currentGameId;
-        _ = command.ExecuteNonQueryAsync();
+        command.Parameters.Add("@EndTime", SqlDbType.DateTime).Value = endTime;
+        command.Parameters.Add("@GameId", SqlDbType.Int).Value = this.currentGameId;
+        command.ExecuteNonQuery();
     }
 
     private void EnsureOpenConnection()
@@ -101,11 +102,20 @@ public class DatabaseInterface
         command.Parameters.Add("@MaxScore", SqlDbType.Int).Value = snake.Score;
         command.Parameters.Add("@EnterTime", SqlDbType.DateTime).Value = DateTime.Now;
 
-        _ = command.ExecuteNonQueryAsync();
+        command.ExecuteNonQuery();
     }
-    
-    public void UpdatePlayerScore(int playerId, int newScore)
+
+    public void UpdatePlayerScore(Snake newSnake, Snake oldSnake)
     {
+        int newScore = newSnake.Score;
+        int oldScore = oldSnake.Score;
+        int playerId = newSnake.Id;
+
+        if (newScore <= oldScore || newSnake.Id != oldSnake.Id)
+        {
+            return;
+        }
+
         EnsureOpenConnection();
 
         string updateSql = $"UPDATE dbo.Players SET MaxScore = {At}MaxScore WHERE GameId = {At}GameId AND PlayerId = {At}PlayerId";
@@ -114,9 +124,9 @@ public class DatabaseInterface
         command.Parameters.Add("@GameId", SqlDbType.Int).Value = this.currentGameId;
         command.Parameters.Add("@PlayerId", SqlDbType.Int).Value = playerId;
 
-        _ = command.ExecuteNonQueryAsync();
+        command.ExecuteNonQuery();
     }
-    
+
     public void PlayerLeft(int playerId)
     {
         EnsureOpenConnection();
@@ -127,6 +137,6 @@ public class DatabaseInterface
         command.Parameters.Add("@GameId", SqlDbType.Int).Value = this.currentGameId;
         command.Parameters.Add("@PlayerId", SqlDbType.Int).Value = playerId;
 
-        _ = command.ExecuteNonQueryAsync();
+        command.ExecuteNonQuery();
     }
 }

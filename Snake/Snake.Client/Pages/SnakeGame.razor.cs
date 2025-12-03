@@ -42,11 +42,6 @@ public partial class SnakeGame : IDisposable
     private CancellationTokenSource? receiveCts;
 
     /// <summary>
-    /// A database interface for the Snake game.
-    /// </summary>
-    public static DatabaseInterface DbInterface { get; } = new DatabaseInterface();
-
-    /// <summary>
     ///     Initializes static members of the <see cref="SnakeGame" /> class.
     /// </summary>
     static SnakeGame()
@@ -126,7 +121,6 @@ public partial class SnakeGame : IDisposable
                     }
 
                     Logger.LogInformation("Connected to server.");
-                    DbInterface.NewGame();
 
                     connectionSpinnerClass = string.Empty;
                     InvokeAsync(StateHasChanged);
@@ -263,7 +257,6 @@ public partial class SnakeGame : IDisposable
         try
         {
             connection.Disconnect();
-            DbInterface.EndGame();
         }
         catch (SqlException e)
         {

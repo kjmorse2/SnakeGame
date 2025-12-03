@@ -16,12 +16,18 @@ namespace CS3500.Snake.Models;
 public class World
 {
     /// <summary>
+    /// A database interface for the Snake game.
+    /// </summary>
+    private static DatabaseInterface DbInterface = new DatabaseInterface();
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="World" /> class with a square size in pixels.
     /// </summary>
     /// <param name="size">Square dimension (width == height) of the playable area.</param>
     public World(int size)
     {
         Size = size;
+        DbInterface.NewGame();
     }
 
     /// <summary>
@@ -76,6 +82,7 @@ public class World
     /// </summary>
     public void Clear()
     {
+        DbInterface.EndGame();
         Snakes.Clear();
         Walls.Clear();
         PowerUps.Clear();
@@ -125,16 +132,15 @@ public class World
                 case 's':
                     Snake receivedSnake = JsonSerializer.Deserialize<Snake>(jsonString) ??
                                           throw new InvalidOperationException();
+
+                    // Update the database with the new player or updated score.
                     if (!Snakes.TryGetValue(receivedSnake.Id, out Snake? oldSnake))
                     {
-                        SnakeGame.DbInterface.InsertNewPlayer(receivedSnake);
+                        DbInterface.InsertNewPlayer(receivedSnake);
                     }
                     else
                     {
-                        if (receivedSnake.Score > oldSnake.Score)
-                        {
-                            SnakeGame.DbInterface.UpdatePlayerScore(receivedSnake.Id, receivedSnake.Score);
-                        }
+                        DbInterface.UpdatePlayerScore(receivedSnake, oldSnake);
                     }
 
                     Snakes[ receivedSnake.Id ] = receivedSnake;
@@ -142,7 +148,7 @@ public class World
                     // In the case the snake disconnects, remove it from the world.
                     if (receivedSnake.Dc)
                     {
-                        SnakeGame.DbInterface.PlayerLeft(receivedSnake.Id);
+                        DbInterface.PlayerLeft(receivedSnake.Id);
                         RemoveSnakeIds.Add(receivedSnake.Id);
                     }
 
