@@ -24,18 +24,19 @@ public static class ServerConnection
     /// </param>
     /// <param name="port"> The port (e.g., 11000) to listen on. </param>
     /// <param name="logger"> The logger instance used for logging connection events. </param>
-    public static void WaitForConnections(Action<NetworkConnection> handleConnect, int port, ILogger logger)
+    public static void WaitForConnections(Action<HttpListenerContext> handleConnect, int port, ILogger logger)
     {
-        TcpListener listener = new(IPAddress.Any, port);
+        HttpListener listener = new();
+        listener.Prefixes.Add("http://localhost:" + port + "/");
         listener.Start();
         ILogger localLogger = logger;
 
         while (true)
         {
             localLogger.LogInformation("Waiting for connections...");
-            NetworkConnection client = new(listener.AcceptTcpClient(), localLogger);
+            HttpListenerContext context = listener.GetContext();
             localLogger.LogInformation("Connection found, attempting to connect.");
-            new Thread(() => handleConnect(client)).Start();
+            new Thread(() => handleConnect(context)).Start();
             localLogger.LogInformation("Connection handed off to thread.");
         }
 
