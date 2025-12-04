@@ -4,8 +4,9 @@
 
 using System.Data;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
-namespace CS3500.Snake.Client.Pages.SnakeGame;
+namespace CS3500.Networking;
 
 /// <summary>
 ///     A database interface for the Snake game.
@@ -73,19 +74,23 @@ public class DatabaseInterface
         PlayersLeft(players);
     }
 
-    public void InsertNewPlayer(Models.Snake snake)
+    /// <summary>
+    ///     Inserts a new player into the database.
+    /// </summary>
+    /// <param name="playerId">The ID of the player.</param>
+    /// <param name="name">The name of the player.</param>
+    /// <param name="score">The initial score of the player.</param>
+    public void InsertNewPlayer(int playerId, string name, int score)
     {
         EnsureOpenConnection();
-
         string insertSql =
             $"INSERT INTO dbo.Players (GameId, PlayerId, Name, MaxScore, EnterTime) VALUES ({At}GameId, {At}PlayerId, {At}Name, {At}MaxScore, {At}EnterTime)";
         using SqlCommand command = new(insertSql, connection);
         command.Parameters.Add("@GameId", SqlDbType.Int).Value = currentGameId;
-        command.Parameters.Add("@PlayerId", SqlDbType.Int).Value = snake.Id;
-        command.Parameters.Add("@Name", SqlDbType.VarChar).Value = snake.Name;
-        command.Parameters.Add("@MaxScore", SqlDbType.Int).Value = snake.Score;
+        command.Parameters.Add("@PlayerId", SqlDbType.Int).Value = playerId;
+        command.Parameters.Add("@Name", SqlDbType.VarChar).Value = name;
+        command.Parameters.Add("@MaxScore", SqlDbType.Int).Value = score;
         command.Parameters.Add("@EnterTime", SqlDbType.DateTime).Value = DateTime.Now;
-
         command.ExecuteNonQuery();
     }
 
@@ -113,26 +118,26 @@ public class DatabaseInterface
         PlayerLeft(playerId, DateTime.Now);
     }
 
-    public void UpdatePlayerScore(Models.Snake newSnake, Models.Snake oldSnake)
+    /// <summary>
+    ///     Updates the score of a player.
+    /// </summary>
+    /// <param name="playerId">The ID of the player.</param>
+    /// <param name="newScore">The new score of the player.</param>
+    /// <param name="oldScore">The old score of the player.</param>
+    public void UpdatePlayerScore(int playerId, int newScore, int oldScore)
     {
-        int newScore = newSnake.Score;
-        int oldScore = oldSnake.Score;
-        int playerId = newSnake.Id;
-
-        if (newScore <= oldScore || newSnake.Id != oldSnake.Id)
+        if (newScore <= oldScore)
         {
             return;
         }
 
         EnsureOpenConnection();
-
         string updateSql =
             $"UPDATE dbo.Players SET MaxScore = {At}MaxScore WHERE GameId = {At}GameId AND PlayerId = {At}PlayerId";
         using SqlCommand command = new(updateSql, connection);
         command.Parameters.Add("@MaxScore", SqlDbType.Int).Value = newScore;
         command.Parameters.Add("@GameId", SqlDbType.Int).Value = currentGameId;
         command.Parameters.Add("@PlayerId", SqlDbType.Int).Value = playerId;
-
         command.ExecuteNonQuery();
     }
 

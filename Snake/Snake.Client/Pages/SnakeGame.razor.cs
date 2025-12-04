@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 using CS3500.Networking;
-using CS3500.Snake.Models;
+using CS3500.SnakeModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.JSInterop;
 
@@ -154,7 +154,7 @@ public partial class SnakeGame : IDisposable
                     {
                         while (!token.IsCancellationRequested
                                && connection.IsConnected
-                               && !World.Snakes.TryGetValue(PlayerId, out Models.Snake? _))
+                               && !World.Snakes.TryGetValue(PlayerId, out SnakeModels.Snake? _))
                         {
                             string message = connection.ReceiveLine();
                             World.UpdateElement(message);

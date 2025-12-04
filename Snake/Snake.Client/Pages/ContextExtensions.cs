@@ -3,11 +3,12 @@
 // </copyright>
 
 using Blazor.Extensions.Canvas.Canvas2D;
-using Point2D = CS3500.Snake.Models.Point2D;
-using PowerUp = CS3500.Snake.Models.PowerUp;
-using Wall = CS3500.Snake.Models.Wall;
+using Point2D = CS3500.SnakeModels.Point2D;
+using PowerUp = CS3500.SnakeModels.PowerUp;
+using Wall = CS3500.SnakeModels.Wall;
+using SnakeModel = CS3500.SnakeModels.Snake;
 
-namespace Snake.Client;
+namespace CS3500.Snake.Client;
 
 /// <summary>
 ///     Canvas drawing helper extensions for rendering world elements using a <see cref="Canvas2DContext" />.
@@ -35,9 +36,9 @@ public static class ContextExtensions
     /// <param name="context">The canvas 2D context to draw with.</param>
     /// <param name="snakes">The sequence of snakes to render.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    public static async Task Draw(this Canvas2DContext context, IEnumerable<CS3500.Snake.Models.Snake> snakes)
+    public static async Task Draw(this Canvas2DContext context, IEnumerable<SnakeModel> snakes)
     {
-        foreach (CS3500.Snake.Models.Snake snake in snakes)
+        foreach (SnakeModel snake in snakes)
         {
             await context.Draw(snake);
         }
@@ -79,7 +80,7 @@ public static class ContextExtensions
     /// <param name="context">The canvas 2D context to draw with.</param>
     /// <param name="snake">The snake to render.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    private static async Task Draw(this Canvas2DContext context, CS3500.Snake.Models.Snake snake)
+    private static async Task Draw(this Canvas2DContext context, SnakeModel snake)
     {
         // Temporarily set stroke thickness for snake geometry
         float oldLineWidth = context.LineWidth;
@@ -105,7 +106,7 @@ public static class ContextExtensions
 
         await context.SetFontAsync("14px Arial");
         await context.SetFillStyleAsync("white");
-        await context.FillTextAsync($" {snake.Name}:{snake.Score}", snake.Head.X - 20, snake.Head.Y + 30);
+        await context.FillTextAsync(" " + snake.Name + ":" + snake.Score, snake.Head.X - 20, snake.Head.Y + 30);
 
         // Restore previous stroke thickness
         await context.SetLineWidthAsync(oldLineWidth);

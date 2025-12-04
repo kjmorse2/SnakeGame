@@ -4,8 +4,7 @@
 
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components;
-
-namespace CS3500.Snake.Models;
+namespace CS3500.SnakeModels;
 
 /// <summary>
 ///     Represents a collectible power-up item in the world grid. When collected it is marked dead for one tick

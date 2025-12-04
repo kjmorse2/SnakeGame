@@ -4,7 +4,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace CS3500.Snake.Models;
+namespace CS3500.SnakeModels;
 
 /// <summary>
 ///     Represents an integer coordinate in the game world. Immutable after construction for thread safety.

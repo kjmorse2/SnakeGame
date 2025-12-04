@@ -23,7 +23,6 @@
     <ItemGroup>
         <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.11"/>
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0-preview2.25289.6"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.0"/>
         <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556">
             <PrivateAssets>all</PrivateAssets>
@@ -33,6 +32,11 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Networking\Networking.csproj"/>
+        <ProjectReference Include="..\..\SnakeModels\SnakeModels.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Helpers\" />
     </ItemGroup>
 
 </Project>
