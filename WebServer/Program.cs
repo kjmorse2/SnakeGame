@@ -7,6 +7,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using CS3500.Networking;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 
 namespace CS3500.SnakeServer;
@@ -82,9 +83,35 @@ public class SnakeServer
         string beginning = template.Substring(0, markerIndex);
         StringBuilder rowsStringBuilder = new StringBuilder();
         string rowsString = rowsStringBuilder.ToString();
+
+        using (SqlConnection sqlConn = new(SnakeSecrets))
+        {
+            try
+            {
+                sqlConn.Open();
+                Console.WriteLine("Connection to Database opened.");
+                SqlCommand command = new("SELECT * FROM GameTable", sqlConn);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int gameID = reader.GetInt32(0);
+                        DateTime start = reader.GetDateTime(1);
+                        DateTime? end = reader.GetDateTime(2);
+                        sb.Append("<tr>");
+                        sb.Append($"<td><a href=\"/games?gameID={gameID}\">{gameID}</a></td>");
+                        sb.Append($"<td>{start} </td>");
+                        sb.Append($"<td>{(end.HasValue ? end.Value.ToString() : String.Empty)}</td>");
+                        sb.Append("</tr>");
+                    }
+                }
+            }
+            catch { }
+        }
+
         string end = template.Substring(markerIndex + rowsString.Length, template.Length);
-        byte[] allGameBytes = Encoding.UTF8.GetBytes(beginning + rowsString + end);
-        // byte[] allGameBytes = Encoding.UTF8.GetBytes(template);
+        byte[ ] allGameBytes = Encoding.UTF8.GetBytes(beginning + rowsString + end);
+        //byte[ ] allGameBytes = Encoding.UTF8.GetBytes(template);
         return allGameBytes;
     }
 
