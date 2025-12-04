@@ -8,20 +8,21 @@ using Microsoft.Extensions.Logging;
 namespace CS3500.Networking;
 
 /// <summary>
-///     Represents a server task that waits for connections on a given
-///     port and calls the provided delegate when a connection is made.
+///     Provides the functionality for running an HTTP server. Waits for incoming HTTP connections and 
+///     hands them off to a user provided handler.
 /// </summary>
 public static class ServerConnection
 {
     /// <summary>
-    ///     Use on a TcpListener to handle new connections. Alert the calling program/function
-    ///     via the handleConnect delegate.
+    /// Listens for incoming HTTP requests on the specified address and port.
+    /// Each request is given a new thread.
     /// </summary>
     /// <param name="handleConnect">
     ///     Handler for what the user wants to do when a connection is made.
     ///     This should be run asynchronously via a new thread.
     /// </param>
-    /// <param name="port"> The port (e.g., 11000) to listen on. </param>
+    /// <param name="address" >The URL address the web server is listening at.</param>
+    /// <param name="port"> The port (e.g., 80, 8080, 11000) to listen on. </param>
     /// <param name="logger"> The logger instance used for logging connection events. </param>
     public static void WaitForConnections(Action<HttpListenerContext> handleConnect, string address, int port, ILogger logger)
     {
