@@ -7,6 +7,8 @@ using System.Text;
 using CS3500.Networking;
 using CS3500.Networking.Records;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace CS3500.SnakeServer;
 
@@ -15,7 +17,12 @@ namespace CS3500.SnakeServer;
 /// </summary>
 public class SnakeServer
 {
-    private const string rowInsertionMarker = "<!--Rows-->";
+    private const string rowInsertionMarker = "<!--ROWS-->";
+    private const string address = "http://localhost:";
+    private const string tdStart = "<td>";
+    private const string tdEnd = "</td>";
+    private const string trStart = "<tr>";
+    private const string trEnd = "</tr>";
     private static readonly string wwwrootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot");
     private static readonly string gameFilePath = Path.Combine(wwwrootPath, "game.html");
     private static readonly string gamesFilePath = Path.Combine(wwwrootPath, "games.html");
@@ -46,7 +53,7 @@ public class SnakeServer
 
         foreach (GameData game in games)
         {
-            tableBuilder.Append(MakeRow(game.ToStringList()));
+            tableBuilder.Append(MakeGameRow(game));
         }
 
         string end = template.Substring(markerIndex + rowInsertionMarker.Length);
@@ -61,13 +68,37 @@ public class SnakeServer
         serverLogger.LogTrace("Connection established with : " + context);
 
         string method = context.Request.HttpMethod;
+        byte[ ] buffer;
         if (method == "GET")
         {
             Uri? url = context.Request.Url;
             serverLogger.LogInformation("Received GET request for URL: " + url);
-            // Handle GET request
+            string path = url.AbsolutePath;
+            List<string> components = path.Split('/').ToList();
+            for (int i = 0; i < components.Count; i++)
+            {
+                if (components[ i ].IsNullOrEmpty())
+                {
+                    components.RemoveAt(i);
+                }
+            }
 
-            byte[ ] buffer = SingleGamePageBytes();
+            if (components.Count > 0 && components[ 0 ] == "games")
+            {
+                if (components.Count == 2 && int.TryParse(components[ 1 ], out int gameId))
+                {
+                    buffer = SingleGamePageBytes(gameId);
+                }
+                else
+                {
+                    buffer = GamesPageBytes();
+                }
+            }
+            else
+            {
+                buffer = HomePageBytes();
+            }
+
             context.Response.StatusCode = 200;
             context.Response.ContentType = "text/html";
             context.Response.ContentLength64 = buffer.Length;
@@ -93,17 +124,14 @@ public class SnakeServer
         serverLogger = loggerFactory.CreateLogger<SnakeServer>();
         serverLogger.LogInformation("Server initialized, waiting for connections...");
 
-        ServerConnection.WaitForConnections(HandleConnect, 8080, serverLogger);
+        ServerConnection.WaitForConnections(HandleConnect, address, 8080, serverLogger);
         Console.Read(); // don't stop the program.
     }
 
-    private static string MakeRow(List<string> elements)
+    private static string MakePlayerRow(PlayerData player)
     {
-        const string tdStart = "<td>";
-        const string tdEnd = "</td>";
-        const string trStart = "<tr>";
-        const string trEnd = "</tr>";
         StringBuilder rowBuilder = new();
+        List<string> elements = player.ToStringList();
 
         rowBuilder.Append(trStart);
         foreach (string element in elements)
@@ -118,18 +146,36 @@ public class SnakeServer
         return rowBuilder.ToString();
     }
 
-    private static byte[ ] SingleGamePageBytes()
+    private static string MakeGameRow(GameData game)
+    {
+        StringBuilder rowBuilder = new();
+        List<string> elements = game.ToStringList();
+        rowBuilder.Append(trStart);
+        rowBuilder.Append(tdStart);
+        rowBuilder.Append("<a href=\"games/" + game.GameId + "\">" + game.GameId + "</a>");
+        rowBuilder.Append(tdEnd);
+        for (int i = 1; i < elements.Count; i++)
+        {
+            rowBuilder.Append(tdStart);
+            rowBuilder.Append(elements[i]);
+            rowBuilder.Append(tdEnd);
+        }
+        rowBuilder.Append(trEnd);
+        return rowBuilder.ToString();
+    }
+
+    private static byte[ ] SingleGamePageBytes(int gameId)
     {
         string template = File.ReadAllText(singleGameFilePath, Encoding.UTF8);
         StringBuilder tableBuilder = new();
         int markerIndex = template.IndexOf(rowInsertionMarker, StringComparison.Ordinal);
         string beginning = template.Substring(0, markerIndex);
         tableBuilder.Append(beginning);
-        List<PlayerData> players = dbInterface.GetSingleGame(20);
+        List<PlayerData> players = dbInterface.GetSingleGame(gameId);
 
         foreach (PlayerData player in players)
         {
-            tableBuilder.Append(MakeRow(player.ToStringList()));
+            tableBuilder.Append(MakePlayerRow(player));
         }
 
         string end = template.Substring(markerIndex + rowInsertionMarker.Length);

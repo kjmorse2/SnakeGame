@@ -23,10 +23,10 @@ public static class ServerConnection
     /// </param>
     /// <param name="port"> The port (e.g., 11000) to listen on. </param>
     /// <param name="logger"> The logger instance used for logging connection events. </param>
-    public static void WaitForConnections(Action<HttpListenerContext> handleConnect, int port, ILogger logger)
+    public static void WaitForConnections(Action<HttpListenerContext> handleConnect, string address, int port, ILogger logger)
     {
         HttpListener listener = new();
-        listener.Prefixes.Add("http://localhost:" + port + "/");
+        listener.Prefixes.Add(address + port + "/");
         listener.Start();
         ILogger localLogger = logger;
 
