@@ -79,7 +79,7 @@ A Homepage, games pages, or individual game page can be displayed.
 
 ### Time Expenditures (in hours):
 Expected Hours: 16 hours total (8 hours each) 
-Actual Hours 38 total (about 19 each):
+Actual Hours 15 total (about 7.5 hours each):
 
 - 11/24/25
     - KJ:
@@ -106,7 +106,8 @@ Actual Hours 38 total (about 19 each):
         - 2: Added documentation to everything that needed it. Documentation complete.
            - Fixed formatting and other bugs.
            - Solution Readme complete.
-
+    - Hunter: Added the css for the webpage to make it look nice.
 ### Sources:
 [System.Data.SqlClient Namespace](https://learn.microsoft.com/en-us/dotnet/api/system.data.sqlclient?view=netframwork-4.8.1)
-[Hypertext Transfer Protocol (HTTP)](http://www.khanacademy.org/computing/computers-and-internet/xcae6f4a7ff015e7d:the-internet/xcae6f4a7ff015e7d:web-protocols/a/hypertext-transfer-protocol-http)
+[Hypertext Transfer Protocol (HTTP)](https://www.khanacademy.org/computing/computers-and-internet/xcae6f4a7ff015e7d:the-internet/xcae6f4a7ff015e7d:web-protocols/a/hypertext-transfer-protocol-http)
+[Get started with Bootstrap](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
