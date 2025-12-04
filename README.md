@@ -78,7 +78,7 @@ A new Webserver project is created, which reads HTTP requests and sends back the
 A Homepage, games pages, or individual game page can be displayed.
 
 ### Time Expenditures (in hours):
-Expected Hours: 15 hours total (7.5 hours each) 
+Expected Hours: 16 hours total (8 hours each) 
 Actual Hours 38 total (about 19 each):
 
 - 11/24/25
@@ -89,18 +89,24 @@ Actual Hours 38 total (about 19 each):
         - 2: Setup secrets file, added the GameTable and Players tables to the database.
 - 12/2/25
     - Paired programming:
-        - 3 : Connected the database and snake game. Allowed .
+        - 3 :  Basic implementation for adding GameID to the GamesTable. Began working on implementation for adding endtime to gamesTable.
+            -  Began setting up the webserver. Basic Homepage and games page setup.
 - 12/3/25
+    -KJ:
+        - 2: Completed Database interface class. GamesTable and Players tables are now updated correctly.
+           - Began work on different Webserver approach from Hunter.
     - Paired programming:
-        - 2 : Started communicaiton with server, recieved walls and powerups, not rendered yet though 
-    - KJ:
-        - 1: Worked on some connection logic, and also starting on rendering, but does not work
-    - Hunter:
-        -  1: Draws snake name on head, and worked on death animation 
+        - 3 : All three pages displaying. Still need the functionally to choose and display correct page. 
+            - Project Readme complete, some documentation added to new methods.
 - 12/4/25: 
-    - Hunter:  
-        - 1: Comments on code so far, worked on drawing more, still bottom right corner only (no translation) 
     - KJ:
-        - 1: Clean up code for stylecop errors, and experimenting with javascript for rendering (should have started with this)
+        - 2: Added small readonly classes for DataBase Interface returns instead of out.
+           - Webserver pages work as intended.
+    -Paired Programming:
+        - 2: Added documentation to everything that needed it. Documentation complete.
+           - Fixed formatting and other bugs.
+           - Solution Readme complete.
 
 ### Sources:
+[System.Data.SqlClient Namespace](https://learn.microsoft.com/en-us/dotnet/api/system.data.sqlclient?view=netframwork-4.8.1)
+[Hypertext Transfer Protocol (HTTP)](http://www.khanacademy.org/computing/computers-and-internet/xcae6f4a7ff015e7d:the-internet/xcae6f4a7ff015e7d:web-protocols/a/hypertext-transfer-protocol-http)
