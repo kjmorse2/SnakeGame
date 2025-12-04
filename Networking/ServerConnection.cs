@@ -21,7 +21,7 @@ public static class ServerConnection
     ///     Handler for what the user wants to do when a connection is made.
     ///     This should be run asynchronously via a new thread.
     /// </param>
-    /// <param name="address" >The URL address the web server is listening at.</param>
+    /// <param name="address" >The URL address the web server is listening/hosting at.</param>
     /// <param name="port"> The port (e.g., 80, 8080, 11000) to listen on. </param>
     /// <param name="logger"> The logger instance used for logging connection events. </param>
     public static void WaitForConnections(Action<HttpListenerContext> handleConnect, string address, int port, ILogger logger)
