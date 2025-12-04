@@ -18,7 +18,6 @@ public class World
     /// <summary>
     ///     A database interface for the Snake game.
     /// </summary>
-    // 
     private static readonly DatabaseInterface DbInterface = new();
 
     /// <summary>
@@ -115,13 +114,13 @@ public class World
     /// </remarks>
     public void UpdateElement(string jsonString)
     {
-        // If the json string is empty, dont do any work.
+        // If the JSON string is empty, don't do any work.
         if (string.IsNullOrWhiteSpace(jsonString))
         {
             return;
         }
 
-        // The second character of the json string is the start of the object, there are 3 distinct cases.
+        // The second character of the JSON string is the start of the object, there are 3 distinct cases.
         // 's' = snake, parse a snake object.
         // 'w' = wall, parse a wall object.
         // 'p' = power-up, parse a power up object.

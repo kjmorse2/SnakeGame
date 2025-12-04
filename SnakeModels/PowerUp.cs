@@ -21,18 +21,18 @@ public class PowerUp
     /// <summary>
     ///     Gets the unique identifier for the power-up.
     /// </summary>
-    [ JsonPropertyName("power") ]
+    [JsonPropertyName("power")]
     public int Id { get; init; }
 
     /// <summary>
     ///     Gets a value indicating whether the power-up has been collected (dead). True only on the collection tick.
     /// </summary>
-    [ JsonPropertyName("died") ]
+    [JsonPropertyName("died")]
     public bool IsDead { get; init; }
 
     /// <summary>
     ///     Gets the absolute world position where the power-up resides.
     /// </summary>
-    [ JsonPropertyName("loc") ]
+    [JsonPropertyName("loc")]
     public required Point2D Position { get; init; }
 }

@@ -14,12 +14,12 @@ public class Point2D
     /// <summary>
     ///     Gets the X coordinate component.
     /// </summary>
-    [ JsonPropertyName("X") ]
+    [JsonPropertyName("X")]
     public int X { get; init; }
 
     /// <summary>
     ///     Gets the Y coordinate component.
     /// </summary>
-    [ JsonPropertyName("Y") ]
+    [JsonPropertyName("Y")]
     public int Y { get; init; }
 }
