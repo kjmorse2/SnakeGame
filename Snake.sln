@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake.Client", "Snake\Snake
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebServer", "WebServer\WebServer.csproj", "{1C46A1E7-4EE7-47AA-AB0B-EA3162EC2784}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeModels", "SnakeModels\SnakeModels.csproj", "{05DA5A7B-A609-48CB-995B-4AEA2A5F8278}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{1C46A1E7-4EE7-47AA-AB0B-EA3162EC2784}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C46A1E7-4EE7-47AA-AB0B-EA3162EC2784}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C46A1E7-4EE7-47AA-AB0B-EA3162EC2784}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05DA5A7B-A609-48CB-995B-4AEA2A5F8278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05DA5A7B-A609-48CB-995B-4AEA2A5F8278}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05DA5A7B-A609-48CB-995B-4AEA2A5F8278}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05DA5A7B-A609-48CB-995B-4AEA2A5F8278}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,9 +4,9 @@ using System.Text.Json;
 using CS3500.Networking;
 using Microsoft.Data.SqlClient;
 
-namespace WebServer;
+namespace CS3500.WebServer;
 
-internal class WebServer
+public class WebServer
 {
     private static readonly string SnakeSecrets = JsonDocument.Parse(File.ReadAllText("secrets.json")).RootElement
         .GetProperty("ConnectionSTring").GetString()!;
@@ -26,8 +26,8 @@ internal class WebServer
                     break;
                 }
 
-                string[ ] parts = lineFromBrowser.Split(' ');
-                string path = parts.Length > 1 ? parts[ 1 ] : "/";
+                string[] parts = lineFromBrowser.Split(' ');
+                string path = parts.Length > 1 ? parts[1] : "/";
                 string html;
 
                 if (path == "/")
@@ -44,7 +44,7 @@ internal class WebServer
                     html = SpecficGamesPage();
                 }
             }
-       
+            
             catch
             {
                 return;
@@ -128,5 +128,4 @@ internal class WebServer
 
         return sb.ToString();
     }
-
 }

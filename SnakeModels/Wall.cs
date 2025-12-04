@@ -5,7 +5,7 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components;
 
-namespace CS3500.Snake.Models;
+namespace CS3500.SnakeModels;
 
 /// <summary>
 ///     Represents an axis-aligned wall occupying a continuous span of 50px segments between two endpoints.

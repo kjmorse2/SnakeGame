@@ -4,9 +4,9 @@
 
 using System.Collections.Concurrent;
 using System.Text.Json;
-using CS3500.Snake.Client.Pages.SnakeGame;
+using CS3500.Networking;
 
-namespace CS3500.Snake.Models;
+namespace CS3500.SnakeModels;
 
 /// <summary>
 ///     Represents the authoritative state of the game world for a single client: square boundary size and
@@ -137,11 +137,11 @@ public class World
                     // Update the database with the new player or updated score.
                     if (!Snakes.TryGetValue(receivedSnake.Id, out Snake? oldSnake))
                     {
-                        DbInterface.InsertNewPlayer(receivedSnake);
+                        DbInterface.InsertNewPlayer(receivedSnake.Id, receivedSnake.Name, receivedSnake.Score);
                     }
                     else
                     {
-                        DbInterface.UpdatePlayerScore(receivedSnake, oldSnake);
+                        DbInterface.UpdatePlayerScore(receivedSnake.Id, receivedSnake.Score, oldSnake.Score);
                     }
 
                     Snakes[ receivedSnake.Id ] = receivedSnake;

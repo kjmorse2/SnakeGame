@@ -3,6 +3,5 @@
   <component name="DataSourcePerFileMappings">
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/89acc110-bbcf-4a83-b8cc-784505b821ec/console_1.sql" value="89acc110-bbcf-4a83-b8cc-784505b821ec" />
     <file url="file://$PROJECT_DIR$/.idea/.idea.Snake/.idea/queries/Query.sql" value="89acc110-bbcf-4a83-b8cc-784505b821ec" />
-    <file url="file://$PROJECT_DIR$/Snake/Snake.Client/Helpers/DatabaseInterface.cs" value="89acc110-bbcf-4a83-b8cc-784505b821ec" />
   </component>
 </project>

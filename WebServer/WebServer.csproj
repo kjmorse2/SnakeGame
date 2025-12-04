@@ -13,7 +13,6 @@
         <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.11" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.11" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.11" />
-        <PackageReference Include="System.Data.SqlClient" Version="4.9.0"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -22,6 +21,7 @@
         <Content Include="wwwroot\**\*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content> 
+        <ProjectReference Include="..\SnakeModels\SnakeModels.csproj" /> 
     </ItemGroup>
 
 </Project>

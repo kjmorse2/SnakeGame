@@ -4,7 +4,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace CS3500.Snake.Models;
+namespace CS3500.SnakeModels;
 
 /// <summary>
 ///     Represents a client control command indicating the desired movement direction for a snake.
