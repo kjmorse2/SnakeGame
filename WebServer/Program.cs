@@ -85,32 +85,33 @@ public class SnakeServer
         int markerIndex = template.IndexOf(rowInsertionMarker, StringComparison.Ordinal);
         string beginning = template.Substring(0, markerIndex);
         StringBuilder rowsStringBuilder = new StringBuilder();
-        string rowsString = rowsStringBuilder.ToString();
+        dbInterface.GetAllGames(out List<int> gameIds, out List<string> startTimes, out List<string> endTimes);
 
-        using (SqlConnection sqlConn = new(SnakeSecrets))
+        for(int i = 0; i < gameIds.Count; i++)
         {
-            try
-            {
-                sqlConn.Open();
-                Console.WriteLine("Connection to Database opened.");
-                SqlCommand command = new("SELECT * FROM GameTable", sqlConn);
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        int gameID = reader.GetInt32(0);
-                        DateTime start = reader.GetDateTime(1);
-                        DateTime? endTime = reader.GetDateTime(2);
-                        rowsBuilder.Append("<tr>");
-                        sb.Append($"<td><a href=\"/games?gameID={gameID}\">{gameID}</a></td>");
-                        sb.Append($"<td>{start} </td>");
-                        sb.Append($"<td>{(end.HasValue ? end.Value.ToString() : String.Empty)}</td>");
-                        sb.Append("</tr>");
-                    }
-                }
-            }
-            catch { }
+            List<string> row = new();
+            row.Add(gameIds[i] + "");
+            row.Add(startTimes[i]);
+            row.Add(endTimes[i]);
+            rowsStringBuilder.Append(MakeRow(row));
         }
+
+
+        string rowsString = rowsStringBuilder.ToString();
+        string end = template.Substring(markerIndex + rowsString.Length, template.Length);
+        byte[ ] allGameBytes = Encoding.UTF8.GetBytes(beginning + rowsString + end);
+        //byte[ ] allGameBytes = Encoding.UTF8.GetBytes(template);
+        return allGameBytes;
+    }
+
+    private static byte[ ] SingleGamePageBytes()
+    {
+        string template = File.ReadAllText(gamesFilePath, Encoding.UTF8);
+        const string rowInsertionMarker = "<!--ROWS-->";
+        int markerIndex = template.IndexOf(rowInsertionMarker, StringComparison.Ordinal);
+        string beginning = template.Substring(0, markerIndex);
+        StringBuilder rowsStringBuilder = new StringBuilder();
+        string rowsString = rowsStringBuilder.ToString();
 
         string end = template.Substring(markerIndex + rowsString.Length, template.Length);
         byte[ ] allGameBytes = Encoding.UTF8.GetBytes(beginning + rowsString + end);
@@ -118,10 +119,21 @@ public class SnakeServer
         return allGameBytes;
     }
 
-    private static string MakeRow(string rowContents)
+    private static string MakeRow(List<string> elements)
     {
         const string tdStart = "<td>";
         const string tdEnd = "</td>";
-        return new StringBuilder().Append(tdStart).Append(tdEnd).Append(rowContents).ToString();
+        const string trStart = "<tr>";
+        const string trEnd = "</tr>";
+        StringBuilder rowBuilder = new();
+        rowBuilder.Append(trStart);
+        foreach(string element in elements)
+        {
+            rowBuilder.Append(tdStart);
+            rowBuilder.Append(element);
+            rowBuilder.Append(tdEnd);
+        }
+        rowBuilder.Append(trEnd);
+        return rowBuilder.ToString();
     }
 }

@@ -141,6 +141,45 @@ public class DatabaseInterface
         command.ExecuteNonQuery();
     }
 
+    public void GetAllGames(out List<int> gameIds, out List<string> startTimes, out List<string> endTimes)
+    {
+        gameIds = new();
+        startTimes = new();
+        endTimes = new();
+        try
+        {
+            EnsureOpenConnection();
+            Console.WriteLine("Connection to Database opened.");
+            SqlCommand command = new("SELECT * FROM GameTable", connection);
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    int gameID = reader.GetInt32(0);
+                    DateTime startTime = reader.GetDateTime(1);
+                    DateTime? endTime = reader.GetDateTime(2);
+                    string endTimeString = endTime.ToString() ?? "None";
+
+                    gameIds.Add(gameID);
+                    startTimes.Add(startTime.ToString());
+                    endTimes.Add(endTimeString);
+                }
+            }
+        }
+        catch
+        {
+        }
+    }
+
+    public void GetSingleGame(out List<int> PlayerIds, out List<string> PlayerNames, out List<string> MaxScores, out List<string> EnterTimes, List<string> LeaveTimes)
+    {
+        PlayerIds = new();
+        PlayerNames = new();
+        MaxScores = new();
+        EnterTimes = new();
+        LeaveTimes = new();
+    }
+
     private void EnsureOpenConnection()
     {
         if (connection.State != ConnectionState.Open)
