@@ -11,7 +11,8 @@ internal class WebServer
     private static readonly string SnakeSecrets = JsonDocument.Parse(File.ReadAllText("secrets.json")).RootElement
         .GetProperty("ConnectionSTring").GetString()!;
 
-
+    
+    
     public static void HandleConnection(NetworkConnection connection)
     {
         string lineFromBrowser = string.Empty;

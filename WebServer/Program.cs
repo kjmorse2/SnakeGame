@@ -9,8 +9,10 @@ using System.Text;
 using CS3500.Networking;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+uusing SnakeGame.Client
 
 namespace CS3500.SnakeServer;
+
 
 /// <summary>
 ///   A simple ChatServer that handles clients separately and replies with a static message.
@@ -27,6 +29,8 @@ public class SnakeServer
     /// Shared logger instance used throughout the server for structured logging.
     /// </summary>
     private static ILogger serverLogger;
+
+    private static DatabaseInterface dbInterface = new();
 
     private static readonly string wwwrootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot");
     private static readonly string indexFilePath = Path.Combine(wwwrootPath, "index.html");
@@ -79,6 +83,7 @@ public class SnakeServer
     private static byte [ ] GamesPageBytes()
     {
         string template = File.ReadAllText(gamesFilePath, Encoding.UTF8);
+        const string rowInsertionMarker = "<!--ROWS-->";
         int markerIndex = template.IndexOf(rowInsertionMarker, StringComparison.Ordinal);
         string beginning = template.Substring(0, markerIndex);
         StringBuilder rowsStringBuilder = new StringBuilder();
@@ -97,8 +102,8 @@ public class SnakeServer
                     {
                         int gameID = reader.GetInt32(0);
                         DateTime start = reader.GetDateTime(1);
-                        DateTime? end = reader.GetDateTime(2);
-                        sb.Append("<tr>");
+                        DateTime? endTime = reader.GetDateTime(2);
+                        rowsBuilder.Append("<tr>");
                         sb.Append($"<td><a href=\"/games?gameID={gameID}\">{gameID}</a></td>");
                         sb.Append($"<td>{start} </td>");
                         sb.Append($"<td>{(end.HasValue ? end.Value.ToString() : String.Empty)}</td>");

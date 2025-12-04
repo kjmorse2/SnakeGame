@@ -5,7 +5,7 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 
-namespace CS3500.Snake.Client.Pages.SnakeGame;
+namespace CS3500.Snake.Client.Helpers.DataBaseInterface;
 
 /// <summary>
 ///     A database interface for the Snake game.
@@ -40,7 +40,7 @@ public class DatabaseInterface
         }.ConnectionString;
 
         connection = new SqlConnection(connectionString);
-        connection.Open();
+        connection.Open(); // TODO add close/dispose logiS
     }
 
     /// <summary>
