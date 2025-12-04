@@ -52,7 +52,6 @@ public class SnakeServer
         Console.Read(); // don't stop the program.
     }
 
-
     private static void HandleConnect( HttpListenerContext context)
     {
         serverLogger.LogTrace( "Connection established with : " + context.ToString() );
@@ -64,7 +63,7 @@ public class SnakeServer
             serverLogger.LogInformation( "Received GET request for URL: " + url );
             // Handle GET request
 
-            byte[] buffer = GamesPageBytes();
+            byte[] buffer = SingleGame();
             context.Response.StatusCode = 200;
             context.Response.ContentType = "text/html";
             context.Response.ContentLength64 = buffer.Length;
@@ -96,7 +95,6 @@ public class SnakeServer
             rowsStringBuilder.Append(MakeRow(row));
         }
 
-
         string rowsString = rowsStringBuilder.ToString();
         string end = template.Substring(markerIndex + rowsString.Length, template.Length);
         byte[ ] allGameBytes = Encoding.UTF8.GetBytes(beginning + rowsString + end);
@@ -110,11 +108,23 @@ public class SnakeServer
         const string rowInsertionMarker = "<!--ROWS-->";
         int markerIndex = template.IndexOf(rowInsertionMarker, StringComparison.Ordinal);
         string beginning = template.Substring(0, markerIndex);
-        StringBuilder rowsStringBuilder = new StringBuilder();
-        string rowsString = rowsStringBuilder.ToString();
+        StringBuilder rowsStringBuilder = new ();
+        dbInterface.GetSingleGame(1, out List<int> playerIds, out List<string> playerNames, out List<int> highScores, out List<string> enterTimes, out List<string> leaveTimes);
 
+        for (int i = 0; i < playerIds.Count; i++)
+        {
+            List<string> row = new();
+            row.Add(playerIds[i] + "");
+            row.Add(playerNames[i]);
+            row.Add(highScores[i] + "");
+            row.Add(enterTimes[i]);
+            row.Add(leaveTimes[i]);
+            rowsStringBuilder.Append(MakeRow(row));
+        }
+
+        string rowsString = rowsStringBuilder.ToString();
         string end = template.Substring(markerIndex + rowsString.Length, template.Length);
-        byte[ ] allGameBytes = Encoding.UTF8.GetBytes(beginning + rowsString + end);
+        byte[] allGameBytes = Encoding.UTF8.GetBytes(beginning + rowsString + end);
         //byte[ ] allGameBytes = Encoding.UTF8.GetBytes(template);
         return allGameBytes;
     }

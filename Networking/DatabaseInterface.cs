@@ -171,13 +171,41 @@ public class DatabaseInterface
         }
     }
 
-    public void GetSingleGame(out List<int> PlayerIds, out List<string> PlayerNames, out List<string> MaxScores, out List<string> EnterTimes, List<string> LeaveTimes)
+    public void GetSingleGame(int gameId, out List<int> playerIds, out List<string> playerNames, out List<int> maxScores, out List<string> enterTimes, out List<string> leaveTimes)
     {
-        PlayerIds = new();
-        PlayerNames = new();
-        MaxScores = new();
-        EnterTimes = new();
-        LeaveTimes = new();
+        playerIds = new();
+        playerNames = new();
+        maxScores = new();
+        enterTimes = new();
+        leaveTimes = new();
+        try
+        {
+            EnsureOpenConnection();
+            Console.WriteLine("Connection to Database opened.");
+            SqlCommand command = new("SELECT PlayerId, PlayerName, MaxScore, StartTime, EndTime FROM PlayerTable WHERE GameId == @GameId", connection);
+            command.Parameters.Add("@GameId", SqlDbType.Int).Value = gameId;
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    int playerId = reader.GetInt32(0);
+                    string playerName = reader.GetString(1);
+                    int maxScore = reader.GetInt32(2);
+                    DateTime enterTime= reader.GetDateTime(3);
+                    DateTime leaveTime = reader.GetDateTime(4);
+
+                    playerIds.Add(playerId);
+                    playerNames.Add(playerName);
+                    maxScores.Add(maxScore);
+
+                    enterTimes.Add(startTime.ToString());
+                    leaveTimes.Add(leaveTime.ToString());
+                }
+            }
+        }
+        catch
+        {
+        }
     }
 
     private void EnsureOpenConnection()
