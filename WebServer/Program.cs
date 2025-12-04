@@ -4,6 +4,8 @@
 
 using System.Collections.Concurrent;
 using System.Net;
+using System.Runtime.InteropServices;
+using System.Text;
 using CS3500.Networking;
 using Microsoft.Extensions.Logging;
 
@@ -24,6 +26,12 @@ public class SnakeServer
     /// Shared logger instance used throughout the server for structured logging.
     /// </summary>
     private static ILogger serverLogger;
+
+    private static readonly string wwwrootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot");
+    private static readonly string indexFilePath = Path.Combine(wwwrootPath, "index.html");
+    private static readonly string gamesFilePath = Path.Combine(wwwrootPath, "games.html");
+    private static readonly string rowInsertionMarker = "<!--Rows-->";
+    private static readonly string gameFilePath = Path.Combine(wwwrootPath, "game.html");
 
     private static void Main()
     {
@@ -52,14 +60,38 @@ public class SnakeServer
             Uri? url = context.Request.Url;
             serverLogger.LogInformation( "Received GET request for URL: " + url );
             // Handle GET request
-            string responseString = "<html><body><h1>Hello, World!</h1></body></html>";
-            byte[] buffer = System.Text.Encoding.UTF8.GetBytes( responseString );
+
+            byte[] buffer = GamesPageBytes();
             context.Response.StatusCode = 200;
+            context.Response.ContentType = "text/html";
             context.Response.ContentLength64 = buffer.Length;
             context.Response.OutputStream.Write( buffer, 0, buffer.Length );
             context.Response.OutputStream.Close();
         }
+    }
 
+    private static byte[ ] HomePageBytes()
+    {
+        return File.ReadAllBytes(indexFilePath);
+    }
 
+    private static byte [ ] GamesPageBytes()
+    {
+        string template = File.ReadAllText(gamesFilePath, Encoding.UTF8);
+        int markerIndex = template.IndexOf(rowInsertionMarker, StringComparison.Ordinal);
+        string beginning = template.Substring(0, markerIndex);
+        StringBuilder rowsStringBuilder = new StringBuilder();
+        string rowsString = rowsStringBuilder.ToString();
+        string end = template.Substring(markerIndex + rowsString.Length, template.Length);
+        byte[] allGameBytes = Encoding.UTF8.GetBytes(beginning + rowsString + end);
+        // byte[] allGameBytes = Encoding.UTF8.GetBytes(template);
+        return allGameBytes;
+    }
+
+    private static string MakeRow(string rowContents)
+    {
+        const string tdStart = "<td>";
+        const string tdEnd = "</td>";
+        return new StringBuilder().Append(tdStart).Append(tdEnd).Append(rowContents).ToString();
     }
 }

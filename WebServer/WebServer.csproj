@@ -18,6 +18,10 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Networking\Networking.csproj"/>
+        <!-- Include all files under `wwwroot` -->
+        <Content Include="wwwroot\**\*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content> 
     </ItemGroup>
 
 </Project>
