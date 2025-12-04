@@ -9,16 +9,27 @@ using CS3500.Networking;
 namespace CS3500.SnakeModels;
 
 /// <summary>
+/// <p>
 ///     Represents the authoritative state of the game world for a single client: square boundary size and
 ///     collections of snakes, walls, and power-ups keyed by unique IDs. Collections are concurrent to allow
 ///     safe updates from a background receive loop while rendering.
+/// </p>
+/// <p>
+///     Worlds responsibilities include:
+/// </p>
+/// <list type="bullet">
+/// <item> Maintaining collections of game elements (snakes, walls, power-ups).</item>
+/// <item> Deserializing objects and applying JSON updates for game elements.</item>
+/// <item> Tracking which snakes and power-ups need to be removed from the world.</item>
+/// <item> Interfacing with the database for player score tracking.</item>
+/// </list>
 /// </summary>
 public class World
 {
     /// <summary>
-    ///     A database interface for the Snake game.
+    ///     A database interface for the Snake game, stores game information on a remove SQL server.
     /// </summary>
-    private static readonly DatabaseInterface DbInterface = new();
+    private readonly DatabaseInterface dbInterface = new();
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="World" /> class with a square size in pixels.
@@ -26,8 +37,11 @@ public class World
     /// <param name="size">Square dimension (width == height) of the playable area.</param>
     public World(int size)
     {
+        // Set the world size and notify the database of a new game.
         Size = size;
-        DbInterface.NewGame();
+
+        // Initialize a new game in the database.
+        dbInterface.NewGame();
     }
 
     /// <summary>
@@ -57,8 +71,14 @@ public class World
 
     private static Point2D DefaultPoint => new() { X = 0, Y = 0 };
 
+    /// <summary>
+    /// Gets a collection of power-up IDs to be removed from the world.
+    /// </summary>
     private ConcurrentBag<int> RemovePowerUpIDs { get; } = new();
 
+    /// <summary>
+    /// Gets a collection of snake IDs to be removed from the world.
+    /// </summary>
     private ConcurrentBag<int> RemoveSnakeIds { get; } = new();
 
     /// <summary>
@@ -82,7 +102,10 @@ public class World
     /// </summary>
     public void Clear()
     {
-        DbInterface.EndGame();
+        // Notify the database that the game has ended.
+        dbInterface.EndGame();
+
+        // Clear all collections.
         Snakes.Clear();
         Walls.Clear();
         PowerUps.Clear();
@@ -136,11 +159,13 @@ public class World
                     // Update the database with the new player or updated score.
                     if (!Snakes.TryGetValue(receivedSnake.Id, out Snake? oldSnake))
                     {
-                        DbInterface.InsertNewPlayer(receivedSnake.Id, receivedSnake.Name, receivedSnake.Score);
+                        // If the snake is new, insert it into the database.
+                        dbInterface.InsertNewPlayer(receivedSnake.Id, receivedSnake.Name, receivedSnake.Score);
                     }
                     else
                     {
-                        DbInterface.UpdatePlayerScore(receivedSnake.Id, receivedSnake.Score, oldSnake.Score);
+                        // If the snake exists, update its score if it has changed.
+                        dbInterface.UpdatePlayerScore(receivedSnake.Id, receivedSnake.Score, oldSnake.Score);
                     }
 
                     Snakes[ receivedSnake.Id ] = receivedSnake;
@@ -148,7 +173,8 @@ public class World
                     // In the case the snake disconnects, remove it from the world.
                     if (receivedSnake.Dc)
                     {
-                        DbInterface.PlayerLeft(receivedSnake.Id);
+                        // Notify the database that the player has left.
+                        dbInterface.PlayerLeft(receivedSnake.Id);
                         RemoveSnakeIds.Add(receivedSnake.Id);
                     }
 

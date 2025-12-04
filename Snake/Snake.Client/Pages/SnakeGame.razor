@@ -310,7 +310,7 @@
             await context.RestoreAsync();
             await context.EndBatchAsync();
 
-            // Clean up dc'd snakes or dead power-ups.
+            // Clean up disconnected snakes or dead power-ups.
             World.CleanupDeadElements();
 
             StateHasChanged();
