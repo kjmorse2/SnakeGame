@@ -16,24 +16,24 @@ namespace CS3500.Networking;
 public class DatabaseInterface
 {
     /// <summary>
-    /// A string constant for the "@" symbol used in SQL parameters.
-    /// A note on this, For some reason, using "@" directly in the SQL strings causes issues with certain analyzers,
-    /// and would not let me run the code, this was the only way I could get around that and used parameterized strings.
+    ///     A string constant for the "@" symbol used in SQL parameters.
+    ///     A note on this, For some reason, using "@" directly in the SQL strings causes issues with certain analyzers,
+    ///     and would not let me run the code, this was the only way I could get around that and used parameterized strings.
     /// </summary>
     private static readonly string At = "@";
 
     /// <summary>
-    /// A SQL connection to the remote database.
+    ///     A SQL connection to the remote database.
     /// </summary>
     private readonly SqlConnection connection;
 
     /// <summary>
-    /// The current game ID for the ongoing game session.
+    ///     The current game ID for the ongoing game session.
     /// </summary>
     private int currentGameId = -1;
 
     /// <summary>
-    /// The start time of the current game session.
+    ///     The start time of the current game session.
     /// </summary>
     private DateTime startTime;
 
@@ -109,7 +109,7 @@ public class DatabaseInterface
     }
 
     /// <summary>
-    /// Gets all games from the database.
+    ///     Gets all games from the database.
     /// </summary>
     /// <returns>A List of GameData objects, containing all fields from the database.</returns>
     public List<GameData> GetAllGames()
@@ -135,7 +135,7 @@ public class DatabaseInterface
     }
 
     /// <summary>
-    /// Gets a single game's player data from the database using the provided game ID.
+    ///     Gets a single game's player data from the database using the provided game ID.
     /// </summary>
     /// <param name="gameId">The id of the game to get the data from.</param>
     /// <returns>A list of PlayerData objects that contains all fields present in the SQL table.</returns>
@@ -186,11 +186,13 @@ public class DatabaseInterface
         using SqlCommand command = new(insertSql, connection);
 
         // Add parameters and execute the insert
-        command.Parameters.Add("@GameId", SqlDbType.Int).Value = currentGameId; // Use current game ID, stored in this object.
+        command.Parameters.Add("@GameId", SqlDbType.Int).Value =
+            currentGameId; // Use current game ID, stored in this object.
         command.Parameters.Add("@PlayerId", SqlDbType.Int).Value = playerId;
         command.Parameters.Add("@Name", SqlDbType.VarChar).Value = name;
         command.Parameters.Add("@MaxScore", SqlDbType.Int).Value = score;
-        command.Parameters.Add("@EnterTime", SqlDbType.DateTime).Value = DateTime.Now; // Use current time as enter time.
+        command.Parameters.Add("@EnterTime", SqlDbType.DateTime).Value =
+            DateTime.Now; // Use current time as enter time.
         command.ExecuteNonQuery();
     }
 
@@ -216,7 +218,7 @@ public class DatabaseInterface
     }
 
     /// <summary>
-    /// Marks the time when a player leaves.
+    ///     Marks the time when a player leaves.
     /// </summary>
     /// <param name="playerId"> The ID of the player that is leaving.</param>
     public void PlayerLeft(int playerId)
@@ -253,7 +255,7 @@ public class DatabaseInterface
     }
 
     /// <summary>
-    ///    Ensures that the SQL connection is open, called before any database operation.
+    ///     Ensures that the SQL connection is open, called before any database operation.
     /// </summary>
     private void EnsureOpenConnection()
     {
@@ -264,7 +266,7 @@ public class DatabaseInterface
     }
 
     /// <summary>
-    /// Updates the database to mark when a player has left the game.
+    ///     Updates the database to mark when a player has left the game.
     /// </summary>
     /// <param name="playerId">The id of the player who left.</param>
     /// <param name="endTime">The time the player left.</param>
@@ -286,8 +288,8 @@ public class DatabaseInterface
     }
 
     /// <summary>
-    /// A helper method to mark multiple players as having left at the same time.
-    /// Used when a game ends to mark all remaining players as having left.
+    ///     A helper method to mark multiple players as having left at the same time.
+    ///     Used when a game ends to mark all remaining players as having left.
     /// </summary>
     /// <param name="players">A list of player Ids who have not already left the game.</param>
     /// <param name="endTime">THe time the game ended/players left.</param>

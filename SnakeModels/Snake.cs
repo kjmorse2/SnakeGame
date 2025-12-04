@@ -1,4 +1,4 @@
-﻿﻿// <copyright file="Snake.cs" company="U of U CS3500">
+﻿// <copyright file="Snake.cs" company="U of U CS3500">
 // Copyright (c) U of U CS3500, Kenneth Morse, and Hunter Simmons. All rights reserved.
 // </copyright>
 
@@ -65,6 +65,13 @@ public class Snake
     public bool Join { get; init; }
 
     /// <summary>
+    ///     Gets or sets the maximum score this snake has achieved during the current session.
+    ///     This property is not serialized/deserialized from JSON as it is tracked locally.
+    /// </summary>
+    [JsonIgnore]
+    public int MaxScore { get; set; }
+
+    /// <summary>
     ///     Gets the display name of the player controlling this snake.
     /// </summary>
     [JsonPropertyName("name")]
@@ -75,11 +82,4 @@ public class Snake
     /// </summary>
     [JsonPropertyName("score")]
     public int Score { get; init; }
-
-    /// <summary>
-    ///     Gets or sets the maximum score this snake has achieved during the current session.
-    ///     This property is not serialized/deserialized from JSON as it is tracked locally.
-    /// </summary>
-    [JsonIgnore]
-    public int MaxScore { get; set; }
 }

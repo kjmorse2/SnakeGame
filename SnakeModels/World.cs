@@ -1,4 +1,4 @@
-﻿﻿// <copyright file="World.cs" company="U of U CS3500">
+﻿// <copyright file="World.cs" company="U of U CS3500">
 // Copyright (c) U of U CS3500, Kenneth Morse, and Hunter Simmons. All rights reserved.
 // </copyright>
 
@@ -9,20 +9,20 @@ using CS3500.Networking;
 namespace CS3500.SnakeModels;
 
 /// <summary>
-/// <p>
-///     Represents the authoritative state of the game world for a single client: square boundary size and
-///     collections of snakes, walls, and power-ups keyed by unique IDs. Collections are concurrent to allow
-///     safe updates from a background receive loop while rendering.
-/// </p>
-/// <p>
-///     Worlds responsibilities include:
-/// </p>
-/// <list type="bullet">
-/// <item> Maintaining collections of game elements (snakes, walls, power-ups).</item>
-/// <item> Deserializing objects and applying JSON updates for game elements.</item>
-/// <item> Tracking which snakes and power-ups need to be removed from the world.</item>
-/// <item> Interfacing with the database for player score tracking.</item>
-/// </list>
+///     <p>
+///         Represents the authoritative state of the game world for a single client: square boundary size and
+///         collections of snakes, walls, and power-ups keyed by unique IDs. Collections are concurrent to allow
+///         safe updates from a background receive loop while rendering.
+///     </p>
+///     <p>
+///         Worlds responsibilities include:
+///     </p>
+///     <list type="bullet">
+///         <item> Maintaining collections of game elements (snakes, walls, power-ups).</item>
+///         <item> Deserializing objects and applying JSON updates for game elements.</item>
+///         <item> Tracking which snakes and power-ups need to be removed from the world.</item>
+///         <item> Interfacing with the database for player score tracking.</item>
+///     </list>
 /// </summary>
 public class World
 {
@@ -72,12 +72,12 @@ public class World
     private static Point2D DefaultPoint => new() { X = 0, Y = 0 };
 
     /// <summary>
-    /// Gets a collection of power-up IDs to be removed from the world.
+    ///     Gets a collection of power-up IDs to be removed from the world.
     /// </summary>
     private ConcurrentBag<int> RemovePowerUpIDs { get; } = new();
 
     /// <summary>
-    /// Gets a collection of snake IDs to be removed from the world.
+    ///     Gets a collection of snake IDs to be removed from the world.
     /// </summary>
     private ConcurrentBag<int> RemoveSnakeIds { get; } = new();
 
