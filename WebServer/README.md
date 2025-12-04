@@ -28,4 +28,6 @@ We only consulted each other for this assignment.
 
 ### Sources:
 
-[SqlCommand Class](learn.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlcommand?view=netframework-4.8.1)
+[SqlCommand Class](https://learn.microsoft.com/en-us/dotnet/api/microsoft.data.sqlclient.sqlcommand?view=sqlclient-dotnet-core-6.0)
+[HTTPListener Class](https://learn.microsoft.com/en-us/dotnet/api/system.net.httplistener?view=net-10.0)
+[HTTPListenerContext Class](https://learn.microsoft.com/en-us/dotnet/api/system.net.httplistenercontext?view=net-10.0)
