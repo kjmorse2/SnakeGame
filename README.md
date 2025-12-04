@@ -7,7 +7,7 @@ Start Date: 11-Nov-2025
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  kjmorse2, HunterDSimmons
 Repo:       https://github.com/uofu-cs3500-20-fall2025/assignment-eight-chatting-kj_hunter_game.git
-Commit Date: 21-Nov-2025
+Commit Date: 4-Dec-2025
 Solution:   Snake 
 Copyright:  CS 3500, Kenneth Morse,and Hunter Simmons - This work may not be copied for use in Academic Coursework.
 ```
@@ -15,7 +15,7 @@ Copyright:  CS 3500, Kenneth Morse,and Hunter Simmons - This work may not be cop
 
 ### Overview of the functionality
 This project uses the NetworkConnection project from Assignment 8 to communicate with a SnakeGame 
-server, along wtih a new Snake project to render that game and allow the user to play with the other
+server, along with a new Snake project to render that game and allow the user to play with the other
 people connected to the same server. 
 
 ### Time Expenditures (in hours):
@@ -23,10 +23,10 @@ Expected Hours: 30 hours total (15 each)
 Actual Hours 38 total (about 19 each):
 - 11/11/25
     - Paired programming:
-        - 3 : Added starter code, read through assigment, and started on model classes for json deserialization.
+        - 3 : Added starter code, read through assignment, and started on model classes for json deserialization.
 - 11/12/25
     - Paired programming:
-        - 2 : Started communicaiton with server, recieved walls and powerups, not rendered yet though 
+        - 2 : Started communication with server, received walls and powerups, not rendered yet though 
     - KJ:
         - 1: Worked on some connection logic, and also starting on rendering, but does not work
     - Hunter:
@@ -44,11 +44,11 @@ Actual Hours 38 total (about 19 each):
         - 1: Polished snake drawing (for now)
         - 1: Added control command functionality 
         - 1: World is translated correctly, but not zoomed
-        - 1: Added commments to code so far, and polished fps counter 
+        - 1: Added comments to code so far, and polished fps counter 
     - Hunter 
         - 1: Implemented snake color changing for up to 8 players.
     - Paired:
-        - 2: Fixed disconnection bugs, program now flows smoothely through all control paths
+        - 2: Fixed disconnection bugs, program now flows smoothly through all control paths
 - 11/18/25:
     - Paired: 
         - 0.5: Removed unused code and refactored some names.
@@ -62,9 +62,45 @@ Actual Hours 38 total (about 19 each):
 - 11/20/25:
     - Paired programming
         - 1: Final code review, checked specs to make sure we adhered to them, and polished comments and readmes.
-
 ### Sources:
 [Microsoft thread safe collections documents](https://learn.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2?view=net-9.0)
 [Task v.s. Thread](https://stackoverflow.com/questions/4130194/what-is-the-difference-between-task-and-thread)
 [Cancelation Tokens](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtokensource?view=net-9.0)
 [Asyncronous and Await](https://www.geeksforgeeks.org/c-sharp/async-and-await-in-c-sharp/)
+
+# Assignment 10:
+
+### Overview of the functionality
+This project adds support for recording snake game data from assignment 9 into an SQL database. That data
+can then be displayed through a web server.
+The snake client now logs each game session, player names, player ids, when players enter and leave, and max scores.
+A new Webserver project is created, which reads HTTP requests and sends back the correct HTML to display the webpage.
+A Homepage, games pages, or individual game page can be displayed.
+
+### Time Expenditures (in hours):
+Expected Hours: 15 hours total (7.5 hours each) 
+Actual Hours 38 total (about 19 each):
+
+- 11/24/25
+    - KJ:
+        - 1: Initial setup, added WebServer project, readMe, and stylecop.
+- 11/25/25
+    - Paired programming
+        - 2: Setup secrets file, added the GameTable and Players tables to the database.
+- 12/2/25
+    - Paired programming:
+        - 3 : Connected the database and snake game. Allowed .
+- 12/3/25
+    - Paired programming:
+        - 2 : Started communicaiton with server, recieved walls and powerups, not rendered yet though 
+    - KJ:
+        - 1: Worked on some connection logic, and also starting on rendering, but does not work
+    - Hunter:
+        -  1: Draws snake name on head, and worked on death animation 
+- 12/4/25: 
+    - Hunter:  
+        - 1: Comments on code so far, worked on drawing more, still bottom right corner only (no translation) 
+    - KJ:
+        - 1: Clean up code for stylecop errors, and experimenting with javascript for rendering (should have started with this)
+
+### Sources:
