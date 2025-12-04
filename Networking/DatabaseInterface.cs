@@ -182,7 +182,7 @@ public class DatabaseInterface
         {
             EnsureOpenConnection();
             Console.WriteLine("Connection to Database opened.");
-            SqlCommand command = new("SELECT PlayerId, PlayerName, MaxScore, StartTime, EndTime FROM PlayerTable WHERE GameId == @GameId", connection);
+            SqlCommand command = new("SELECT PlayerId, Name, MaxScore, EnterTime, LeaveTime FROM Players WHERE GameId = @GameId ORDER BY MaxScore DESC", connection);
             command.Parameters.Add("@GameId", SqlDbType.Int).Value = gameId;
             using (SqlDataReader reader = command.ExecuteReader())
             {

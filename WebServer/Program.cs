@@ -33,6 +33,7 @@ public class SnakeServer
     private static readonly string wwwrootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot");
     private static readonly string indexFilePath = Path.Combine(wwwrootPath, "index.html");
     private static readonly string gamesFilePath = Path.Combine(wwwrootPath, "games.html");
+    private static readonly string singleGameFilePath = Path.Combine(wwwrootPath, "singleGame.html");
     private static readonly string rowInsertionMarker = "<!--Rows-->";
     private static readonly string gameFilePath = Path.Combine(wwwrootPath, "game.html");
 
@@ -63,7 +64,7 @@ public class SnakeServer
             serverLogger.LogInformation( "Received GET request for URL: " + url );
             // Handle GET request
 
-            byte[] buffer = SingleGame();
+            byte[] buffer = SingleGamePageBytes();
             context.Response.StatusCode = 200;
             context.Response.ContentType = "text/html";
             context.Response.ContentLength64 = buffer.Length;
@@ -96,7 +97,7 @@ public class SnakeServer
         }
 
         string rowsString = rowsStringBuilder.ToString();
-        string end = template.Substring(markerIndex + rowsString.Length, template.Length);
+        string end = template.Substring(markerIndex + rowInsertionMarker.Length);
         byte[ ] allGameBytes = Encoding.UTF8.GetBytes(beginning + rowsString + end);
         //byte[ ] allGameBytes = Encoding.UTF8.GetBytes(template);
         return allGameBytes;
@@ -104,12 +105,12 @@ public class SnakeServer
 
     private static byte[ ] SingleGamePageBytes()
     {
-        string template = File.ReadAllText(gamesFilePath, Encoding.UTF8);
+        string template = File.ReadAllText(singleGameFilePath, Encoding.UTF8);
         const string rowInsertionMarker = "<!--ROWS-->";
         int markerIndex = template.IndexOf(rowInsertionMarker, StringComparison.Ordinal);
         string beginning = template.Substring(0, markerIndex);
         StringBuilder rowsStringBuilder = new ();
-        dbInterface.GetSingleGame(1, out List<int> playerIds, out List<string> playerNames, out List<int> highScores, out List<string> enterTimes, out List<string> leaveTimes);
+        dbInterface.GetSingleGame(20, out List<int> playerIds, out List<string> playerNames, out List<int> highScores, out List<string> enterTimes, out List<string> leaveTimes);
 
         for (int i = 0; i < playerIds.Count; i++)
         {
@@ -123,7 +124,7 @@ public class SnakeServer
         }
 
         string rowsString = rowsStringBuilder.ToString();
-        string end = template.Substring(markerIndex + rowsString.Length, template.Length);
+        string end = template.Substring(markerIndex +  rowInsertionMarker.Length);
         byte[] allGameBytes = Encoding.UTF8.GetBytes(beginning + rowsString + end);
         //byte[ ] allGameBytes = Encoding.UTF8.GetBytes(template);
         return allGameBytes;
