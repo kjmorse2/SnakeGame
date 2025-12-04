@@ -7,10 +7,8 @@ using System.Text;
 using CS3500.Networking;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
-using CS3500.Networking;
 
 namespace CS3500.SnakeServer;
-
 
 /// <summary>
 ///   A simple ChatServer that handles clients separately and replies with a static message.
@@ -28,6 +26,9 @@ public class SnakeServer
     /// </summary>
     private static ILogger serverLogger;
 
+    /// <summary>
+    /// New DatabaseInterface instance used to get the data from the table in the database.
+    /// </summary>
     private static DatabaseInterface dbInterface = new();
 
     private static readonly string wwwrootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot");
@@ -63,7 +64,7 @@ public class SnakeServer
             serverLogger.LogInformation( "Received GET request for URL: " + url );
             // Handle GET request
 
-            byte[] buffer = SingleGame();
+            byte[] buffer = GamesPageBytes();
             context.Response.StatusCode = 200;
             context.Response.ContentType = "text/html";
             context.Response.ContentLength64 = buffer.Length;
@@ -83,7 +84,7 @@ public class SnakeServer
         const string rowInsertionMarker = "<!--ROWS-->";
         int markerIndex = template.IndexOf(rowInsertionMarker, StringComparison.Ordinal);
         string beginning = template.Substring(0, markerIndex);
-        StringBuilder rowsStringBuilder = new StringBuilder();
+        StringBuilder rowsStringBuilder = new();
         dbInterface.GetAllGames(out List<int> gameIds, out List<string> startTimes, out List<string> endTimes);
 
         for(int i = 0; i < gameIds.Count; i++)

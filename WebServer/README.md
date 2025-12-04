@@ -16,14 +16,15 @@ Copyright:  CS 3500, Kenneth Morse,and Hunter Simmons - This work may not be cop
 
 ### Comments to Evaluators:
 
-TODO
+We could not get the style cop header for the classes in this project to work.
 
 ### Assignment Specific Topics:
 
-TODO
+None
 
 ### Consulted Peers:
 
-TODO
+We only consulted each other for this assignment.
 
 ### Sources:
+[SqlCommand Class](learn.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlcommand?view=netframework-4.8.1)

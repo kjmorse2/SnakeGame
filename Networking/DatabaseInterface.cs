@@ -113,6 +113,10 @@ public class DatabaseInterface
         return currentGameId;
     }
 
+    /// <summary>
+    /// Marks the time when a player leaves.
+    /// </summary>
+    /// <param name="playerId"> The ID of the player that is leaving.</param>
     public void PlayerLeft(int playerId)
     {
         PlayerLeft(playerId, DateTime.Now);
