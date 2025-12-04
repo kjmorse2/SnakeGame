@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Runtime.InteropServices.ComTypes;
+using System.Text;
 using System.Text.Json;
 using CS3500.Networking;
 using Microsoft.Data.SqlClient;
@@ -9,6 +10,7 @@ internal class WebServer
 {
     private static readonly string SnakeSecrets = JsonDocument.Parse(File.ReadAllText("secrets.json")).RootElement
         .GetProperty("ConnectionSTring").GetString()!;
+
 
     public static void HandleConnection(NetworkConnection connection)
     {
@@ -33,9 +35,15 @@ internal class WebServer
                 }
                 else if (path == "/games")
                 {
-                    html = GamesPage();
+                    html = AllGamesPage();
+                }
+
+                else
+                {
+                    html = SpecficGamesPage();
                 }
             }
+       
             catch
             {
                 return;
@@ -43,12 +51,17 @@ internal class WebServer
         }
     }
 
-    private static string GamesPage()
+
+    private static string HomePage()
+    {
+        return "<html>\n<h3>Welcome to the Snake Games Database!</h3>\n<a href=\"/games\">View Games</a>\n</html>";
+    }
+    private static string AllGamesPage()
     {
         StringBuilder sb = new();
         sb.Append("<html>");
         sb.Append("<table border=\"1\">");
-        sb.Append("<thead><tr><td>ID</td><td>Start</td><td>End</td></tr></thead><tbody><tr>");
+        sb.Append("<thead><tr><td>ID</td><td>Start</td><td>End</td></tr></thead><tbody>");
 
 
         using (SqlConnection sqlConn = new(SnakeSecrets))
@@ -57,8 +70,21 @@ internal class WebServer
             {
                 sqlConn.Open();
                 Console.WriteLine("Connection to Database opened.");
-                string queryString = "";
-                SqlCommand command = new();
+                SqlCommand command = new("SELECT * FROM GameTable", sqlConn);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int gameID = reader.GetInt32(0);
+                        DateTime start = reader.GetDateTime(1);
+                        DateTime? end = reader.GetDateTime(2);
+                        sb.Append("<tr>");
+                        sb.Append($"<td><a href=\"/games?gameID={gameID}\">{gameID}</a></td>");
+                        sb.Append($"<td>{start} </td>");
+                        sb.Append($"<td>{(end.HasValue ? end.Value.ToString() : String.Empty)}</td>");
+                        sb.Append("</tr>");
+                    }
+                }
             }
             catch { }
         }
@@ -66,8 +92,40 @@ internal class WebServer
         return sb.ToString();
     }
 
-    private static string HomePage()
+    private static string SpecficGamesPage()
     {
-        return "<html>\n<h3>Welcome to the Snake Games Database!</h3>\n<a href=\"/games\">View Games</a>\n</html>";
+        StringBuilder sb = new();
+        sb.Append("<html>");
+        sb.Append("<table border=\"1\">");
+        sb.Append("<thead><tr><td>ID</td><td>Start</td><td>End</td></tr></thead><tbody>");
+
+
+        using (SqlConnection sqlConn = new(SnakeSecrets))
+        {
+            try
+            {
+                sqlConn.Open();
+                Console.WriteLine("Connection to Database opened.");
+                SqlCommand command = new("SELECT * FROM GameTable", sqlConn);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int gameID = reader.GetInt32(0);
+                        DateTime start = reader.GetDateTime(1);
+                        DateTime? end = reader.GetDateTime(2);
+                        sb.Append("<tr>");
+                        sb.Append($"<td><a href=\"/games?gameID={gameID}\">{gameID}</a></td>");
+                        sb.Append($"<td>{start} </td>");
+                        sb.Append($"<td>{(end.HasValue ? end.Value.ToString() : String.Empty)}</td>");
+                        sb.Append("</tr>");
+                    }
+                }
+            }
+            catch { }
+        }
+
+        return sb.ToString();
     }
+
 }
