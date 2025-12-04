@@ -68,7 +68,7 @@ public class SnakeServer
     /// <summary>
     ///     The path to the single game HTML file.
     /// </summary>
-    private static readonly string SingleGameFilePath = Path.Combine(WwwrootPath, "singleGame.html");
+    private static readonly string SingleGameFilePath = Path.Combine(WwwrootPath, "singlegame.html");
 
     /// <summary>
     ///     Shared logger instance used throughout the server for structured logging.

@@ -1,4 +1,4 @@
-﻿// <copyright file="World.cs" company="U of U CS3500">
+﻿﻿// <copyright file="World.cs" company="U of U CS3500">
 // Copyright (c) U of U CS3500, Kenneth Morse, and Hunter Simmons. All rights reserved.
 // </copyright>
 
@@ -159,13 +159,19 @@ public class World
                     // Update the database with the new player or updated score.
                     if (!Snakes.TryGetValue(receivedSnake.Id, out Snake? oldSnake))
                     {
-                        // If the snake is new, insert it into the database.
+                        // If the snake is new, initialize MaxScore and insert into the database.
+                        receivedSnake.MaxScore = receivedSnake.Score;
                         dbInterface.InsertNewPlayer(receivedSnake.Id, receivedSnake.Name, receivedSnake.Score);
                     }
                     else
                     {
-                        // If the snake exists, update its score if it has changed.
-                        dbInterface.UpdatePlayerScore(receivedSnake.Id, receivedSnake.Score, oldSnake.Score);
+                        // Preserve the MaxScore from the old snake and update if current score is higher.
+                        receivedSnake.MaxScore = oldSnake.MaxScore;
+                        if (receivedSnake.Score > receivedSnake.MaxScore)
+                        {
+                            receivedSnake.MaxScore = receivedSnake.Score;
+                            dbInterface.UpdatePlayerScore(receivedSnake.Id, receivedSnake.Score, oldSnake.MaxScore);
+                        }
                     }
 
                     Snakes[ receivedSnake.Id ] = receivedSnake;
