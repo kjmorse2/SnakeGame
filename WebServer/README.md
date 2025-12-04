@@ -27,4 +27,5 @@ None
 We only consulted each other for this assignment.
 
 ### Sources:
+
 [SqlCommand Class](learn.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlcommand?view=netframework-4.8.1)
