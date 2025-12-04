@@ -352,6 +352,9 @@ public class SnakeServer
             // Read the template file
             string template = File.ReadAllText(SingleGameFilePath, Encoding.UTF8);
 
+            // Replaces %%GameID%% From the HTML file to the actual game ID.
+            template = template.Replace("%%GameID%%", gameId.ToString());
+
             // StringBuilder for the full page
             StringBuilder tableBuilder = new();
 
