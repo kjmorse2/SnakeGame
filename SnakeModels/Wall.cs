@@ -26,19 +26,19 @@ public class Wall
     /// <summary>
     ///     Gets the unique identifier for the wall.
     /// </summary>
-    [JsonPropertyName("wall")]
+    [ JsonPropertyName("wall") ]
     public int Id { get; init; }
 
     /// <summary>
     ///     Gets the first endpoint (unordered) of the wall span.
     /// </summary>
-    [JsonPropertyName("p1")]
+    [ JsonPropertyName("p1") ]
     public required Point2D P1 { get; init; }
 
     /// <summary>
     ///     Gets the second endpoint (unordered) of the wall span.
     /// </summary>
-    [JsonPropertyName("p2")]
+    [ JsonPropertyName("p2") ]
     public required Point2D P2 { get; init; }
 
     /// <summary>

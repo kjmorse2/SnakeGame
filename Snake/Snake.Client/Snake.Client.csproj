@@ -32,11 +32,11 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Networking\Networking.csproj"/>
-        <ProjectReference Include="..\..\SnakeModels\SnakeModels.csproj" />
+        <ProjectReference Include="..\..\SnakeModels\SnakeModels.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Helpers\" />
+        <Folder Include="Helpers\"/>
     </ItemGroup>
 
 </Project>

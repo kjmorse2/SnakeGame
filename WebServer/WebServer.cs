@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using CS3500.Networking;
 using Microsoft.Data.SqlClient;
@@ -11,8 +10,7 @@ public class WebServer
     private static readonly string SnakeSecrets = JsonDocument.Parse(File.ReadAllText("secrets.json")).RootElement
         .GetProperty("ConnectionSTring").GetString()!;
 
-    
-    
+
     public static void HandleConnection(NetworkConnection connection)
     {
         string lineFromBrowser = string.Empty;
@@ -26,8 +24,8 @@ public class WebServer
                     break;
                 }
 
-                string[] parts = lineFromBrowser.Split(' ');
-                string path = parts.Length > 1 ? parts[1] : "/";
+                string[ ] parts = lineFromBrowser.Split(' ');
+                string path = parts.Length > 1 ? parts[ 1 ] : "/";
                 string html;
 
                 if (path == "/")
@@ -44,7 +42,7 @@ public class WebServer
                     html = SpecficGamesPage();
                 }
             }
-            
+
             catch
             {
                 return;
@@ -52,11 +50,6 @@ public class WebServer
         }
     }
 
-
-    private static string HomePage()
-    {
-        return "<html>\n<h3>Welcome to the Snake Games Database!</h3>\n<a href=\"/games\">View Games</a>\n</html>";
-    }
     private static string AllGamesPage()
     {
         StringBuilder sb = new();
@@ -82,7 +75,7 @@ public class WebServer
                         sb.Append("<tr>");
                         sb.Append($"<td><a href=\"/games?gameID={gameID}\">{gameID}</a></td>");
                         sb.Append($"<td>{start} </td>");
-                        sb.Append($"<td>{(end.HasValue ? end.Value.ToString() : String.Empty)}</td>");
+                        sb.Append($"<td>{(end.HasValue ? end.Value.ToString() : string.Empty)}</td>");
                         sb.Append("</tr>");
                     }
                 }
@@ -91,6 +84,12 @@ public class WebServer
         }
 
         return sb.ToString();
+    }
+
+
+    private static string HomePage()
+    {
+        return "<html>\n<h3>Welcome to the Snake Games Database!</h3>\n<a href=\"/games\">View Games</a>\n</html>";
     }
 
     private static string SpecficGamesPage()
@@ -118,7 +117,7 @@ public class WebServer
                         sb.Append("<tr>");
                         sb.Append($"<td><a href=\"/games?gameID={gameID}\">{gameID}</a></td>");
                         sb.Append($"<td>{start} </td>");
-                        sb.Append($"<td>{(end.HasValue ? end.Value.ToString() : String.Empty)}</td>");
+                        sb.Append($"<td>{(end.HasValue ? end.Value.ToString() : string.Empty)}</td>");
                         sb.Append("</tr>");
                     }
                 }

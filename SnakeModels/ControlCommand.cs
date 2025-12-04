@@ -25,6 +25,6 @@ public class ControlCommand(string direction)
     ///     Gets or sets the movement direction requested by the player.
     ///     Valid values: "up", "down", "left", "right". An empty string represents no movement.
     /// </summary>
-    [JsonPropertyName("moving")]
+    [ JsonPropertyName("moving") ]
     public string Direction { get; set; } = direction;
 }

@@ -25,54 +25,54 @@ public class Snake
     /// <summary>
     ///     Gets a value indicating whether the snake is alive (inverse of permanent death condition).
     /// </summary>
-    [JsonPropertyName("alive")]
+    [ JsonPropertyName("alive") ]
     public bool Alive { get; init; }
 
     /// <summary>
     ///     Gets the ordered body segment coordinates; index 0 is the tail, last index is the head.
     /// </summary>
-    [JsonPropertyName("body")]
+    [ JsonPropertyName("body") ]
     public List<Point2D> Body { get; init; } = new();
 
     /// <summary>
     ///     Gets a value indicating whether the player disconnected (true only on the disconnect tick).
     /// </summary>
-    [JsonPropertyName("dc")]
+    [ JsonPropertyName("dc") ]
     public bool Dc { get; init; }
 
     /// <summary>
     ///     Gets a value indicating whether the snake has died (true only on the death tick).
     /// </summary>
-    [JsonPropertyName("died")]
+    [ JsonPropertyName("died") ]
     public bool Died { get; init; }
 
     /// <summary>
     ///     Gets the current movement direction vector (delta per tick) reported by the server.
     /// </summary>
-    [JsonPropertyName("dir")]
+    [ JsonPropertyName("dir") ]
     public Point2D Dir { get; init; } = new();
 
     /// <summary>
     ///     Gets the unique identifier for the snake.
     /// </summary>
-    [JsonPropertyName("snake")]
+    [ JsonPropertyName("snake") ]
     public int Id { get; init; }
 
     /// <summary>
     ///     Gets a value indicating whether the player just joined (true only on the join tick).
     /// </summary>
-    [JsonPropertyName("join")]
+    [ JsonPropertyName("join") ]
     public bool Join { get; init; }
 
     /// <summary>
     ///     Gets the display name of the player controlling this snake.
     /// </summary>
-    [JsonPropertyName("name")]
+    [ JsonPropertyName("name") ]
     public required string Name { get; init; }
 
     /// <summary>
     ///     Gets the accumulated score for this snake.
     /// </summary>
-    [JsonPropertyName("score")]
+    [ JsonPropertyName("score") ]
     public int Score { get; init; }
 }

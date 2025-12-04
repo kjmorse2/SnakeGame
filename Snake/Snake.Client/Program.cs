@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace CS3500.Snake.Client;
 
 public class Program
 {
-    public static async Task Main(string[] args)
+    public static async Task Main(string[ ] args)
     {
         WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 

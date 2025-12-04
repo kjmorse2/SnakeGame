@@ -3,7 +3,6 @@
 // </copyright>
 
 using System.Net;
-using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
 
 namespace CS3500.Networking;

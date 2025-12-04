@@ -3,6 +3,7 @@
 // </copyright>
 
 using System.Data;
+using CS3500.Networking.Records;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
@@ -74,6 +75,65 @@ public class DatabaseInterface
         PlayersLeft(players);
     }
 
+    public List<GameData> GetAllGames()
+    {
+        List<GameData> games = new();
+        try
+        {
+            EnsureOpenConnection();
+            Console.WriteLine("Connection to Database opened.");
+            SqlCommand command = new("SELECT * FROM GameTable", connection);
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    int gameID = reader.GetInt32(0);
+                    DateTime startTime = reader.GetDateTime(1);
+                    DateTime endTime = reader.IsDBNull(2) ? DateTime.MinValue : reader.GetDateTime(2);
+
+                    games.Add(new GameData(gameID, startTime, endTime));
+                }
+            }
+        }
+        catch
+        {
+        }
+
+        return games;
+    }
+
+    public List<PlayerData> GetSingleGame(int gameId)
+    {
+        List<PlayerData> players = new();
+        try
+        {
+            EnsureOpenConnection();
+            Console.WriteLine("Connection to Database opened.");
+            SqlCommand command = new(
+                "SELECT PlayerId, Name, MaxScore, EnterTime, LeaveTime FROM Players WHERE GameId = @GameId ORDER BY MaxScore DESC",
+                connection);
+            command.Parameters.Add("@GameId", SqlDbType.Int).Value = gameId;
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    int playerId = reader.GetInt32(0);
+                    string playerName = reader.GetString(1);
+                    int maxScore = reader.GetInt32(2);
+                    DateTime enterTime = reader.GetDateTime(3);
+                    DateTime leaveTime = reader.IsDBNull(4) ? DateTime.MinValue : reader.GetDateTime(4);
+
+                    players.Add(new PlayerData(playerId, gameId, playerName, maxScore, enterTime, leaveTime));
+                }
+            }
+        }
+        catch
+        {
+        }
+
+        return players;
+    }
+
     /// <summary>
     ///     Inserts a new player into the database.
     /// </summary>
@@ -143,73 +203,6 @@ public class DatabaseInterface
         command.Parameters.Add("@GameId", SqlDbType.Int).Value = currentGameId;
         command.Parameters.Add("@PlayerId", SqlDbType.Int).Value = playerId;
         command.ExecuteNonQuery();
-    }
-
-    public void GetAllGames(out List<int> gameIds, out List<string> startTimes, out List<string> endTimes)
-    {
-        gameIds = new();
-        startTimes = new();
-        endTimes = new();
-        try
-        {
-            EnsureOpenConnection();
-            Console.WriteLine("Connection to Database opened.");
-            SqlCommand command = new("SELECT * FROM GameTable", connection);
-            using (SqlDataReader reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    int gameID = reader.GetInt32(0);
-                    DateTime startTime = reader.GetDateTime(1);
-                    DateTime? endTime = reader.GetDateTime(2);
-                    string endTimeString = endTime.ToString() ?? "None";
-
-                    gameIds.Add(gameID);
-                    startTimes.Add(startTime.ToString());
-                    endTimes.Add(endTimeString);
-                }
-            }
-        }
-        catch
-        {
-        }
-    }
-
-    public void GetSingleGame(int gameId, out List<int> playerIds, out List<string> playerNames, out List<int> maxScores, out List<string> enterTimes, out List<string> leaveTimes)
-    {
-        playerIds = new();
-        playerNames = new();
-        maxScores = new();
-        enterTimes = new();
-        leaveTimes = new();
-        try
-        {
-            EnsureOpenConnection();
-            Console.WriteLine("Connection to Database opened.");
-            SqlCommand command = new("SELECT PlayerId, Name, MaxScore, EnterTime, LeaveTime FROM Players WHERE GameId = @GameId ORDER BY MaxScore DESC", connection);
-            command.Parameters.Add("@GameId", SqlDbType.Int).Value = gameId;
-            using (SqlDataReader reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    int playerId = reader.GetInt32(0);
-                    string playerName = reader.GetString(1);
-                    int maxScore = reader.GetInt32(2);
-                    DateTime enterTime= reader.GetDateTime(3);
-                    DateTime leaveTime = reader.GetDateTime(4);
-
-                    playerIds.Add(playerId);
-                    playerNames.Add(playerName);
-                    maxScores.Add(maxScore);
-
-                    enterTimes.Add(startTime.ToString());
-                    leaveTimes.Add(leaveTime.ToString());
-                }
-            }
-        }
-        catch
-        {
-        }
     }
 
     private void EnsureOpenConnection()

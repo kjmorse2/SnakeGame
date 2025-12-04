@@ -10,9 +10,9 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.3"/>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.11" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.11" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.11" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.11"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.11"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.11"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -20,8 +20,8 @@
         <!-- Include all files under `wwwroot` -->
         <Content Include="wwwroot\**\*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content> 
-        <ProjectReference Include="..\SnakeModels\SnakeModels.csproj" /> 
+        </Content>
+        <ProjectReference Include="..\SnakeModels\SnakeModels.csproj"/>
     </ItemGroup>
 
 </Project>
