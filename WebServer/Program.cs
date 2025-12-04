@@ -1,4 +1,4 @@
-﻿// <copyright file="Program.cs" company="PlaceholderCompany">
+﻿﻿// <copyright file="Program.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
@@ -166,8 +166,26 @@ public class SnakeServer
                 // If the size is greater than 0, and the first component is "games", we know we are not headed to homepage.
                 if (components.Count > 0 && components[ 0 ] == "games")
                 {
-                    // If there are two components, and the second is an integer, we serve single game page
-                    if (components.Count == 2 && int.TryParse(components[ 1 ], out int gameId))
+                    // Check if there's a query string parameter "gid"
+                    string? gidParam = null;
+                    if (!string.IsNullOrEmpty(url.Query))
+                    {
+                        // Parse query string manually (e.g., "?gid=123")
+                        string query = url.Query.TrimStart('?');
+                        string[ ] parameters = query.Split('&');
+                        foreach (string param in parameters)
+                        {
+                            string[ ] keyValue = param.Split('=');
+                            if (keyValue.Length == 2 && keyValue[ 0 ] == "gid")
+                            {
+                                gidParam = keyValue[ 1 ];
+                                break;
+                            }
+                        }
+                    }
+
+                    // If gid parameter exists and is a valid integer, serve single game page
+                    if (gidParam != null && int.TryParse(gidParam, out int gameId))
                     {
                         buffer = SingleGamePageBytes(gameId);
                     }
@@ -277,10 +295,10 @@ public class SnakeServer
         // Convert game data to list of strings
         List<string> elements = game.ToStringList();
 
-        // Build first division manually with link on Game ID
+        // Build first division manually with link on Game ID using query string format
         rowBuilder.Append(TrStart);
         rowBuilder.Append(TdStart);
-        rowBuilder.Append("<a href=\"games/" + game.GameId + "\">" + game.GameId + "</a>");
+        rowBuilder.Append("<a href=\"games?gid=" + game.GameId + "\">" + game.GameId + "</a>");
         rowBuilder.Append(TdEnd);
 
         // Build the rest of the row
