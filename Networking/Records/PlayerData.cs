@@ -7,7 +7,7 @@ using System.Globalization;
 namespace CS3500.Networking.Records;
 
 /// <summary>
-/// Holds the information about a player in a specific game, which includes their ID, name, highscore, 
+/// Holds the information about a player in a specific game, which includes their ID, name, highscore,
 /// and the time they joined the game and left the game.
 /// </summary>
 /// /<remarks>This class is immutable. </remarks>
@@ -68,13 +68,14 @@ public sealed class PlayerData
     /// <returns>A list of strings in the order of PlayerId, Name, StartTime, EndTime, and Dates.</returns>
     public List<string> ToStringList()
     {
-        return new List<string>
-        {
+        string endTimeStr = EndTime == DateTime.MinValue ? "Not Left Yet" : EndTime.ToString(CultureInfo.InvariantCulture);
+        return
+        [
             PlayerId.ToString(),
             Name,
             HighScore.ToString(),
             StartTime.ToString(CultureInfo.InvariantCulture),
-            EndTime.ToString(CultureInfo.InvariantCulture),
-        };
+            endTimeStr,
+        ];
     }
 }

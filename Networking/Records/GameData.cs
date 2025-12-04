@@ -46,11 +46,12 @@ public sealed class GameData
     /// <returns>A list of strings representing the object's properties. The list is ordered by  GameID, StartTime, and Endtime.
     public List<string> ToStringList()
     {
+        string endTimeStr = EndTime == DateTime.MinValue ? "Ongoing" : EndTime.ToString(CultureInfo.InvariantCulture);
         return new List<string>
         {
             GameId.ToString(),
             StartTime.ToString(CultureInfo.InvariantCulture),
-            EndTime.ToString(CultureInfo.InvariantCulture),
+            endTimeStr,
         };
     }
 }
