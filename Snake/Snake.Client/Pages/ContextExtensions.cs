@@ -23,6 +23,10 @@ public static class ContextExtensions
         "lime", "cyan", "yellow", "orange", "magenta", "red", "blue", "white", "red", "green",
     ];
 
+    /// <summary>
+    ///     Array of dash patterns used to draw snakes with different visual styles.
+    ///     Each pattern is an array of dash and gap lengths in pixels.
+    /// </summary>
     private static readonly float[ ][ ] SnakePatterns =
     [
         [ 7, 7 ], [ 4, 4 ], [ 15, 5 ], [ 3, 1, 4 ],

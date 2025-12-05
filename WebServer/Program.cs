@@ -20,6 +20,8 @@ public class SnakeServer
     /// </summary>
     private const string Address = "http://localhost:";
 
+    private const int Port = 80;
+
     /// <summary>
     ///     A marker string in the HTML templates where rows will be inserted.
     /// </summary>
@@ -278,7 +280,7 @@ public class SnakeServer
         ServerLogger.LogInformation("Server initialized, waiting for connections...");
 
         // Start the main server loop to wait for connections, Handle connect is called on each connection.
-        ServerConnection.WaitForConnections(HandleConnect, Address, 8080, ServerLogger);
+        ServerConnection.WaitForConnections(HandleConnect, Address, Port, ServerLogger);
         Console.Read(); // don't stop the program.
     }
 

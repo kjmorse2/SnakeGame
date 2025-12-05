@@ -69,6 +69,9 @@ public class World
     /// </summary>
     public bool WallsLoaded { get; set; }
 
+    /// <summary>
+    ///     Gets a default point at the origin (0, 0) used as a fallback when a snake is not found.
+    /// </summary>
     private static Point2D DefaultPoint => new() { X = 0, Y = 0 };
 
     /// <summary>

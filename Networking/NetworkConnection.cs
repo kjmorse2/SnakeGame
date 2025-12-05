@@ -152,7 +152,7 @@ public sealed class NetworkConnection : IDisposable
 
     /// <summary>
     ///     Read a message from the other side of the socket.  The message will contain
-    ///     all characters up to the first new line. See <see cref="SendLineAsync" />.
+    ///     all characters up to the first new line. See <see cref="SendLine" />.
     /// </summary>
     /// <remarks>
     ///     <list type="bullet">
