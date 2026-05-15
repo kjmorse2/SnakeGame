@@ -1,8 +1,7 @@
 # assignment-eight-chatting-kj_hunter_game
 assignment-eight-chatting-kj_hunter_game created by GitHub Classroom
 ```
-Author:     Kenneth Morse 
-Partner:    Hunter Simmons
+Authors:     Kenneth Morse, Hunter Simmons
 Start Date: 11-Nov-2025
 Course:     CS 3500, University of Utah, School of Computing
 GitHub ID:  kjmorse2, HunterDSimmons
